@@ -1,0 +1,47 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:agent_run_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "agent_run_id",
+    "scenario_id",
+    "status",
+    "current_state",
+    "user_goal",
+    "constraint_json",
+    "output_summary",
+    "error_message",
+    "started_at",
+    "finished_at"
+  ],
+  "fields": [
+    {"fieldname": "agent_run_id", "fieldtype": "Data", "in_list_view": 1, "label": "Agent Run ID", "reqd": 1, "unique": 1},
+    {"fieldname": "scenario_id", "fieldtype": "Link", "in_list_view": 1, "label": "Scenario", "options": "Scenario"},
+    {"default": "Created", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Created\nRunning\nSuccess\nFailed", "reqd": 1},
+    {"default": "CREATED", "fieldname": "current_state", "fieldtype": "Select", "in_list_view": 1, "label": "Current State", "options": "CREATED\nPARSE_USER_GOAL\nBUILD_SCENARIO_CONSTRAINTS\nCHECK_DATA_QUALITY\nRUN_OPTIMIZATION\nRUN_RISK_SIMULATION\nCHECK_CONSTRAINTS\nGENERATE_ACTION_CARDS\nGENERATE_EXPLANATION\nCREATE_APPROVAL_PACKAGE\nWAITING_FOR_APPROVAL\nCREATE_WRITEBACK_DRAFT\nMONITOR_EXECUTION\nLEARN_FROM_FEEDBACK", "reqd": 1},
+    {"fieldname": "user_goal", "fieldtype": "Long Text", "label": "User Goal", "reqd": 1},
+    {"fieldname": "constraint_json", "fieldtype": "Code", "label": "Constraint JSON", "options": "JSON"},
+    {"fieldname": "output_summary", "fieldtype": "Small Text", "label": "Output Summary"},
+    {"fieldname": "error_message", "fieldtype": "Small Text", "label": "Error Message"},
+    {"fieldname": "started_at", "fieldtype": "Datetime", "in_list_view": 1, "label": "Started At"},
+    {"fieldname": "finished_at", "fieldtype": "Datetime", "label": "Finished At"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Agent Run",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"create": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1, "write": 1},
+    {"create": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1, "write": 1}
+  ],
+  "sort_field": "started_at",
+  "sort_order": "DESC",
+  "states": []
+}

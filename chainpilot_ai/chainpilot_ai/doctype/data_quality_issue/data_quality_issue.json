@@ -1,0 +1,45 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:issue_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "issue_id",
+    "agent_run",
+    "issue_type",
+    "severity",
+    "object_type",
+    "object_id",
+    "message",
+    "recommendation",
+    "status"
+  ],
+  "fields": [
+    {"fieldname": "issue_id", "fieldtype": "Data", "in_list_view": 1, "label": "Issue ID", "reqd": 1, "unique": 1},
+    {"fieldname": "agent_run", "fieldtype": "Link", "label": "Agent Run", "options": "Agent Run"},
+    {"fieldname": "issue_type", "fieldtype": "Select", "in_list_view": 1, "label": "Issue Type", "options": "Missing Field\nOutlier\nStale Snapshot\nMapping Gap", "reqd": 1},
+    {"default": "Medium", "fieldname": "severity", "fieldtype": "Select", "in_list_view": 1, "label": "Severity", "options": "Low\nMedium\nHigh\nBlocked", "reqd": 1},
+    {"fieldname": "object_type", "fieldtype": "Data", "label": "Object Type"},
+    {"fieldname": "object_id", "fieldtype": "Data", "label": "Object ID"},
+    {"fieldname": "message", "fieldtype": "Small Text", "label": "Message", "reqd": 1},
+    {"fieldname": "recommendation", "fieldtype": "Small Text", "label": "Recommendation"},
+    {"default": "Open", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Open\nResolved\nIgnored", "reqd": 1}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Data Quality Issue",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

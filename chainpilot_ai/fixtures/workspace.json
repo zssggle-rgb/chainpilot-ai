@@ -7,7 +7,7 @@
     "module": "ChainPilot AI",
     "public": 1,
     "is_hidden": 0,
-    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AI Command Center\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-scenario-studio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Scenario Studio\",\"link_to\":\"scenario-studio\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP Integration Console\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Action Inbox\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
+    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AI Command Center\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-ai-copilot\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AI Copilot\",\"link_to\":\"ai-copilot\",\"type\":\"Page\"}},{\"id\":\"chainpilot-scenario-studio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Scenario Studio\",\"link_to\":\"scenario-studio\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP Integration Console\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Action Inbox\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
     "shortcuts": [
       {
         "label": "AI Command Center",
@@ -18,6 +18,11 @@
         "label": "Action Inbox",
         "type": "Page",
         "link_to": "action-inbox"
+      },
+      {
+        "label": "AI Copilot",
+        "type": "Page",
+        "link_to": "ai-copilot"
       },
       {
         "label": "Scenario Studio",
@@ -33,6 +38,11 @@
         "label": "SAP Endpoints",
         "type": "DocType",
         "link_to": "SAP Endpoint"
+      },
+      {
+        "label": "Agent Runs",
+        "type": "DocType",
+        "link_to": "Agent Run"
       },
       {
         "label": "Scenarios",

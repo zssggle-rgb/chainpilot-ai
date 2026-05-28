@@ -10,6 +10,7 @@
 
     page.set_primary_action(__("打开动作收件箱"), () => frappe.set_route("action-inbox"));
     page.set_secondary_action(__("方案工作台"), () => frappe.set_route("scenario-studio"));
+    page.add_inner_button(__("AI Copilot"), () => frappe.set_route("ai-copilot"));
     page.add_inner_button(__("SAP 集成台"), () => frappe.set_route("sap-integration-console"));
     page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">${__("正在加载 ChainPilot 决策台...")}</div></div>`);
     load_command_center(page);

@@ -8,6 +8,7 @@ from chainpilot_ai.agent.service import next_state
 from chainpilot_ai.optimization.service import calculate_cash_release
 from chainpilot_ai.recommendation.service import explanation_status
 from chainpilot_ai.sap_connector.service import get_entity_set, sync_endpoint, test_connection, upsert_snapshot
+from chainpilot_ai.scenario.service import parse_user_goal
 from chainpilot_ai.scripts.import_demo_data import DEFAULT_DEMO_PATH, load_demo_data, validate_demo_data
 from chainpilot_ai.scripts.verify_phase_0 import REQUIRED_DOCTYPES, REQUIRED_MODULES, ROOT
 
@@ -51,6 +52,9 @@ class Phase0ContractTest(unittest.TestCase):
             "sap_inventory_snapshot/sap_inventory_snapshot.json",
             "sap_pr_line/sap_pr_line.json",
             "sap_po_line/sap_po_line.json",
+            "agent_run/agent_run.json",
+            "agent_tool_log/agent_tool_log.json",
+            "data_quality_issue/data_quality_issue.json",
         ]
         doctype_dir = ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype"
         for relative_path in m2_doctypes:
@@ -68,6 +72,7 @@ class Phase0ContractTest(unittest.TestCase):
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "action_inbox" / "action_inbox.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "scenario_studio" / "scenario_studio.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "sap_integration_console" / "sap_integration_console.js",
+            ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "ai_copilot" / "ai_copilot.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "scenario" / "scenario.json",
             ROOT / "chainpilot_ai" / "public" / "css" / "chainpilot_ai.css",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "recommendation" / "recommendation.js",
@@ -88,6 +93,10 @@ class Phase0ContractTest(unittest.TestCase):
         sync_result = sync_endpoint("purchase_requisition_items", {"mode": "mock", "dry_run": True})
         self.assertEqual(sync_result["status"], "Success")
         self.assertEqual(sync_result["rows_upserted"], 2)
+        parsed_goal = parse_user_goal("释放 8000 万，不影响空调，优先改 PR")
+        self.assertEqual(parsed_goal["cash_release_target"], 80_000_000)
+        self.assertIn("空调", parsed_goal["protected_product_lines"])
+        self.assertIn("REDUCE_PR_QTY", parsed_goal["preferred_actions"])
         self.assertEqual(get_entity_set("purchase_requisition_items"), [])
         self.assertEqual(upsert_snapshot("SAP Snapshot", {"doc": "100", "item": "10"}, ["doc", "item"]), "100::10")
 
