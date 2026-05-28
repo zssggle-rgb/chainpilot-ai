@@ -7,6 +7,7 @@ from pathlib import Path
 from chainpilot_ai.agent.service import next_state
 from chainpilot_ai.optimization.service import calculate_cash_release
 from chainpilot_ai.recommendation.service import explanation_status
+from chainpilot_ai.sap_connector.service import get_entity_set, test_connection, upsert_snapshot
 from chainpilot_ai.scripts.import_demo_data import DEFAULT_DEMO_PATH, load_demo_data, validate_demo_data
 from chainpilot_ai.scripts.verify_phase_0 import REQUIRED_DOCTYPES, REQUIRED_MODULES, ROOT
 
@@ -48,6 +49,8 @@ class Phase0ContractTest(unittest.TestCase):
         pages = [
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "chainpilot_ai_command_center" / "chainpilot_ai_command_center.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "action_inbox" / "action_inbox.js",
+            ROOT / "chainpilot_ai" / "public" / "css" / "chainpilot_ai.css",
+            ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "recommendation" / "recommendation.js",
         ]
         self.assertTrue(all(path.exists() for path in pages))
 
@@ -56,6 +59,12 @@ class Phase0ContractTest(unittest.TestCase):
         self.assertEqual(explanation_status(["EVD-001"]), "Ready")
         self.assertEqual(explanation_status([]), "NEED_EVIDENCE")
         self.assertEqual(next_state("CREATED"), "PARSE_USER_GOAL")
+        self.assertEqual(test_connection({"mode": "mock"})["status"], "MOCK_READY")
+        self.assertEqual(test_connection(None)["status"], "NOT_CONFIGURED")
+        rows = get_entity_set("purchase_requisition_items", {"mode": "mock", "plant": "CN01"})
+        self.assertGreaterEqual(len(rows), 1)
+        self.assertEqual(get_entity_set("purchase_requisition_items"), [])
+        self.assertEqual(upsert_snapshot("SAP Snapshot", {"doc": "100", "item": "10"}, ["doc", "item"]), "100::10")
 
 
 if __name__ == "__main__":
