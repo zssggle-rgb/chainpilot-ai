@@ -4,17 +4,17 @@
   frappe.pages["chainpilot-ai-command-center"].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
       parent: wrapper,
-      title: __("ChainPilot AI Command Center"),
+      title: "采购决策",
       single_column: true,
     });
 
-    page.set_primary_action(__("打开动作收件箱"), () => frappe.set_route("action-inbox"));
-    page.set_secondary_action(__("方案工作台"), () => frappe.set_route("scenario-studio"));
-    page.add_inner_button(__("AI Copilot"), () => frappe.set_route("ai-copilot"));
-    page.add_inner_button(__("执行监控"), () => frappe.set_route("execution-monitor"));
-    page.add_inner_button(__("学习中心"), () => frappe.set_route("learning-center"));
-    page.add_inner_button(__("SAP 集成台"), () => frappe.set_route("sap-integration-console"));
-    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">${__("正在加载 ChainPilot 决策台...")}</div></div>`);
+    page.set_primary_action("查看建议", () => frappe.set_route("action-inbox"));
+    page.set_secondary_action("SAP 连接", () => frappe.set_route("sap-integration-console"));
+    page.add_inner_button("方案", () => frappe.set_route("scenario-studio"));
+    page.add_inner_button("智能", () => frappe.set_route("ai-copilot"));
+    page.add_inner_button("监控", () => frappe.set_route("execution-monitor"));
+    page.add_inner_button("学习", () => frappe.set_route("learning-center"));
+    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载采购决策...</div></div>`);
     load_command_center(page);
   };
 
@@ -54,7 +54,7 @@
         checks,
       });
     } catch (error) {
-      page.main.find(".chainpilot-shell").html(`<div class="chainpilot-empty">${__("无法加载 ChainPilot 决策台数据。")}</div>`);
+      page.main.find(".chainpilot-shell").html(`<div class="chainpilot-empty">无法加载采购决策数据。</div>`);
       console.error(error);
     }
   }
@@ -76,46 +76,46 @@
     page.main.find(".chainpilot-shell").html(`
       <section class="chainpilot-hero">
         <div>
-          <div class="chainpilot-eyebrow">${__("SAP 报告到动作驾驶舱")}</div>
-          <h1 class="chainpilot-title">${__("5月采购优化决策台")}</h1>
+          <div class="chainpilot-eyebrow">采购优化</div>
+          <h1 class="chainpilot-title">5月采购优化</h1>
           <p class="chainpilot-subtitle">
-            ${__("把导入的 SAP 优化结果转成方案选择、单据行级动作、证据约束和可审批的业务队列。当前运行在 mock/demo 数据层，后续可替换为 SAP 只读接口。")}
+            查看优化方案、待处理建议、风险事项和资金占用影响。
           </p>
         </div>
         <div class="chainpilot-meta-grid">
-          ${meta_item(__("来源系统"), session.source_system || "-")}
-          ${meta_item(__("运行日期"), session.run_date || "-")}
-          ${meta_item(__("物料数"), chainpilot.number(session.material_count || 0))}
-          ${meta_item(__("最优解数"), chainpilot.number(session.best_solution_count || 0))}
+          ${meta_item("来源系统", chainpilot.sourceSystemLabel(session.source_system) || "-")}
+          ${meta_item("运行日期", session.run_date || "-")}
+          ${meta_item("物料数", chainpilot.number(session.material_count || 0))}
+          ${meta_item("候选方案", chainpilot.number(session.best_solution_count || 0))}
         </div>
       </section>
 
       <section class="chainpilot-kpi-grid">
-        ${kpi_card(__("采购基线"), chainpilot.currency(session.baseline_amount), __("导入 SAP 采购金额基线"))}
-        ${kpi_card(__("推荐释放现金"), chainpilot.currency(releaseValue), `${chainpilot.percent(releaseRate)} ${__("占基线比例")}`)}
-        ${kpi_card(__("待审批动作"), chainpilot.number(pending.length), __("等待业务复核的建议动作"))}
-        ${kpi_card(__("风险关注"), chainpilot.number(riskActions.length + warnEvidence + approvalRequired), __("需要升级复核的动作、证据或约束"))}
+        ${kpi_card("采购金额基线", chainpilot.currency(session.baseline_amount), "导入数据中的采购金额")}
+        ${kpi_card("资金占用减少额", chainpilot.currency(releaseValue), `${chainpilot.percent(releaseRate)} 占基线比例`)}
+        ${kpi_card("待审批建议", chainpilot.number(pending.length), "等待业务复核")}
+        ${kpi_card("需关注事项", chainpilot.number(riskActions.length + warnEvidence + approvalRequired), "风险、证据或审批提示")}
       </section>
 
       <section class="chainpilot-grid-2">
         <div class="chainpilot-panel">
           <div class="chainpilot-panel-header">
             <div>
-              <h2 class="chainpilot-panel-title">${__("方案组合")}</h2>
-              <p class="chainpilot-panel-note">${__("对比导入优化结果中的保守、推荐和激进方案。")}</p>
+              <h2 class="chainpilot-panel-title">方案组合</h2>
+              <p class="chainpilot-panel-note">对比稳妥、推荐和进取方案。</p>
             </div>
-            <button class="chainpilot-link-button" data-route="scenario-studio">${__("打开方案工作台")}</button>
+            <button class="chainpilot-link-button" data-route="scenario-studio">查看方案</button>
           </div>
           <div class="chainpilot-scenario-list">
-            ${scenarios.map(scenario_card).join("") || empty_state(__("No scenarios imported."))}
+            ${scenarios.map(scenario_card).join("") || empty_state("尚未导入方案。")}
           </div>
         </div>
 
         <div class="chainpilot-panel">
           <div class="chainpilot-panel-header">
             <div>
-              <h2 class="chainpilot-panel-title">${__("管控异常")}</h2>
-              <p class="chainpilot-panel-note">${__("创建 SAP 回写草稿前必须复核的审批和风险事项。")}</p>
+              <h2 class="chainpilot-panel-title">需关注事项</h2>
+              <p class="chainpilot-panel-note">高风险、缺证据或需要审批的建议。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
@@ -127,22 +127,20 @@
       <section class="chainpilot-panel" style="margin-top: 18px;">
         <div class="chainpilot-panel-header">
           <div>
-            <h2 class="chainpilot-panel-title">${__("高价值动作")}</h2>
-            <p class="chainpilot-panel-note">${__("按释放现金排序的单据行级 SAP 建议。")}</p>
+            <h2 class="chainpilot-panel-title">高价值建议</h2>
+            <p class="chainpilot-panel-note">按资金占用减少额排序。</p>
           </div>
-          <button class="chainpilot-link-button" data-route="action-inbox">${__("查看队列")}</button>
+          <button class="chainpilot-link-button" data-route="action-inbox">查看建议</button>
         </div>
         <div class="chainpilot-action-list">
-          ${recommendations.slice(0, 5).map(action_card).join("") || empty_state(__("No actions imported."))}
+          ${recommendations.slice(0, 5).map(action_card).join("") || empty_state("尚未导入建议。")}
         </div>
       </section>
     `);
 
     page.main.find("[data-route='action-inbox']").on("click", () => frappe.set_route("action-inbox"));
     page.main.find("[data-route='scenario-studio']").on("click", () => frappe.set_route("scenario-studio"));
-    page.main.find("[data-recommendation]").on("click", function () {
-      frappe.set_route("Form", "Recommendation", $(this).data("recommendation"));
-    });
+    page.main.find("[data-recommendation]").on("click", () => frappe.set_route("action-inbox"));
   }
 
   function meta_item(label, value) {
@@ -158,14 +156,14 @@
     return `
       <div class="chainpilot-scenario ${recommended ? "is-recommended" : ""}">
         <div>
-          <div class="chainpilot-scenario-name">${chainpilot.escape(scenario.strategy_name)}</div>
-          <div class="chainpilot-scenario-text">${chainpilot.escape(scenario.ai_recommendation || "")}</div>
+          <div class="chainpilot-scenario-name">${chainpilot.strategyLabel(scenario.strategy_name || scenario.strategy_type)}</div>
+          <div class="chainpilot-scenario-text">${chainpilot.escape(business_text(scenario.ai_recommendation || ""))}</div>
         </div>
-        ${metric_block(__("采购金额"), chainpilot.currency(scenario.purchase_amount))}
-        ${metric_block(__("释放现金"), chainpilot.currency(scenario.cash_release))}
+        ${metric_block("采购金额", chainpilot.currency(scenario.purchase_amount))}
+        ${metric_block("资金占用减少额", chainpilot.currency(scenario.cash_release))}
         <div>
-          ${metric_block(__("释放比例"), chainpilot.percent(scenario.cash_release_rate || 0))}
-          <div style="margin-top: 6px;">${chainpilot.badge(scenario.risk_level || "-", chainpilot.riskTone(scenario.risk_level))}</div>
+          ${metric_block("改善比例", chainpilot.percent(scenario.cash_release_rate || 0))}
+          <div style="margin-top: 6px;">${chainpilot.badge(chainpilot.riskLabel(scenario.risk_level) || "-", chainpilot.riskTone(scenario.risk_level))}</div>
         </div>
       </div>
     `;
@@ -179,19 +177,19 @@
     const approvalChecks = checks.filter((item) => item.verdict === "PASS_WITH_APPROVAL").slice(0, 4);
     const rows = [
       ...riskActions.slice(0, 3).map((item) => ({
-        label: item.recommendation_id,
+        label: chainpilot.recommendationLabel(item.recommendation_id),
         note: `${chainpilot.actionLabel(item.action_type)} · ${item.material_name || item.material_code}`,
-        badge: chainpilot.badge(__("风险 ") + chainpilot.number(item.shortage_risk_after, 1), "amber"),
+        badge: chainpilot.badge(`风险 ${chainpilot.number(item.shortage_risk_after, 1)}`, "amber"),
         name: item.name,
       })),
       ...approvalChecks.map((item) => ({
-        label: item.rule_code,
-        note: item.message,
-        badge: chainpilot.badge(__("需审批"), "blue"),
+        label: rule_label(item.rule_code),
+        note: business_text(item.message),
+        badge: chainpilot.badge("需审批", "blue"),
         name: item.recommendation_id,
       })),
     ];
-    if (!rows.length) return empty_state(__("No elevated risk or approval exception found."));
+    if (!rows.length) return empty_state("暂无高风险或审批提示。");
     return rows
       .slice(0, 6)
       .map(
@@ -201,7 +199,7 @@
               <div class="chainpilot-action-title">${chainpilot.escape(row.label)}</div>
               <div class="chainpilot-action-subtitle">${chainpilot.escape(row.note)}</div>
             </div>
-            <button class="chainpilot-link-button" data-recommendation="${chainpilot.escape(row.name)}">${__("打开")}</button>
+            <button class="chainpilot-link-button" data-recommendation="${chainpilot.escape(row.name)}">处理</button>
           </div>
         `,
       )
@@ -212,22 +210,45 @@
     return `
       <div class="chainpilot-action-card">
         <div class="chainpilot-action-main">
-          <div class="chainpilot-action-id">${chainpilot.escape(item.recommendation_id)}</div>
+          <div class="chainpilot-action-id">${chainpilot.escape(chainpilot.recommendationLabel(item.recommendation_id))}</div>
           <div class="chainpilot-action-title">${chainpilot.actionLabel(item.action_type)} · ${chainpilot.escape(item.material_name || item.material_code)}</div>
-          <div class="chainpilot-action-subtitle">${chainpilot.escape(item.sap_object_type)} ${chainpilot.escape(item.sap_doc_no)}/${chainpilot.escape(item.sap_item_no)} · ${chainpilot.escape(item.plant)} · ${chainpilot.escape(item.supplier || "-")}</div>
+          <div class="chainpilot-action-subtitle">${chainpilot.sapObjectLabel(item.sap_object_type)} ${chainpilot.escape(item.sap_doc_no)}/${chainpilot.escape(item.sap_item_no)} · ${chainpilot.escape(item.plant)} · ${chainpilot.escape(item.supplier || "-")}</div>
           <div class="chainpilot-change-line">
-            <span>${__("数量")}: ${chainpilot.number(item.before_qty)} -> ${chainpilot.number(item.after_qty)}</span>
-            <span>${__("日期")}: ${chainpilot.escape(item.before_date || "-")} -> ${chainpilot.escape(item.after_date || "-")}</span>
+            <span>数量：${chainpilot.number(item.before_qty)} → ${chainpilot.number(item.after_qty)}</span>
+            <span>日期：${chainpilot.escape(item.before_date || "-")} → ${chainpilot.escape(item.after_date || "-")}</span>
           </div>
         </div>
-        ${metric_block(__("释放现金"), chainpilot.currency(item.cash_release))}
+        ${metric_block("资金占用减少额", chainpilot.currency(item.cash_release))}
         <div>
-          ${chainpilot.badge(item.approval_status, chainpilot.verdictTone(item.approval_status))}
-          ${chainpilot.badge(item.explanation_status, chainpilot.verdictTone(item.explanation_status))}
+          ${chainpilot.badge(chainpilot.statusLabel(item.approval_status), chainpilot.verdictTone(item.approval_status))}
+          ${chainpilot.badge(chainpilot.statusLabel(item.explanation_status), chainpilot.verdictTone(item.explanation_status))}
         </div>
-        <button class="chainpilot-link-button" data-recommendation="${chainpilot.escape(item.name)}">${__("查看详情")}</button>
+        <button class="chainpilot-link-button" data-recommendation="${chainpilot.escape(item.name)}">查看详情</button>
       </div>
     `;
+  }
+
+  function rule_label(value) {
+    const labels = {
+      MASTER_DATA_REVIEW: "主数据复核",
+      SUPPLIER_CONFIRMATION: "供应商确认",
+      RISK_LIMIT: "风险阈值",
+      M3_SAFE_STOCK: "安全库存校验",
+    };
+    return labels[value] || value || "";
+  }
+
+  function business_text(value) {
+    return String(value || "")
+      .replaceAll("PR 数量下调", "采购申请数量下调")
+      .replaceAll("PO 延期", "采购订单延期")
+      .replaceAll("PR", "采购申请")
+      .replaceAll("PO", "采购订单")
+      .replaceAll("MVP", "首版验证")
+      .replaceAll("首版验证 推荐方案", "首版验证推荐方案")
+      .replaceAll("作为 首版验证推荐方案", "作为首版验证推荐方案")
+      .replaceAll("SAP writeback", "SAP 回写")
+      .replaceAll("draft-only", "仅生成草稿");
   }
 
   function empty_state(message) {
@@ -240,7 +261,9 @@
         return frappe.utils.escape_html(value == null ? "" : String(value));
       },
       currency(value) {
-        return format_currency(value || 0, frappe.defaults.get_default("currency") || "USD", 0);
+        const amount = Number(value || 0);
+        if (Math.abs(amount) >= 10000) return `${(amount / 10000).toLocaleString(undefined, { maximumFractionDigits: 1 })} 万元`;
+        return `${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })} 元`;
       },
       number(value, decimals = 0) {
         return Number(value || 0).toLocaleString(undefined, {
@@ -253,6 +276,30 @@
       },
       badge(label, tone = "neutral") {
         return `<span class="chainpilot-badge ${tone}">${this.escape(label)}</span>`;
+      },
+      statusLabel(value) {
+        const labels = { Pending: "待处理", Approved: "已批准", Rejected: "已拒绝", Ready: "已就绪", Failed: "失败" };
+        return labels[value] || value || "";
+      },
+      riskLabel(risk) {
+        const labels = { High: "高", Medium: "中", Low: "低", Critical: "严重" };
+        return labels[risk] || risk || "";
+      },
+      strategyLabel(strategy) {
+        const labels = { Recommended: "推荐方案", Conservative: "稳妥方案", Aggressive: "进取方案", "Agent 推荐方案": "智能推荐方案", "AI 推荐方案": "智能推荐方案", "Recommended Plan": "推荐方案", "Conservative Plan": "稳妥方案", "Aggressive Plan": "进取方案" };
+        return labels[strategy] || strategy || "";
+      },
+      sourceSystemLabel(sourceSystem) {
+        const labels = { SAP_MOCK: "SAP 模拟快照", AIPLAN_DB: "采购分析报告导入", SAP: "SAP" };
+        return labels[sourceSystem] || sourceSystem || "";
+      },
+      sapObjectLabel(objectType) {
+        const labels = { PR: "采购申请", PO: "采购订单", MRP_PARAM: "MRP 参数", PLANNED_ORDER: "计划订单" };
+        return labels[objectType] || objectType || "";
+      },
+      recommendationLabel(recommendationId) {
+        const value = String(recommendationId || "");
+        return value ? `建议 ${value.replace(/^REC-/, "")}` : "";
       },
       riskTone(risk) {
         if (risk === "High") return "red";
@@ -267,11 +314,11 @@
       },
       actionLabel(actionType) {
         const labels = {
-          REDUCE_PR_QTY: __("下调 PR 数量"),
-          DELAY_UNCONFIRMED_PO: __("延后未确认 PO"),
-          ADVANCE_RISK_MATERIAL: __("提前风险物料"),
-          REVIEW_SAFETY_STOCK: __("复核安全库存"),
-          REVIEW_SUPPLIER_LEAD_TIME: __("复核供应商交期"),
+          REDUCE_PR_QTY: "下调采购申请数量",
+          DELAY_UNCONFIRMED_PO: "延后未确认采购订单",
+          ADVANCE_RISK_MATERIAL: "提前风险物料采购",
+          REVIEW_SAFETY_STOCK: "复核安全库存",
+          REVIEW_SUPPLIER_LEAD_TIME: "复核供应商交期",
         };
         return labels[actionType] || actionType || "";
       },

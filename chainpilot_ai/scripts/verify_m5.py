@@ -66,7 +66,7 @@ def check_m5_page_assets() -> dict[str, str]:
     page_js = ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "learning_center" / "learning_center.js"
     workspace = ROOT / "chainpilot_ai" / "fixtures" / "workspace.json"
     text = page_js.read_text(encoding="utf-8") if page_js.exists() else ""
-    required = ["Learning Center", "seed_learning_mock_data", "Rule Weight Adjustment", "Shortage Event"]
+    required = ["学习中心", "seed_learning_mock_data", "规则调权草稿", "缺料事件"]
     if all(token in text for token in required) and "learning-center" in workspace.read_text(encoding="utf-8"):
         return _status("Pass", f"{page_js}; {workspace}", "")
     return _status("Fail", f"{page_js}; {workspace}", "M5 Learning Center route or core actions missing.")

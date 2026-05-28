@@ -12,18 +12,32 @@
   chainpilot.badge = chainpilot.badge || function (label, tone = "neutral") {
     return `<span class="chainpilot-badge ${tone}">${chainpilot.escape(label)}</span>`;
   };
+  chainpilot.statusLabel = chainpilot.statusLabel || function (value) {
+    const labels = {
+      Success: "成功",
+      Failed: "失败",
+      "Not Run": "未运行",
+      "Mock Ready": "模拟连接可用",
+      MOCK_READY: "模拟连接可用",
+      DRY_RUN: "配置校验",
+      "Dry Run": "配置校验",
+      Ready: "已就绪",
+      Pending: "待处理",
+    };
+    return labels[value] || value || "";
+  };
 
   frappe.pages["sap-integration-console"].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
       parent: wrapper,
-      title: __("SAP Integration Console"),
+      title: "SAP 连接",
       single_column: true,
     });
 
-    page.set_primary_action(__("同步全部 P0 快照"), () => run_sync(page, "all"));
-    page.add_inner_button(__("测试 Mock 连接"), () => test_connection(page));
-    page.add_inner_button(__("返回决策台"), () => frappe.set_route("chainpilot-ai-command-center"));
-    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">${__("正在加载 SAP 集成控制台...")}</div></div>`);
+    page.set_primary_action("同步", () => run_sync(page, "all"));
+    page.add_inner_button("测试连接", () => test_connection(page));
+    page.add_inner_button("返回", () => frappe.set_route("chainpilot-ai-command-center"));
+    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载 SAP 连接...</div></div>`);
     load_dashboard(page);
   };
 
@@ -35,7 +49,7 @@
       render_dashboard(page, response.message || {});
     } catch (error) {
       console.error(error);
-      page.main.find(".chainpilot-shell").html(`<div class="chainpilot-empty">${__("无法加载 SAP 集成控制台。")}</div>`);
+      page.main.find(".chainpilot-shell").html(`<div class="chainpilot-empty">无法加载 SAP 连接。</div>`);
     }
   }
 
@@ -51,17 +65,17 @@
     page.main.find(".chainpilot-shell").html(`
       <section class="chainpilot-hero">
         <div>
-          <div class="chainpilot-eyebrow">${__("M2 Read-only SAP Layer")}</div>
-          <h1 class="chainpilot-title">${__("SAP Integration Console")}</h1>
+          <div class="chainpilot-eyebrow">只读接入</div>
+          <h1 class="chainpilot-title">SAP 连接</h1>
           <p class="chainpilot-subtitle">
-            ${__("配置 SAP 只读 Endpoint、字段映射和同步审计。当前运行 mock adapter，用确定性数据验证未来 OData 接入的字段、日志和快照契约。")}
+            当前使用模拟连接。接入真实 SAP 时，在这里配置接口地址、只读技术用户、接口、字段映射、同步任务和日志。
           </p>
         </div>
         <div class="chainpilot-meta-grid">
-          ${meta_item(__("连接状态"), connection.last_test_status || __("Mock Ready"))}
-          ${meta_item(__("快照记录"), chainpilot.number(totalRows))}
-          ${meta_item(__("Endpoint"), chainpilot.number(endpoints.length))}
-          ${meta_item(__("最近同步"), lastJob.status || __("Not Run"))}
+          ${meta_item("连接状态", chainpilot.statusLabel(connection.last_test_status || "Mock Ready"))}
+          ${meta_item("快照记录", chainpilot.number(totalRows))}
+          ${meta_item("接口数量", chainpilot.number(endpoints.length))}
+          ${meta_item("最近同步", chainpilot.statusLabel(lastJob.status || "Not Run"))}
         </div>
       </section>
 
@@ -69,34 +83,34 @@
         <div class="chainpilot-panel">
           <div class="chainpilot-panel-header">
             <div>
-              <h2 class="chainpilot-panel-title">${__("连接配置")}</h2>
-              <p class="chainpilot-panel-note">${__("M2 只读接入先验证连接契约；真实账号不得进入代码仓库。")}</p>
+              <h2 class="chainpilot-panel-title">连接配置</h2>
+              <p class="chainpilot-panel-note">当前为模拟连接；真实账号通过平台密码字段或环境变量配置。</p>
             </div>
-            ${chainpilot.badge(connection.mode || "Mock", "blue")}
+            ${chainpilot.badge(connection_mode_label(connection.mode), "blue")}
           </div>
           <div class="chainpilot-detail-grid">
-            ${meta_item(__("模式"), connection.mode || "Mock")}
-            ${meta_item(__("最后测试"), connection.last_test_at || "-")}
-            ${meta_item(__("结果"), connection.last_test_message || __("Using ChainPilot deterministic mock SAP adapter."))}
+            ${meta_item("模式", connection_mode_label(connection.mode))}
+            ${meta_item("最后测试", connection.last_test_at || "-")}
+            ${meta_item("测试结果", connection_message(connection))}
           </div>
           <div style="margin-top: 14px;">
-            <button class="chainpilot-link-button" data-test-connection="1">${__("测试 Mock 连接")}</button>
-            <button class="chainpilot-filter" data-sync-endpoint="all">${__("同步全部 P0 快照")}</button>
+            <button class="chainpilot-link-button" data-test-connection="1">测试连接</button>
+            <button class="chainpilot-filter" data-sync-endpoint="all">同步</button>
           </div>
         </div>
 
         <div class="chainpilot-panel">
           <div class="chainpilot-panel-header">
             <div>
-              <h2 class="chainpilot-panel-title">${__("Snapshot 覆盖")}</h2>
-              <p class="chainpilot-panel-note">${__("四类 P0 对象先落本地快照，供优化和 Agent 读取。")}</p>
+              <h2 class="chainpilot-panel-title">快照覆盖</h2>
+              <p class="chainpilot-panel-note">物料、库存、采购申请和采购订单先同步到本地快照。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
-            ${snapshot_count(__("物料主数据"), counts["SAP Material Snapshot"])}
-            ${snapshot_count(__("库存"), counts["SAP Inventory Snapshot"])}
-            ${snapshot_count(__("采购申请 PR"), counts["SAP PR Line"])}
-            ${snapshot_count(__("采购订单 PO"), counts["SAP PO Line"])}
+            ${snapshot_count("物料主数据", counts["SAP Material Snapshot"])}
+            ${snapshot_count("库存", counts["SAP Inventory Snapshot"])}
+            ${snapshot_count("采购申请", counts["SAP PR Line"])}
+            ${snapshot_count("采购订单", counts["SAP PO Line"])}
           </div>
         </div>
       </section>
@@ -104,12 +118,12 @@
       <section class="chainpilot-panel" style="margin-top: 18px;">
         <div class="chainpilot-panel-header">
           <div>
-            <h2 class="chainpilot-panel-title">${__("Endpoint 配置")}</h2>
-            <p class="chainpilot-panel-note">${__("每个 Endpoint 绑定目标 DocType、EntitySet 和字段映射。")}</p>
+            <h2 class="chainpilot-panel-title">接口配置</h2>
+            <p class="chainpilot-panel-note">每个接口绑定业务对象、SAP 实体集、目标快照表和字段映射。</p>
           </div>
         </div>
         <div class="chainpilot-action-list">
-          ${endpoints.map(endpoint_card).join("") || empty_state(__("尚未配置 Endpoint。"))}
+          ${endpoints.map(endpoint_card).join("") || empty_state("尚未配置接口。")}
         </div>
       </section>
 
@@ -117,23 +131,23 @@
         <div class="chainpilot-panel">
           <div class="chainpilot-panel-header">
             <div>
-              <h2 class="chainpilot-panel-title">${__("同步任务")}</h2>
-              <p class="chainpilot-panel-note">${__("成功、失败、重试和同步数量都要可审计。")}</p>
+              <h2 class="chainpilot-panel-title">同步任务</h2>
+              <p class="chainpilot-panel-note">记录同步状态、数量和错误摘要。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
-            ${jobs.map(job_row).join("") || empty_state(__("尚无同步任务。"))}
+            ${jobs.map(job_row).join("") || empty_state("尚无同步任务。")}
           </div>
         </div>
         <div class="chainpilot-panel">
           <div class="chainpilot-panel-header">
             <div>
-              <h2 class="chainpilot-panel-title">${__("API 日志")}</h2>
-              <p class="chainpilot-panel-note">${__("测试连接和同步请求都保留摘要，避免暴露密码和完整业务数据。")}</p>
+              <h2 class="chainpilot-panel-title">接口日志</h2>
+              <p class="chainpilot-panel-note">保留请求摘要、响应摘要、耗时和错误信息。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
-            ${logs.map(log_row).join("") || empty_state(__("尚无 API 日志。"))}
+            ${logs.map(log_row).join("") || empty_state("尚无接口日志。")}
           </div>
         </div>
       </section>
@@ -146,28 +160,28 @@
   }
 
   async function test_connection(page) {
-    frappe.show_alert({ message: __("正在测试 mock 连接..."), indicator: "blue" });
+    frappe.show_alert({ message: "正在测试模拟连接...", indicator: "blue" });
     const response = await frappe.call({
       method: "chainpilot_ai.sap_connector.service.test_connection_rpc",
       args: { mode: "mock" },
     });
     const result = response.message || {};
     frappe.show_alert({
-      message: result.ok ? __("Mock 连接可用") : __("连接测试未通过"),
+      message: result.ok ? "模拟连接可用" : "连接测试未通过",
       indicator: result.ok ? "green" : "orange",
     });
     load_dashboard(page);
   }
 
   async function run_sync(page, endpointName) {
-    frappe.show_alert({ message: __("正在执行只读 mock 同步..."), indicator: "blue" });
+    frappe.show_alert({ message: "正在执行只读模拟同步...", indicator: "blue" });
     const response = await frappe.call({
       method: "chainpilot_ai.sap_connector.service.run_mock_sync",
       args: { endpoint_name: endpointName },
     });
     const result = response.message || {};
     frappe.show_alert({
-      message: __("同步完成：{0} 行", [chainpilot.number(result.rows_upserted || 0)]),
+      message: `同步完成：${chainpilot.number(result.rows_upserted || 0)} 行`,
       indicator: result.ok ? "green" : "orange",
     });
     load_dashboard(page);
@@ -177,14 +191,14 @@
     return `
       <div class="chainpilot-action-card">
         <div class="chainpilot-action-main">
-          <div class="chainpilot-action-id">${chainpilot.escape(endpoint.business_object || "")}</div>
-          <div class="chainpilot-action-title">${chainpilot.escape(endpoint.endpoint_name || "")}</div>
-          <div class="chainpilot-action-subtitle">${chainpilot.escape(endpoint.entity_set || "")}</div>
+          <div class="chainpilot-action-id">${chainpilot.escape(object_label(endpoint.business_object))}</div>
+          <div class="chainpilot-action-title">${chainpilot.escape(endpoint_label(endpoint.endpoint_name))}</div>
+          <div class="chainpilot-action-subtitle">标准接口实体已绑定</div>
         </div>
-        <div>${metric(chainpilot.escape(endpoint.target_doctype || "-"), __("目标 DocType"))}</div>
-        <div>${metric(endpoint.enabled ? __("Enabled") : __("Disabled"), __("状态"))}</div>
+        <div>${metric(snapshot_label(endpoint.target_doctype), "目标快照表")}</div>
+        <div>${metric(endpoint.enabled ? "启用" : "停用", "状态")}</div>
         <div>
-          <button class="chainpilot-link-button" data-sync-endpoint="${chainpilot.escape(endpoint.endpoint_name || "")}">${__("同步")}</button>
+          <button class="chainpilot-link-button" data-sync-endpoint="${chainpilot.escape(endpoint.endpoint_name || "")}">同步</button>
         </div>
       </div>
     `;
@@ -195,13 +209,13 @@
     return `
       <div class="chainpilot-risk-row">
         <div>
-          <div class="chainpilot-action-title">${chainpilot.escape(job.endpoint || job.job_id || "")}</div>
+          <div class="chainpilot-action-title">${chainpilot.escape(endpoint_label(job.endpoint) || job.job_id || "")}</div>
           <div class="chainpilot-action-subtitle">${chainpilot.escape(job.started_at || "")}</div>
         </div>
         <div>
-          ${chainpilot.badge(job.status || "-", tone)}
+          ${chainpilot.badge(chainpilot.statusLabel(job.status) || "-", tone)}
           <div class="chainpilot-metric">${chainpilot.number(job.rows_upserted || 0)}</div>
-          <div class="chainpilot-metric-label">${__("upserted")}</div>
+          <div class="chainpilot-metric-label">写入/更新</div>
         </div>
       </div>
     `;
@@ -212,12 +226,12 @@
     return `
       <div class="chainpilot-risk-row">
         <div>
-          <div class="chainpilot-action-title">${chainpilot.escape(log.endpoint || log.api_log_id || "")}</div>
-          <div class="chainpilot-action-subtitle">${chainpilot.escape(log.response_summary || log.error_message || "")}</div>
+          <div class="chainpilot-action-title">${chainpilot.escape(endpoint_label(log.endpoint) || log.api_log_id || "")}</div>
+          <div class="chainpilot-action-subtitle">${chainpilot.escape(log_summary(log))}</div>
         </div>
         <div>
           ${chainpilot.badge(log.status_code || "0", failed ? "red" : "green")}
-          <div class="chainpilot-metric">${chainpilot.number(log.duration_ms || 0)}ms</div>
+          <div class="chainpilot-metric">${chainpilot.number(log.duration_ms || 0)} 毫秒</div>
         </div>
       </div>
     `;
@@ -237,5 +251,58 @@
 
   function empty_state(message) {
     return `<div class="chainpilot-empty">${chainpilot.escape(message)}</div>`;
+  }
+
+  function endpoint_label(value) {
+    const labels = {
+      material_master: "物料主数据",
+      inventory_snapshots: "库存快照",
+      purchase_requisition_items: "采购申请行",
+      purchase_order_items: "采购订单行",
+      all: "全部接口",
+    };
+    return labels[value] || value || "";
+  }
+
+  function object_label(value) {
+    const labels = {
+      Material: "物料",
+      Inventory: "库存",
+      PR: "采购申请",
+      PO: "采购订单",
+    };
+    return labels[value] || value || "";
+  }
+
+  function snapshot_label(value) {
+    const labels = {
+      "SAP Material Snapshot": "物料快照",
+      "SAP Inventory Snapshot": "库存快照",
+      "SAP PR Line": "采购申请快照",
+      "SAP PO Line": "采购订单快照",
+    };
+    return labels[value] || value || "-";
+  }
+
+  function connection_message(connection) {
+    if ((connection.last_test_status || "") === "Mock Ready") return "模拟连接可用";
+    if ((connection.last_test_status || "") === "Dry Run") return "真实连接未配置，当前仅校验配置";
+    return connection.last_test_message || "模拟连接可用";
+  }
+
+  function connection_mode_label(value) {
+    const labels = {
+      mock: "模拟连接",
+      Mock: "模拟连接",
+      OData: "真实连接",
+      "Dry Run": "配置校验",
+    };
+    return labels[value] || value || "-";
+  }
+
+  function log_summary(log) {
+    if (log.error_message) return "接口请求失败，错误摘要已记录。";
+    if (log.response_summary) return "接口返回摘要已记录。";
+    return "接口请求已记录。";
   }
 })();

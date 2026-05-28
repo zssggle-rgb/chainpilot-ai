@@ -31,10 +31,10 @@ def check_m1_02_commercial_ui_assets() -> dict[str, str]:
     detail_js = ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "recommendation" / "recommendation.js"
     required = {
         css_path: [".chainpilot-hero", ".chainpilot-action-card", ".chainpilot-detail-panel"],
-        command_center: ["5月采购优化决策台", "方案组合", "高价值动作"],
-        action_inbox: ["推荐动作收件箱", "全部动作", "风险关注"],
-        scenario_studio: ["Scenario Studio", "业务目标", "方案对比"],
-        detail_js: ["建议详情", "证据", "约束校验", "AI 解释草稿"],
+        command_center: ["5月采购优化", "方案组合", "高价值建议"],
+        action_inbox: ["采购建议", "全部", "风险关注"],
+        scenario_studio: ["方案工作台", "业务目标", "方案对比"],
+        detail_js: ["建议详情", "证据", "约束校验", "智能解释草稿"],
     }
     missing: list[str] = []
     for path, tokens in required.items():
@@ -79,7 +79,7 @@ def check_m1_05_scenario_doctype() -> dict[str, str]:
     required = {
         scenario_path: ["Scenario ID", "Business Goal", "Constraint JSON"],
         result_path: ["scenario_id", "\"options\": \"Scenario\""],
-        workspace_path: ["Scenario Studio", "scenario-studio", "Scenario"],
+        workspace_path: ["方案测算", "scenario-studio", "Scenario"],
     }
     missing: list[str] = []
     for path, tokens in required.items():

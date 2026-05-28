@@ -74,7 +74,7 @@ def check_m2_console_assets() -> dict[str, str]:
     workspace = ROOT / "chainpilot_ai" / "fixtures" / "workspace.json"
     page_text = page_js.read_text(encoding="utf-8") if page_js.exists() else ""
     workspace_text = workspace.read_text(encoding="utf-8")
-    required = ["SAP Integration Console", "run_mock_sync", "Snapshot 覆盖", "Endpoint 配置"]
+    required = ["SAP 连接", "run_mock_sync", "快照覆盖", "接口配置"]
     if all(token in page_text for token in required) and "sap-integration-console" in workspace_text:
         return _status("Pass", f"{page_js}; {workspace}", "")
     return _status("Fail", f"{page_js}; {workspace}", "M2 console route or core copy missing.")

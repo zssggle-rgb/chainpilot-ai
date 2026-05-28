@@ -81,10 +81,7 @@ def run_agent(user_goal: str, dry_run: bool = False) -> dict[str, Any]:
     _record_tool(tool_logs, agent_run_id, "collect_evidence", generated["recommendations"], lambda: generated["evidence"])
     _record_tool(tool_logs, agent_run_id, "explain_recommendation", generated["evidence"], lambda: _explanation_summary(generated["evidence"]))
 
-    output_summary = (
-        f"Generated {len(generated['recommendations'])} recommendations, "
-        f"{len(generated['checks'])} constraint checks, {len(generated['evidence'])} evidence records."
-    )
+    output_summary = f"生成 {len(generated['recommendations'])} 条建议、{len(generated['checks'])} 条约束校验和 {len(generated['evidence'])} 条证据。"
     result = {
         "ok": True,
         "agent_run_id": agent_run_id,
@@ -191,7 +188,7 @@ def _build_scenario(agent_run_id: str, constraints: dict[str, Any], demo_data: d
     return {
         "scenario_id": agent_run_id.replace("ARUN", "SCN"),
         "session_id": session["session_id"],
-        "scenario_name": "Agent 生成现金释放方案",
+        "scenario_name": "智能测算方案",
         "business_goal": constraints["user_goal"],
         "target_cash_release": target,
         "planning_horizon_start": "2026-06-01",
@@ -210,14 +207,14 @@ def _build_scenario_result(agent_run_id: str, scenario: dict[str, Any], constrai
         "result_id": agent_run_id.replace("ARUN", "RES"),
         "session_id": session["session_id"],
         "scenario_id": scenario["scenario_id"],
-        "strategy_name": "Agent 推荐方案",
+        "strategy_name": "智能推荐方案",
         "strategy_type": "Recommended",
         "purchase_amount": max(baseline - cash_release, 0),
         "cash_release": cash_release,
         "cash_release_rate": round(cash_release / baseline * 100, 2),
         "risk_level": "Low" if cash_release <= 120_000_000 else "Medium",
         "recommendation_count": 10,
-        "ai_recommendation": "优先处理 PR 数量下调和未确认 PO 延期，保持安全库存和冻结期约束。",
+        "ai_recommendation": "优先处理采购申请数量下调和未确认采购订单延期，保持安全库存和冻结期约束。",
     }
 
 
@@ -244,7 +241,7 @@ def _build_recommendations(agent_run_id: str, scenario_result: dict[str, Any], d
                 "metric_value": str(copied.get("inventory_days_after", "")),
                 "threshold_value": "28",
                 "verdict": "PASS" if float(copied.get("inventory_days_after") or 0) >= 28 else "WARN",
-                "summary": "Agent 生成动作已绑定库存覆盖证据。",
+                "summary": "AI 生成建议已绑定库存覆盖证据。",
             }
         )
         verdict = "PASS_WITH_APPROVAL" if copied["approval_status"] == "Pending" and float(copied.get("cash_release") or 0) >= 20_000_000 else "PASS"
@@ -270,8 +267,8 @@ def _build_data_quality_issues(agent_run_id: str) -> list[dict[str, Any]]:
             "severity": "Low",
             "object_type": "SAP Mock Snapshot",
             "object_id": "M2_MOCK",
-            "message": "当前为 mock 快照，接入真实 SAP 后需复核快照日期和字段映射。",
-            "recommendation": "上线真实 OData 前先运行 M2 同步并比对 PR/PO/库存字段。",
+            "message": "当前为模拟快照，接入真实 SAP 后需复核快照日期和字段映射。",
+            "recommendation": "上线真实接口前先运行二阶段同步，并比对采购申请、采购订单和库存字段。",
             "status": "Open",
         }
     ]
@@ -281,7 +278,7 @@ def _explanation_summary(evidence: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "explanation_status": "Ready" if evidence else "NEED_EVIDENCE",
         "evidence_count": len(evidence),
-        "summary": "每条推荐动作均包含 evidence_id，可进入解释和审批链路。",
+        "summary": "每条建议均包含证据，可进入解释和审批链路。",
     }
 
 
@@ -347,22 +344,38 @@ def _summary(value: Any) -> str:
     return text[:500]
 
 
+def _action_label(action_type: str) -> str:
+    labels = {
+        "REDUCE_PR_QTY": "下调采购申请数量",
+        "DELAY_UNCONFIRMED_PO": "延后未确认采购订单",
+        "ADVANCE_RISK_MATERIAL": "提前风险物料采购",
+        "REVIEW_SAFETY_STOCK": "复核安全库存",
+        "REVIEW_SUPPLIER_LEAD_TIME": "复核供应商交期",
+    }
+    return labels.get(action_type, action_type)
+
+
+def _risk_label(risk: str) -> str:
+    labels = {"High": "高", "Medium": "中", "Low": "低", "Critical": "严重"}
+    return labels.get(risk, risk)
+
+
 def _tool_output_summary(tool_name: str, output: Any) -> str:
     if tool_name == "parse_user_goal":
         target = output.get("cash_release_target") or 0
         protected = ",".join(output.get("protected_product_lines") or []) or "-"
-        actions = ",".join(output.get("preferred_actions") or []) or "-"
-        return f"目标释放 {target:,.0f}；保护品类 {protected}；优先动作 {actions}。"
+        actions = "、".join(_action_label(action) for action in (output.get("preferred_actions") or [])) or "-"
+        return f"目标占用减少额 {target:,.0f} 元；保护品类 {protected}；优先建议类型 {actions}。"
     if tool_name == "build_scenario_constraints":
-        return f"生成场景 {output.get('scenario_id')}，约束模式 draft_only。"
+        return f"生成方案 {output.get('scenario_id')}，回写方式为仅生成草稿。"
     if tool_name == "check_data_quality":
-        return f"发现 {len(output)} 条数据质量提示，最高严重级别 Low。"
+        return f"发现 {len(output)} 条数据质量提示，最高严重级别为低。"
     if tool_name == "run_optimization":
-        return f"生成 {output.get('strategy_name')}，预计释放 {float(output.get('cash_release') or 0):,.0f}，风险 {output.get('risk_level')}。"
+        return f"生成 {output.get('strategy_name')}，资金占用减少额 {float(output.get('cash_release') or 0):,.0f} 元，风险 {_risk_label(output.get('risk_level') or '')}。"
     if tool_name == "generate_action_cards":
-        return f"生成 {len(output.get('recommendations') or [])} 条动作、{len(output.get('checks') or [])} 条约束校验。"
+        return f"生成 {len(output.get('recommendations') or [])} 条建议、{len(output.get('checks') or [])} 条约束校验。"
     if tool_name == "collect_evidence":
-        return f"收集 {len(output)} 条 evidence_id，覆盖每条推荐动作。"
+        return f"收集 {len(output)} 条证据，覆盖每条建议。"
     if tool_name == "explain_recommendation":
         return str(output.get("summary") or "")
     return _summary(output)

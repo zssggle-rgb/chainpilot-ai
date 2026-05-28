@@ -234,10 +234,10 @@ def test_connection(config: dict[str, Any] | None = None) -> dict[str, Any]:
     config = config or {}
     mode = str(config.get("mode") or "").lower()
     if not config or mode == "disabled":
-        return {"ok": False, "status": "NOT_CONFIGURED", "message": "SAP connection is not configured."}
+        return {"ok": False, "status": "NOT_CONFIGURED", "message": "SAP 连接尚未配置。"}
     if mode == "mock":
-        return {"ok": True, "status": "MOCK_READY", "message": "Using ChainPilot mock SAP read adapter."}
-    return {"ok": False, "status": "DRY_RUN", "message": "M2 read-only adapter is configured for dry run until customer SAP credentials are provided."}
+        return {"ok": True, "status": "MOCK_READY", "message": "正在使用模拟 SAP 只读适配器。"}
+    return {"ok": False, "status": "DRY_RUN", "message": "真实 SAP 只读账号尚未配置，当前仅做配置校验。"}
 
 
 def get_entity_set(endpoint_name: str, params: dict[str, Any] | None = None) -> list[dict[str, Any]]:
@@ -286,7 +286,7 @@ def sync_endpoint(endpoint_name: str, params: dict[str, Any] | None = None) -> d
             "rows_upserted": 0,
             "job_id": None,
             "api_log_id": None,
-            "message": "Real SAP OData is not called until credentials and services are configured.",
+            "message": "真实 SAP 账号和服务未配置前，不会调用正式接口。",
         }
         if _frappe_ready():
             _write_api_log(config, None, result, started_at, error_message=result["message"])
@@ -408,8 +408,8 @@ def _write_api_log(
             "url": f"mock://{config.entity_set}",
             "status_code": 200 if result.get("status") == "Success" else 0,
             "duration_ms": duration_ms,
-            "request_summary": f"entity_set={config.entity_set}; target={config.target_doctype}",
-            "response_summary": f"rows_read={result.get('rows_read', 0)}; rows_upserted={result.get('rows_upserted', 0)}",
+            "request_summary": f"SAP 实体集 {config.entity_set}；目标快照表 {config.target_doctype}",
+            "response_summary": f"读取 {result.get('rows_read', 0)} 行；写入或更新 {result.get('rows_upserted', 0)} 行",
             "error_message": error_message,
         }
     )
@@ -458,7 +458,7 @@ def ensure_mock_configuration() -> dict[str, Any]:
     connection.timeout_seconds = 30
     connection.verify_ssl = 1
     connection.last_test_status = "Mock Ready"
-    connection.last_test_message = "Using ChainPilot deterministic mock SAP adapter."
+    connection.last_test_message = "正在使用确定性模拟 SAP 只读适配器。"
     connection.last_test_at = _now()
     connection.save(ignore_permissions=True)
 

@@ -99,7 +99,7 @@
       </div>
 
       <div class="chainpilot-panel" style="margin-top: 12px; background: #f8fafc;">
-        <div class="chainpilot-label">${__("AI 解释草稿")}</div>
+        <div class="chainpilot-label">${__("智能解释草稿")}</div>
         <div class="chainpilot-action-subtitle" style="margin-top: 8px;">
           ${chainpilot.escape(explanation_copy(doc, evidence, checks))}
         </div>

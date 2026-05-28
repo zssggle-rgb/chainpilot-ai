@@ -75,7 +75,7 @@ def check_m3_console_assets() -> dict[str, str]:
     page_js = ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "ai_copilot" / "ai_copilot.js"
     workspace = ROOT / "chainpilot_ai" / "fixtures" / "workspace.json"
     text = page_js.read_text(encoding="utf-8") if page_js.exists() else ""
-    required = ["AI Copilot", "run_agent_rpc", "Agent Run 历史", "工具调用", "数据质量提示"]
+    required = ["智能助手", "run_agent_rpc", "运行历史", "工具调用", "数据质量提示"]
     if all(token in text for token in required) and "ai-copilot" in workspace.read_text(encoding="utf-8"):
         return _status("Pass", f"{page_js}; {workspace}", "")
     return _status("Fail", f"{page_js}; {workspace}", "M3 Copilot route or core copy missing.")

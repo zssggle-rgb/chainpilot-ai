@@ -7,80 +7,80 @@
     "module": "ChainPilot AI",
     "public": 1,
     "is_hidden": 0,
-    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AI Command Center\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-ai-copilot\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AI Copilot\",\"link_to\":\"ai-copilot\",\"type\":\"Page\"}},{\"id\":\"chainpilot-execution-monitor\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Execution Monitor\",\"link_to\":\"execution-monitor\",\"type\":\"Page\"}},{\"id\":\"chainpilot-learning-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Learning Center\",\"link_to\":\"learning-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-scenario-studio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Scenario Studio\",\"link_to\":\"scenario-studio\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP Integration Console\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Action Inbox\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
+    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"采购决策\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-ai-copilot\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"智能助手\",\"link_to\":\"ai-copilot\",\"type\":\"Page\"}},{\"id\":\"chainpilot-execution-monitor\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"执行监控\",\"link_to\":\"execution-monitor\",\"type\":\"Page\"}},{\"id\":\"chainpilot-learning-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"学习中心\",\"link_to\":\"learning-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-scenario-studio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"方案测算\",\"link_to\":\"scenario-studio\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP 连接\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"采购建议\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
     "shortcuts": [
       {
-        "label": "AI Command Center",
+        "label": "采购决策",
         "type": "Page",
         "link_to": "chainpilot-ai-command-center"
       },
       {
-        "label": "Action Inbox",
+        "label": "采购建议",
         "type": "Page",
         "link_to": "action-inbox"
       },
       {
-        "label": "AI Copilot",
+        "label": "智能助手",
         "type": "Page",
         "link_to": "ai-copilot"
       },
       {
-        "label": "Execution Monitor",
+        "label": "执行监控",
         "type": "Page",
         "link_to": "execution-monitor"
       },
       {
-        "label": "Learning Center",
+        "label": "学习中心",
         "type": "Page",
         "link_to": "learning-center"
       },
       {
-        "label": "Scenario Studio",
+        "label": "方案测算",
         "type": "Page",
         "link_to": "scenario-studio"
       },
       {
-        "label": "SAP Integration Console",
+        "label": "SAP 连接",
         "type": "Page",
         "link_to": "sap-integration-console"
       },
       {
-        "label": "SAP Endpoints",
+        "label": "SAP 接口",
         "type": "DocType",
         "link_to": "SAP Endpoint"
       },
       {
-        "label": "Agent Runs",
+        "label": "AI 运行记录",
         "type": "DocType",
         "link_to": "Agent Run"
       },
       {
-        "label": "Approval Packages",
+        "label": "审批包",
         "type": "DocType",
         "link_to": "Approval Package"
       },
       {
-        "label": "Writeback Drafts",
+        "label": "回写草稿",
         "type": "DocType",
         "link_to": "SAP Writeback Draft"
       },
       {
-        "label": "Learning Snapshots",
+        "label": "学习快照",
         "type": "DocType",
         "link_to": "Learning Metric Snapshot"
       },
       {
-        "label": "Rule Adjustments",
+        "label": "调权草稿",
         "type": "DocType",
         "link_to": "Rule Weight Adjustment"
       },
       {
-        "label": "Scenarios",
+        "label": "方案",
         "type": "DocType",
         "link_to": "Scenario"
       },
       {
-        "label": "Recommendations",
+        "label": "优化建议",
         "type": "DocType",
         "link_to": "Recommendation"
       }

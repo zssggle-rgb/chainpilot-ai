@@ -86,7 +86,7 @@ def check_m4_console_assets() -> dict[str, str]:
     page_js = ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "execution_monitor" / "execution_monitor.js"
     workspace = ROOT / "chainpilot_ai" / "fixtures" / "workspace.json"
     text = page_js.read_text(encoding="utf-8") if page_js.exists() else ""
-    required = ["Execution Monitor", "create_approval_package_rpc", "approve_package_rpc", "SAP Writeback Draft", "Learning Signal"]
+    required = ["执行监控", "create_approval_package_rpc", "approve_package_rpc", "SAP 回写草稿", "学习信号"]
     if all(token in text for token in required) and "execution-monitor" in workspace.read_text(encoding="utf-8"):
         return _status("Pass", f"{page_js}; {workspace}", "")
     return _status("Fail", f"{page_js}; {workspace}", "M4 Execution Monitor route or core actions missing.")
