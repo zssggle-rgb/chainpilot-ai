@@ -1,0 +1,48 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:api_log_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "api_log_id",
+    "endpoint",
+    "job_id",
+    "mode",
+    "method",
+    "url",
+    "status_code",
+    "duration_ms",
+    "request_summary",
+    "response_summary",
+    "error_message"
+  ],
+  "fields": [
+    {"fieldname": "api_log_id", "fieldtype": "Data", "in_list_view": 1, "label": "API Log ID", "reqd": 1, "unique": 1},
+    {"fieldname": "endpoint", "fieldtype": "Link", "in_list_view": 1, "label": "Endpoint", "options": "SAP Endpoint"},
+    {"fieldname": "job_id", "fieldtype": "Link", "in_list_view": 1, "label": "Sync Job", "options": "SAP Sync Job"},
+    {"default": "Mock", "fieldname": "mode", "fieldtype": "Select", "label": "Mode", "options": "Mock\nOData\nDry Run"},
+    {"default": "GET", "fieldname": "method", "fieldtype": "Data", "label": "Method"},
+    {"fieldname": "url", "fieldtype": "Data", "in_list_view": 1, "label": "URL"},
+    {"default": "0", "fieldname": "status_code", "fieldtype": "Int", "in_list_view": 1, "label": "Status Code"},
+    {"default": "0", "fieldname": "duration_ms", "fieldtype": "Int", "label": "Duration ms"},
+    {"fieldname": "request_summary", "fieldtype": "Small Text", "label": "Request Summary"},
+    {"fieldname": "response_summary", "fieldtype": "Small Text", "label": "Response Summary"},
+    {"fieldname": "error_message", "fieldtype": "Small Text", "label": "Error Message"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "SAP API Log",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

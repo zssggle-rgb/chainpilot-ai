@@ -1,0 +1,48 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:snapshot_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "snapshot_id",
+    "purchase_order",
+    "purchase_order_item",
+    "material_code",
+    "plant",
+    "supplier",
+    "order_quantity",
+    "delivery_date",
+    "confirmation_status",
+    "last_synced_at"
+  ],
+  "fields": [
+    {"fieldname": "snapshot_id", "fieldtype": "Data", "in_list_view": 1, "label": "Snapshot ID", "reqd": 1, "unique": 1},
+    {"fieldname": "purchase_order", "fieldtype": "Data", "in_list_view": 1, "label": "Purchase Order", "reqd": 1},
+    {"fieldname": "purchase_order_item", "fieldtype": "Data", "in_list_view": 1, "label": "Purchase Order Item", "reqd": 1},
+    {"fieldname": "material_code", "fieldtype": "Data", "in_list_view": 1, "label": "Material Code", "reqd": 1},
+    {"fieldname": "plant", "fieldtype": "Data", "in_list_view": 1, "label": "Plant", "reqd": 1},
+    {"fieldname": "supplier", "fieldtype": "Data", "in_list_view": 1, "label": "Supplier"},
+    {"fieldname": "order_quantity", "fieldtype": "Float", "label": "Order Quantity"},
+    {"fieldname": "delivery_date", "fieldtype": "Date", "in_list_view": 1, "label": "Delivery Date"},
+    {"default": "Unconfirmed", "fieldname": "confirmation_status", "fieldtype": "Select", "in_list_view": 1, "label": "Confirmation Status", "options": "Confirmed\nUnconfirmed\nRejected"},
+    {"fieldname": "last_synced_at", "fieldtype": "Datetime", "label": "Last Synced At"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "SAP PO Line",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Buyer", "share": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "last_synced_at",
+  "sort_order": "DESC",
+  "states": []
+}

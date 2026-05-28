@@ -1,0 +1,52 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:endpoint_name",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "endpoint_name",
+    "business_object",
+    "enabled",
+    "service_section",
+    "service_path",
+    "entity_set",
+    "target_doctype",
+    "key_fields",
+    "filter_json",
+    "page_size",
+    "sync_frequency",
+    "mapping_section",
+    "field_mappings"
+  ],
+  "fields": [
+    {"fieldname": "endpoint_name", "fieldtype": "Data", "in_list_view": 1, "label": "Endpoint Name", "reqd": 1, "unique": 1},
+    {"fieldname": "business_object", "fieldtype": "Select", "in_list_view": 1, "label": "Business Object", "options": "Material\nInventory\nPR\nPO", "reqd": 1},
+    {"default": "1", "fieldname": "enabled", "fieldtype": "Check", "in_list_view": 1, "label": "Enabled"},
+    {"fieldname": "service_section", "fieldtype": "Section Break", "label": "OData Service"},
+    {"fieldname": "service_path", "fieldtype": "Data", "label": "Service Path", "reqd": 1},
+    {"fieldname": "entity_set", "fieldtype": "Data", "in_list_view": 1, "label": "Entity Set", "reqd": 1},
+    {"fieldname": "target_doctype", "fieldtype": "Link", "in_list_view": 1, "label": "Target DocType", "options": "DocType", "reqd": 1},
+    {"fieldname": "key_fields", "fieldtype": "Data", "label": "Key Fields", "reqd": 1},
+    {"fieldname": "filter_json", "fieldtype": "Code", "label": "Filter JSON", "options": "JSON"},
+    {"default": "200", "fieldname": "page_size", "fieldtype": "Int", "label": "Page Size"},
+    {"default": "Manual", "fieldname": "sync_frequency", "fieldtype": "Select", "label": "Sync Frequency", "options": "Manual\nHourly\nDaily"},
+    {"fieldname": "mapping_section", "fieldtype": "Section Break", "label": "Field Mapping"},
+    {"fieldname": "field_mappings", "fieldtype": "Table", "label": "Field Mappings", "options": "SAP Field Mapping"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "SAP Endpoint",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

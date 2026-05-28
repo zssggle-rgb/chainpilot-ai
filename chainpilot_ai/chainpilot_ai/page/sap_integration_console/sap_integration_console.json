@@ -1,0 +1,22 @@
+{
+  "content": null,
+  "creation": "2026-05-28 00:00:00.000000",
+  "docstatus": 0,
+  "doctype": "Page",
+  "idx": 0,
+  "modified": "2026-05-28 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "ChainPilot AI",
+  "name": "sap-integration-console",
+  "owner": "Administrator",
+  "page_name": "sap-integration-console",
+  "roles": [
+    {"role": "ChainPilot Admin"},
+    {"role": "ChainPilot Supply Chain Director"}
+  ],
+  "script": null,
+  "standard": "Yes",
+  "style": null,
+  "system_page": 0,
+  "title": "SAP Integration Console"
+}
