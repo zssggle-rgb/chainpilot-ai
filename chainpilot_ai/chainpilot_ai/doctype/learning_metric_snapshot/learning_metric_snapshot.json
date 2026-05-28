@@ -1,0 +1,43 @@
+{
+  "doctype": "DocType",
+  "name": "Learning Metric Snapshot",
+  "module": "ChainPilot AI",
+  "custom": 0,
+  "is_submittable": 0,
+  "autoname": "field:snapshot_id",
+  "title_field": "snapshot_id",
+  "field_order": [
+    "snapshot_id",
+    "period_start",
+    "period_end",
+    "adoption_rate",
+    "rejection_rate",
+    "supplier_acceptance_rate",
+    "realization_rate",
+    "total_expected_cash",
+    "total_realized_cash",
+    "shortage_event_count",
+    "top_rejection_reason",
+    "summary",
+    "generated_at"
+  ],
+  "fields": [
+    {"fieldname": "snapshot_id", "fieldtype": "Data", "in_list_view": 1, "label": "Snapshot ID", "reqd": 1, "unique": 1},
+    {"fieldname": "period_start", "fieldtype": "Date", "label": "Period Start", "reqd": 1},
+    {"fieldname": "period_end", "fieldtype": "Date", "label": "Period End", "reqd": 1},
+    {"fieldname": "adoption_rate", "fieldtype": "Percent", "in_list_view": 1, "label": "Adoption Rate"},
+    {"fieldname": "rejection_rate", "fieldtype": "Percent", "label": "Rejection Rate"},
+    {"fieldname": "supplier_acceptance_rate", "fieldtype": "Percent", "in_list_view": 1, "label": "Supplier Acceptance Rate"},
+    {"fieldname": "realization_rate", "fieldtype": "Percent", "in_list_view": 1, "label": "Realization Rate"},
+    {"fieldname": "total_expected_cash", "fieldtype": "Currency", "label": "Total Expected Cash"},
+    {"fieldname": "total_realized_cash", "fieldtype": "Currency", "label": "Total Realized Cash"},
+    {"fieldname": "shortage_event_count", "fieldtype": "Int", "label": "Shortage Event Count"},
+    {"fieldname": "top_rejection_reason", "fieldtype": "Data", "label": "Top Rejection Reason"},
+    {"fieldname": "summary", "fieldtype": "Small Text", "label": "Summary"},
+    {"fieldname": "generated_at", "fieldtype": "Datetime", "label": "Generated At"}
+  ],
+  "permissions": [
+    {"role": "ChainPilot Admin", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "ChainPilot Supply Chain Director", "read": 1}
+  ]
+}

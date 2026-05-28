@@ -7,6 +7,7 @@ from pathlib import Path
 
 from chainpilot_ai.agent.service import next_state
 from chainpilot_ai.approval.service import dry_run_package
+from chainpilot_ai.learning.service import build_rule_adjustment, calculate_learning_metrics
 from chainpilot_ai.optimization.service import calculate_cash_release
 from chainpilot_ai.recommendation.service import explanation_status
 from chainpilot_ai.sap_connector.service import get_entity_set, sync_endpoint, test_connection, upsert_snapshot
@@ -65,6 +66,9 @@ class Phase0ContractTest(unittest.TestCase):
             "feedback_record/feedback_record.json",
             "learning_signal/learning_signal.json",
             "supplier_communication_draft/supplier_communication_draft.json",
+            "learning_metric_snapshot/learning_metric_snapshot.json",
+            "shortage_event/shortage_event.json",
+            "rule_weight_adjustment/rule_weight_adjustment.json",
         ]
         doctype_dir = ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype"
         for relative_path in m2_doctypes:
@@ -84,6 +88,7 @@ class Phase0ContractTest(unittest.TestCase):
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "sap_integration_console" / "sap_integration_console.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "ai_copilot" / "ai_copilot.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "execution_monitor" / "execution_monitor.js",
+            ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "learning_center" / "learning_center.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "scenario" / "scenario.json",
             ROOT / "chainpilot_ai" / "public" / "css" / "chainpilot_ai.css",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "recommendation" / "recommendation.js",
@@ -133,6 +138,18 @@ class Phase0ContractTest(unittest.TestCase):
         }
         po_draft = build_writeback_draft(approved_po, "APKG-X")
         self.assertIn("2026-06-15", po_draft["payload_json"])
+        metrics = calculate_learning_metrics(
+            [{"status": "Approved"}, {"status": "Rejected"}],
+            [{"feedback_type": "Supplier Feedback", "supplier_response": "Accepted"}],
+            [{"expected_cash_release": 100, "realized_cash_release": 80}],
+            [{"status": "Sent"}],
+            [{"event_id": "SHE-X"}],
+        )
+        self.assertEqual(metrics["adoption_rate"], 50.0)
+        self.assertEqual(metrics["realization_rate"], 80.0)
+        adjustment = build_rule_adjustment({"signal_id": "LSIG-X", "target": "DELAY_UNCONFIRMED_PO", "suggested_weight_delta": -0.1})
+        self.assertEqual(adjustment["status"], "Draft")
+        self.assertLess(adjustment["suggested_weight"], adjustment["current_weight"])
         self.assertEqual(get_entity_set("purchase_requisition_items"), [])
         self.assertEqual(upsert_snapshot("SAP Snapshot", {"doc": "100", "item": "10"}, ["doc", "item"]), "100::10")
 

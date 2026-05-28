@@ -115,6 +115,21 @@
   line-height: 1.45;
 }
 
+.chainpilot-progress {
+  height: 7px;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8eef5;
+}
+
+.chainpilot-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--cp-cyan), var(--cp-blue));
+}
+
 .chainpilot-grid-2 {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);

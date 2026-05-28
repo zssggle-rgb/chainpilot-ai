@@ -22,6 +22,7 @@
 
     page.set_primary_action(__("运行动作生成"), () => run_agent(page));
     page.add_inner_button(__("动作收件箱"), () => frappe.set_route("action-inbox"));
+    page.add_inner_button(__("学习中心"), () => frappe.set_route("learning-center"));
     page.add_inner_button(__("方案工作台"), () => frappe.set_route("scenario-studio"));
     page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">${__("正在加载 AI Copilot...")}</div></div>`);
     load_dashboard(page);

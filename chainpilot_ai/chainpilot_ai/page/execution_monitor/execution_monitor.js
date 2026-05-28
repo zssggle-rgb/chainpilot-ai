@@ -26,6 +26,7 @@
     page.set_primary_action(__("生成审批包"), () => create_package(page));
     page.add_inner_button(__("批准最新审批包"), () => approve_latest(page));
     page.add_inner_button(__("拒绝最新审批包"), () => reject_latest(page));
+    page.add_inner_button(__("学习中心"), () => frappe.set_route("learning-center"));
     page.add_inner_button(__("动作收件箱"), () => frappe.set_route("action-inbox"));
     page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">${__("正在加载执行监控...")}</div></div>`);
     load_dashboard(page);

@@ -1,0 +1,37 @@
+{
+  "doctype": "DocType",
+  "name": "Rule Weight Adjustment",
+  "module": "ChainPilot AI",
+  "custom": 0,
+  "is_submittable": 0,
+  "autoname": "field:adjustment_id",
+  "title_field": "adjustment_id",
+  "field_order": [
+    "adjustment_id",
+    "signal_id",
+    "target_type",
+    "target",
+    "current_weight",
+    "suggested_weight",
+    "confidence",
+    "rationale",
+    "status",
+    "generated_at"
+  ],
+  "fields": [
+    {"fieldname": "adjustment_id", "fieldtype": "Data", "in_list_view": 1, "label": "Adjustment ID", "reqd": 1, "unique": 1},
+    {"fieldname": "signal_id", "fieldtype": "Link", "label": "Learning Signal", "options": "Learning Signal"},
+    {"fieldname": "target_type", "fieldtype": "Data", "label": "Target Type"},
+    {"fieldname": "target", "fieldtype": "Data", "in_list_view": 1, "label": "Target"},
+    {"fieldname": "current_weight", "fieldtype": "Float", "label": "Current Weight"},
+    {"fieldname": "suggested_weight", "fieldtype": "Float", "in_list_view": 1, "label": "Suggested Weight"},
+    {"fieldname": "confidence", "fieldtype": "Percent", "in_list_view": 1, "label": "Confidence"},
+    {"fieldname": "rationale", "fieldtype": "Small Text", "label": "Rationale"},
+    {"fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Draft\nReviewed\nApplied\nIgnored", "reqd": 1},
+    {"fieldname": "generated_at", "fieldtype": "Datetime", "label": "Generated At"}
+  ],
+  "permissions": [
+    {"role": "ChainPilot Admin", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "ChainPilot Supply Chain Director", "read": 1}
+  ]
+}

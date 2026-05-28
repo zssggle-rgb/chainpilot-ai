@@ -1,0 +1,37 @@
+{
+  "doctype": "DocType",
+  "name": "Shortage Event",
+  "module": "ChainPilot AI",
+  "custom": 0,
+  "is_submittable": 0,
+  "autoname": "field:event_id",
+  "title_field": "event_id",
+  "field_order": [
+    "event_id",
+    "recommendation_id",
+    "material_code",
+    "plant",
+    "severity",
+    "event_date",
+    "lost_revenue_estimate",
+    "root_cause",
+    "linked_action",
+    "status"
+  ],
+  "fields": [
+    {"fieldname": "event_id", "fieldtype": "Data", "in_list_view": 1, "label": "Event ID", "reqd": 1, "unique": 1},
+    {"fieldname": "recommendation_id", "fieldtype": "Link", "in_list_view": 1, "label": "Recommendation", "options": "Recommendation"},
+    {"fieldname": "material_code", "fieldtype": "Data", "in_list_view": 1, "label": "Material Code"},
+    {"fieldname": "plant", "fieldtype": "Data", "label": "Plant"},
+    {"fieldname": "severity", "fieldtype": "Select", "in_list_view": 1, "label": "Severity", "options": "Low\nMedium\nHigh\nCritical", "reqd": 1},
+    {"fieldname": "event_date", "fieldtype": "Date", "in_list_view": 1, "label": "Event Date", "reqd": 1},
+    {"fieldname": "lost_revenue_estimate", "fieldtype": "Currency", "label": "Lost Revenue Estimate"},
+    {"fieldname": "root_cause", "fieldtype": "Small Text", "label": "Root Cause"},
+    {"fieldname": "linked_action", "fieldtype": "Data", "label": "Linked Action"},
+    {"fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Open\nContained\nClosed", "reqd": 1}
+  ],
+  "permissions": [
+    {"role": "ChainPilot Admin", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "ChainPilot Supply Chain Director", "read": 1}
+  ]
+}
