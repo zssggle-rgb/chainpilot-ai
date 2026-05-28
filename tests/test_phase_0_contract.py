@@ -17,6 +17,7 @@ class Phase0ContractTest(unittest.TestCase):
         validation = validate_demo_data(load_demo_data(DEFAULT_DEMO_PATH))
         self.assertTrue(validation["ok"], validation["errors"])
         self.assertGreaterEqual(validation["counts"]["optimization_sessions"], 1)
+        self.assertGreaterEqual(validation["counts"]["scenarios"], 1)
         self.assertGreaterEqual(validation["counts"]["scenario_results"], 3)
         self.assertGreaterEqual(validation["counts"]["recommendations"], 10)
         self.assertGreaterEqual(validation["counts"]["evidence"], 10)
@@ -49,6 +50,8 @@ class Phase0ContractTest(unittest.TestCase):
         pages = [
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "chainpilot_ai_command_center" / "chainpilot_ai_command_center.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "action_inbox" / "action_inbox.js",
+            ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "scenario_studio" / "scenario_studio.js",
+            ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "scenario" / "scenario.json",
             ROOT / "chainpilot_ai" / "public" / "css" / "chainpilot_ai.css",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "recommendation" / "recommendation.js",
         ]

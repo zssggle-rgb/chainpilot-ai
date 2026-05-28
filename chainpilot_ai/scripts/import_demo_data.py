@@ -21,9 +21,21 @@ REQUIRED_FIELDS: dict[str, set[str]] = {
         "run_date",
         "status",
     },
+    "scenarios": {
+        "scenario_id",
+        "session_id",
+        "scenario_name",
+        "business_goal",
+        "target_cash_release",
+        "planning_horizon_start",
+        "planning_horizon_end",
+        "constraint_json",
+        "status",
+    },
     "scenario_results": {
         "result_id",
         "session_id",
+        "scenario_id",
         "strategy_name",
         "strategy_type",
         "purchase_amount",
@@ -68,6 +80,7 @@ REQUIRED_FIELDS: dict[str, set[str]] = {
 
 DOCTYPE_MAP = {
     "optimization_sessions": "Optimization Session",
+    "scenarios": "Scenario",
     "scenario_results": "Scenario Result",
     "recommendations": "Recommendation",
     "evidence": "Recommendation Evidence",
@@ -98,13 +111,20 @@ def validate_demo_data(data: dict[str, Any]) -> dict[str, Any]:
                 errors.append(f"{section}[{index}] missing required fields: {', '.join(missing)}")
 
     session_ids = {row["session_id"] for row in data.get("optimization_sessions", []) if row.get("session_id")}
+    scenario_ids = {row["scenario_id"] for row in data.get("scenarios", []) if row.get("scenario_id")}
     result_ids = {row["result_id"] for row in data.get("scenario_results", []) if row.get("result_id")}
     recommendation_ids = {row["recommendation_id"] for row in data.get("recommendations", []) if row.get("recommendation_id")}
     evidence_by_recommendation: dict[str, list[str]] = {}
 
+    for scenario in data.get("scenarios", []):
+        if scenario.get("session_id") not in session_ids:
+            errors.append(f"Scenario {scenario.get('scenario_id')} references missing session_id {scenario.get('session_id')}.")
+
     for result in data.get("scenario_results", []):
         if result.get("session_id") not in session_ids:
             errors.append(f"Scenario Result {result.get('result_id')} references missing session_id {result.get('session_id')}.")
+        if result.get("scenario_id") not in scenario_ids:
+            errors.append(f"Scenario Result {result.get('result_id')} references missing scenario_id {result.get('scenario_id')}.")
 
     for recommendation in data.get("recommendations", []):
         if recommendation.get("result_id") not in result_ids:
@@ -143,6 +163,7 @@ def _insert_with_frappe(data: dict[str, Any]) -> dict[str, Any]:
         for row in data.get(section, []):
             name_field = {
                 "optimization_sessions": "session_id",
+                "scenarios": "scenario_id",
                 "scenario_results": "result_id",
                 "recommendations": "recommendation_id",
                 "evidence": "evidence_id",

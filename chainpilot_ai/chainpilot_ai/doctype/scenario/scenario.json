@@ -1,0 +1,51 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:scenario_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "scenario_id",
+    "session_id",
+    "scenario_name",
+    "business_goal",
+    "planning_section",
+    "target_cash_release",
+    "planning_horizon_start",
+    "planning_horizon_end",
+    "constraint_section",
+    "constraint_json",
+    "status",
+    "owner_role"
+  ],
+  "fields": [
+    {"fieldname": "scenario_id", "fieldtype": "Data", "in_list_view": 1, "label": "Scenario ID", "reqd": 1, "unique": 1},
+    {"fieldname": "session_id", "fieldtype": "Link", "in_list_view": 1, "label": "Optimization Session", "options": "Optimization Session", "reqd": 1},
+    {"fieldname": "scenario_name", "fieldtype": "Data", "in_list_view": 1, "label": "Scenario Name", "reqd": 1},
+    {"fieldname": "business_goal", "fieldtype": "Small Text", "label": "Business Goal", "reqd": 1},
+    {"fieldname": "planning_section", "fieldtype": "Section Break", "label": "Planning Target"},
+    {"fieldname": "target_cash_release", "fieldtype": "Currency", "in_list_view": 1, "label": "Target Cash Release", "reqd": 1},
+    {"fieldname": "planning_horizon_start", "fieldtype": "Date", "label": "Planning Horizon Start", "reqd": 1},
+    {"fieldname": "planning_horizon_end", "fieldtype": "Date", "label": "Planning Horizon End", "reqd": 1},
+    {"fieldname": "constraint_section", "fieldtype": "Section Break", "label": "Constraints"},
+    {"fieldname": "constraint_json", "fieldtype": "Code", "label": "Constraint JSON", "options": "JSON", "reqd": 1},
+    {"fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Draft\nReady\nGenerated\nArchived", "reqd": 1},
+    {"fieldname": "owner_role", "fieldtype": "Data", "label": "Owner Role"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Scenario",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"create": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planning Manager", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

@@ -12,10 +12,25 @@
       "status": "Imported"
     }
   ],
+  "scenarios": [
+    {
+      "scenario_id": "SCN-202605-001",
+      "session_id": "CCO-202605-001",
+      "scenario_name": "5月采购现金释放目标",
+      "business_goal": "在不突破安全库存和关键物料缺料阈值的前提下，释放 1.7 亿采购现金。",
+      "target_cash_release": 170000000,
+      "planning_horizon_start": "2026-06-01",
+      "planning_horizon_end": "2026-07-31",
+      "constraint_json": "{\"minimum_inventory_days\":28,\"max_shortage_risk_after\":3.5,\"sap_writeback_mode\":\"draft_only\",\"freeze_window_days\":7}",
+      "status": "Generated",
+      "owner_role": "ChainPilot Supply Chain Director"
+    }
+  ],
   "scenario_results": [
     {
       "result_id": "RST-202605-001",
       "session_id": "CCO-202605-001",
+      "scenario_id": "SCN-202605-001",
       "strategy_name": "精准分类方案",
       "strategy_type": "Recommended",
       "purchase_amount": 474000000,
@@ -28,6 +43,7 @@
     {
       "result_id": "RST-202605-002",
       "session_id": "CCO-202605-001",
+      "scenario_id": "SCN-202605-001",
       "strategy_name": "激进降本方案",
       "strategy_type": "Aggressive",
       "purchase_amount": 451000000,
@@ -40,6 +56,7 @@
     {
       "result_id": "RST-202605-003",
       "session_id": "CCO-202605-001",
+      "scenario_id": "SCN-202605-001",
       "strategy_name": "交期提前方案",
       "strategy_type": "Conservative",
       "purchase_amount": 622000000,

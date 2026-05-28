@@ -9,7 +9,7 @@
     });
 
     page.set_primary_action(__("打开动作收件箱"), () => frappe.set_route("action-inbox"));
-    page.set_secondary_action(__("建议清单"), () => frappe.set_route("List", "Recommendation"));
+    page.set_secondary_action(__("方案工作台"), () => frappe.set_route("scenario-studio"));
     page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">${__("正在加载 ChainPilot 决策台...")}</div></div>`);
     load_command_center(page);
   };
@@ -100,7 +100,7 @@
               <h2 class="chainpilot-panel-title">${__("方案组合")}</h2>
               <p class="chainpilot-panel-note">${__("对比导入优化结果中的保守、推荐和激进方案。")}</p>
             </div>
-            ${chainpilot.badge(__("推荐路径"), "blue")}
+            <button class="chainpilot-link-button" data-route="scenario-studio">${__("打开方案工作台")}</button>
           </div>
           <div class="chainpilot-scenario-list">
             ${scenarios.map(scenario_card).join("") || empty_state(__("No scenarios imported."))}
@@ -135,6 +135,7 @@
     `);
 
     page.main.find("[data-route='action-inbox']").on("click", () => frappe.set_route("action-inbox"));
+    page.main.find("[data-route='scenario-studio']").on("click", () => frappe.set_route("scenario-studio"));
     page.main.find("[data-recommendation]").on("click", function () {
       frappe.set_route("Form", "Recommendation", $(this).data("recommendation"));
     });

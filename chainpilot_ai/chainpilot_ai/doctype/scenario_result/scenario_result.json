@@ -9,6 +9,7 @@
   "field_order": [
     "result_id",
     "session_id",
+    "scenario_id",
     "strategy_name",
     "strategy_type",
     "purchase_amount",
@@ -21,6 +22,7 @@
   "fields": [
     {"fieldname": "result_id", "fieldtype": "Data", "in_list_view": 1, "label": "Result ID", "reqd": 1, "unique": 1},
     {"fieldname": "session_id", "fieldtype": "Link", "in_list_view": 1, "label": "Optimization Session", "options": "Optimization Session", "reqd": 1},
+    {"fieldname": "scenario_id", "fieldtype": "Link", "in_list_view": 1, "label": "Scenario", "options": "Scenario"},
     {"fieldname": "strategy_name", "fieldtype": "Data", "in_list_view": 1, "label": "Strategy Name", "reqd": 1},
     {"fieldname": "strategy_type", "fieldtype": "Select", "in_list_view": 1, "label": "Strategy Type", "options": "Conservative\nRecommended\nAggressive", "reqd": 1},
     {"fieldname": "purchase_amount", "fieldtype": "Currency", "in_list_view": 1, "label": "Purchase Amount", "reqd": 1},

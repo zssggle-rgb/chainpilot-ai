@@ -18,7 +18,7 @@ def _status(status: str, evidence: str, notes: str = "") -> dict[str, str]:
 
 def check_m1_01_demo_contract() -> dict[str, str]:
     validation = validate_demo_data(load_demo_data(DEFAULT_DEMO_PATH))
-    if validation["ok"] and validation["counts"]["recommendations"] >= 10:
+    if validation["ok"] and validation["counts"]["scenarios"] >= 1 and validation["counts"]["recommendations"] >= 10:
         return _status("Pass", str(DEFAULT_DEMO_PATH), json.dumps(validation["counts"], ensure_ascii=False))
     return _status("Fail", str(DEFAULT_DEMO_PATH), "; ".join(validation["errors"]))
 
@@ -27,11 +27,13 @@ def check_m1_02_commercial_ui_assets() -> dict[str, str]:
     css_path = ROOT / "chainpilot_ai" / "public" / "css" / "chainpilot_ai.css"
     command_center = ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "chainpilot_ai_command_center" / "chainpilot_ai_command_center.js"
     action_inbox = ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "action_inbox" / "action_inbox.js"
+    scenario_studio = ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "scenario_studio" / "scenario_studio.js"
     detail_js = ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "recommendation" / "recommendation.js"
     required = {
         css_path: [".chainpilot-hero", ".chainpilot-action-card", ".chainpilot-detail-panel"],
         command_center: ["5月采购优化决策台", "方案组合", "高价值动作"],
         action_inbox: ["推荐动作收件箱", "全部动作", "风险关注"],
+        scenario_studio: ["Scenario Studio", "业务目标", "方案对比"],
         detail_js: ["建议详情", "证据", "约束校验", "AI 解释草稿"],
     }
     missing: list[str] = []
@@ -70,11 +72,33 @@ def check_m1_04_sap_mock_adapter() -> dict[str, str]:
     return _status("Fail", "chainpilot_ai.sap_connector.service", json.dumps({"connection": connection, "pr_rows": pr_rows, "non_mock_rows": non_mock_rows}, ensure_ascii=False))
 
 
+def check_m1_05_scenario_doctype() -> dict[str, str]:
+    scenario_path = ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "scenario" / "scenario.json"
+    result_path = ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "scenario_result" / "scenario_result.json"
+    workspace_path = ROOT / "chainpilot_ai" / "fixtures" / "workspace.json"
+    required = {
+        scenario_path: ["Scenario ID", "Business Goal", "Constraint JSON"],
+        result_path: ["scenario_id", "\"options\": \"Scenario\""],
+        workspace_path: ["Scenario Studio", "scenario-studio", "Scenario"],
+    }
+    missing: list[str] = []
+    for path, tokens in required.items():
+        if not path.exists():
+            missing.append(str(path))
+            continue
+        text = path.read_text(encoding="utf-8")
+        missing.extend(f"{path}: {token}" for token in tokens if token not in text)
+    if missing:
+        return _status("Fail", "Scenario Studio contract", "; ".join(missing))
+    return _status("Pass", "Scenario DocType, Scenario Result link, Workspace shortcut")
+
+
 CHECKS = {
     "M1-UI-001": check_m1_01_demo_contract,
     "M1-UI-002": check_m1_02_commercial_ui_assets,
     "M1-UI-003": check_m1_03_no_phase0_placeholder,
     "M1-SAP-001": check_m1_04_sap_mock_adapter,
+    "M1-SCENARIO-001": check_m1_05_scenario_doctype,
 }
 
 

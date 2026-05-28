@@ -7,7 +7,7 @@
     "module": "ChainPilot AI",
     "public": 1,
     "is_hidden": 0,
-    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AI Command Center\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Action Inbox\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
+    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AI Command Center\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-scenario-studio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Scenario Studio\",\"link_to\":\"scenario-studio\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Action Inbox\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
     "shortcuts": [
       {
         "label": "AI Command Center",
@@ -18,6 +18,16 @@
         "label": "Action Inbox",
         "type": "Page",
         "link_to": "action-inbox"
+      },
+      {
+        "label": "Scenario Studio",
+        "type": "Page",
+        "link_to": "scenario-studio"
+      },
+      {
+        "label": "Scenarios",
+        "type": "DocType",
+        "link_to": "Scenario"
       },
       {
         "label": "Recommendations",
