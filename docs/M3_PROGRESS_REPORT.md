@@ -20,6 +20,7 @@
 - 当前是确定性 mock Agent，不调用真实 LLM。
 - Agent 不审批、不直接写 SAP、不生成生产回写；所有 SAP 写入仍保持 M4 回写草稿边界。
 - 真实 LLM 接入后，仍应保留当前 Tool Log、Evidence 和 Constraint Check 契约。
+- 真实 AI 能力已拆解到 `docs/AI_FUNCTION_IMPLEMENTATION_RESEARCH.md`，后续按 M3R 执行，不能再把 mock Agent 标记为真实 AI 完成。
 
 ## 验证命令
 

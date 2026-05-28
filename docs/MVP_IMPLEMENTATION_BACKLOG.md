@@ -142,6 +142,8 @@ MVP 只验证一条主闭环：
 
 目标：从自然语言业务目标生成结构化场景、候选动作、约束校验和证据解释。
 
+当前 M3 的 `Ready` 状态仅代表 mock Agent、DocType 契约、页面入口和规则/模板链路可运行，不代表真实 LLM Agent 已完成。真实 AI 能力按 [AI_FUNCTION_IMPLEMENTATION_RESEARCH.md](AI_FUNCTION_IMPLEMENTATION_RESEARCH.md) 重开为 M3R。
+
 | ID | 优先级 | 工作项 | 交付物 | 验收标准 | 状态 |
 | --- | --- | --- | --- | --- | --- |
 | M3-01 | P0 | Agent Run DocType | 状态、输入、输出、错误、关联场景 | Agent Run 可记录完整状态流转 | Ready |
@@ -165,6 +167,17 @@ MVP 只验证一条主闭环：
 | 约束 | BLOCKED 动作不能进入批量审批 |
 | 解释 | 正式解释必须包含 evidence_id |
 | 审计 | Agent Run 和 Tool Log 可追溯 |
+
+### M3R 真实 AI 能力重开项
+
+| ID | 优先级 | 工作项 | 交付物 | 验收标准 | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| M3R-01 | P0 | AI Provider 基础设施 | Provider Config、Task Config、Prompt Template、LLM Call Log | 至少支持一个真实模型和 Mock 降级；密钥不入日志 | Todo |
+| M3R-02 | P0 | 任务 SOP 与 Schema | 九类 AI 任务、输入/输出 Schema、业务校验器 | 所有 LLM 输出先过 Schema 和业务校验 | Todo |
+| M3R-03 | P0 | 真实需求澄清器 | LLM 结构化解析 + 规则校验 | 20 条中文目标关键字段解析准确率不低于 90% | Todo |
+| M3R-04 | P0 | 证据解释器 | Evidence Bundle 检索、解释生成、证据校验 | 正式解释 100% 引用有效 evidence_id | Todo |
+| M3R-05 | P1 | 方案与审批摘要 | Scenario Debate、Approval Summary | 摘要中的金额、数量、风险均来自业务对象 | Todo |
+| M3R-06 | P1 | 沟通、监控、学习 | Supplier Communication、Execution Monitoring、Learning Signaling | 只生成草稿和调权建议，必须人工确认 | Todo |
 
 ## 8. M4 审批、沟通与回写草稿
 
