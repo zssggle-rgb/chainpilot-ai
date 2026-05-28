@@ -36,14 +36,22 @@ python3 -m chainpilot_ai.scripts.verify_phase_0
 
 ## Bench Checks
 
-When a Frappe bench/site is available:
+The Phase 0 local bench was created at `/Users/sjs/chainpilot-ai-bench` with:
+
+- Frappe: `15.109.0`
+- bench: `5.29.1`
+- site: `chainpilot.localhost`
+- database: MariaDB `10.6.26` on `127.0.0.1:3316`
+- app install mode: soft link to this repository as `chainpilot_ai`
+
+From the bench directory:
 
 ```bash
-bench --site <site> list-apps
-bench --site <site> migrate
-bench --site <site> run-tests --app chainpilot_ai
-bench --site <site> execute chainpilot_ai.scripts.import_demo_data.run
-bench --site <site> execute chainpilot_ai.scripts.verify_phase_0.run
+bench --site chainpilot.localhost list-apps
+bench --site chainpilot.localhost migrate
+bench --site chainpilot.localhost run-tests --app chainpilot_ai
+bench --site chainpilot.localhost execute chainpilot_ai.scripts.import_demo_data.run
+bench --site chainpilot.localhost execute chainpilot_ai.scripts.verify_phase_0.run
 ```
 
 ## Documents

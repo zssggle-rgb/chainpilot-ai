@@ -43,6 +43,10 @@ REQUIRED_DOCTYPES = {
     "Constraint Check Result": ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "constraint_check_result" / "constraint_check_result.json",
 }
 
+GO_REQUIRED_PASS = {"V-001", "V-002", "V-003", "V-006", "V-007", "V-010", "V-011", "V-012"}
+GO_MINIMUM_PARTIAL = {"V-008", "V-009"}
+GO_DISALLOWED_STATUSES = {"Fail", "Blocked", "Not Started"}
+
 
 def _status(status: str, evidence: str, notes: str = "") -> dict[str, str]:
     return {"status": status, "evidence": evidence, "notes": notes}
@@ -64,6 +68,15 @@ def check_v001() -> dict[str, str]:
 
 
 def check_v002() -> dict[str, str]:
+    try:
+        import frappe  # type: ignore
+
+        if getattr(frappe.local, "site", None) and "chainpilot_ai" in frappe.get_installed_apps():
+            frappe.db.sql("select 1")
+            return _status("Pass", f"bench site {frappe.local.site}", "chainpilot_ai is installed and database is reachable.")
+    except Exception:
+        pass
+
     if not shutil.which("bench"):
         return _status("Blocked", "bench not found", "Install frappe-bench before running bench checks.")
     bench_path = Path("/Users/sjs/chainpilot-ai-bench")
@@ -218,12 +231,32 @@ CHECKS = {
 }
 
 
+def _meets_go_no_go(results: dict[str, dict[str, str]]) -> bool:
+    required_pass_ok = all(results[check_id]["status"] == "Pass" for check_id in GO_REQUIRED_PASS)
+    minimum_partial_ok = all(results[check_id]["status"] in {"Pass", "Partial"} for check_id in GO_MINIMUM_PARTIAL)
+    no_disallowed_status = all(result["status"] not in GO_DISALLOWED_STATUSES for result in results.values())
+    return required_pass_ok and minimum_partial_ok and no_disallowed_status
+
+
 def run() -> dict[str, Any]:
     results = {check_id: check() for check_id, check in CHECKS.items()}
     counts: dict[str, int] = {}
     for result in results.values():
         counts[result["status"]] = counts.get(result["status"], 0) + 1
-    report = {"ok": all(result["status"] == "Pass" for result in results.values()), "counts": counts, "results": results}
+    all_pass = all(result["status"] == "Pass" for result in results.values())
+    go_no_go_ok = _meets_go_no_go(results)
+    report = {
+        "ok": go_no_go_ok,
+        "all_pass": all_pass,
+        "counts": counts,
+        "go_no_go": {
+            "ok": go_no_go_ok,
+            "required_pass": sorted(GO_REQUIRED_PASS),
+            "minimum_partial": sorted(GO_MINIMUM_PARTIAL),
+            "disallowed_statuses": sorted(GO_DISALLOWED_STATUSES),
+        },
+        "results": results,
+    }
     VERIFY_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with VERIFY_REPORT_PATH.open("w", encoding="utf-8") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2)

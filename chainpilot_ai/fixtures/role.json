@@ -1,36 +1,43 @@
 [
   {
     "doctype": "Role",
+    "name": "ChainPilot Admin",
     "role_name": "ChainPilot Admin",
     "desk_access": 1
   },
   {
     "doctype": "Role",
+    "name": "ChainPilot Supply Chain Director",
     "role_name": "ChainPilot Supply Chain Director",
     "desk_access": 1
   },
   {
     "doctype": "Role",
+    "name": "ChainPilot Planning Manager",
     "role_name": "ChainPilot Planning Manager",
     "desk_access": 1
   },
   {
     "doctype": "Role",
+    "name": "ChainPilot Procurement Manager",
     "role_name": "ChainPilot Procurement Manager",
     "desk_access": 1
   },
   {
     "doctype": "Role",
+    "name": "ChainPilot Planner",
     "role_name": "ChainPilot Planner",
     "desk_access": 1
   },
   {
     "doctype": "Role",
+    "name": "ChainPilot Buyer",
     "role_name": "ChainPilot Buyer",
     "desk_access": 1
   },
   {
     "doctype": "Role",
+    "name": "ChainPilot Finance BP",
     "role_name": "ChainPilot Finance BP",
     "desk_access": 1
   }
