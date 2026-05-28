@@ -1,0 +1,43 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:execution_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "execution_id",
+    "draft_id",
+    "recommendation_id",
+    "status",
+    "expected_cash_release",
+    "realized_cash_release",
+    "unrealized_reason",
+    "monitored_at"
+  ],
+  "fields": [
+    {"fieldname": "execution_id", "fieldtype": "Data", "in_list_view": 1, "label": "Execution ID", "reqd": 1, "unique": 1},
+    {"fieldname": "draft_id", "fieldtype": "Link", "in_list_view": 1, "label": "Writeback Draft", "options": "SAP Writeback Draft"},
+    {"fieldname": "recommendation_id", "fieldtype": "Link", "label": "Recommendation", "options": "Recommendation", "reqd": 1},
+    {"default": "Draft Ready", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Draft Ready\nExecuted\nFailed\nSkipped", "reqd": 1},
+    {"default": "0", "fieldname": "expected_cash_release", "fieldtype": "Currency", "in_list_view": 1, "label": "Expected Cash Release"},
+    {"default": "0", "fieldname": "realized_cash_release", "fieldtype": "Currency", "label": "Realized Cash Release"},
+    {"fieldname": "unrealized_reason", "fieldtype": "Small Text", "label": "Unrealized Reason"},
+    {"fieldname": "monitored_at", "fieldtype": "Datetime", "label": "Monitored At"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Execution Result",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Finance BP", "share": 1, "write": 1}
+  ],
+  "sort_field": "monitored_at",
+  "sort_order": "DESC",
+  "states": []
+}

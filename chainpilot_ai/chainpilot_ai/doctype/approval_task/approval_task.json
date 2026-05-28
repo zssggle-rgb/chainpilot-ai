@@ -1,0 +1,43 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:task_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "task_id",
+    "package_id",
+    "approval_role",
+    "approver",
+    "status",
+    "decision_comment",
+    "decided_at"
+  ],
+  "fields": [
+    {"fieldname": "task_id", "fieldtype": "Data", "in_list_view": 1, "label": "Task ID", "reqd": 1, "unique": 1},
+    {"fieldname": "package_id", "fieldtype": "Link", "in_list_view": 1, "label": "Approval Package", "options": "Approval Package", "reqd": 1},
+    {"fieldname": "approval_role", "fieldtype": "Data", "in_list_view": 1, "label": "Approval Role", "reqd": 1},
+    {"fieldname": "approver", "fieldtype": "Data", "label": "Approver"},
+    {"default": "Pending", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Pending\nApproved\nRejected", "reqd": 1},
+    {"fieldname": "decision_comment", "fieldtype": "Small Text", "label": "Decision Comment"},
+    {"fieldname": "decided_at", "fieldtype": "Datetime", "label": "Decided At"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Approval Task",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Procurement Manager", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Finance BP", "share": 1, "write": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

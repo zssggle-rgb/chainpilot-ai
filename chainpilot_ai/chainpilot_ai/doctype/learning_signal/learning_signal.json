@@ -1,0 +1,40 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:signal_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "signal_id",
+    "feedback_id",
+    "target_type",
+    "target",
+    "reason",
+    "suggested_weight_delta",
+    "status"
+  ],
+  "fields": [
+    {"fieldname": "signal_id", "fieldtype": "Data", "in_list_view": 1, "label": "Signal ID", "reqd": 1, "unique": 1},
+    {"fieldname": "feedback_id", "fieldtype": "Link", "label": "Feedback Record", "options": "Feedback Record"},
+    {"default": "Action Type", "fieldname": "target_type", "fieldtype": "Select", "label": "Target Type", "options": "Action Type\nMaterial\nSupplier\nRule", "reqd": 1},
+    {"fieldname": "target", "fieldtype": "Data", "in_list_view": 1, "label": "Target", "reqd": 1},
+    {"fieldname": "reason", "fieldtype": "Small Text", "label": "Reason", "reqd": 1},
+    {"default": "0", "fieldname": "suggested_weight_delta", "fieldtype": "Float", "label": "Suggested Weight Delta"},
+    {"default": "New", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "New\nReviewed\nApplied\nIgnored", "reqd": 1}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Learning Signal",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1, "write": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

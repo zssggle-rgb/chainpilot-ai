@@ -7,9 +7,7 @@
 
       frm.page.set_primary_action(__("返回动作收件箱"), () => frappe.set_route("action-inbox"));
       frm.add_custom_button(__("打开方案"), () => frappe.set_route("Form", "Scenario Result", frm.doc.result_id));
-      frm.add_custom_button(__("生成回写草稿"), () => {
-        frappe.msgprint(__("M1 阶段仅保留 SAP 回写草稿入口，不自动写入生产 SAP。审批包和回写草稿对象将在后续里程碑补齐。"));
-      });
+      frm.add_custom_button(__("进入执行监控"), () => frappe.set_route("execution-monitor"));
 
       render_recommendation_detail(frm);
     },

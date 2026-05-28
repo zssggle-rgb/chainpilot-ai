@@ -10,6 +10,7 @@
 
     page.set_primary_action(__("返回决策台"), () => frappe.set_route("chainpilot-ai-command-center"));
     page.set_secondary_action(__("建议清单"), () => frappe.set_route("List", "Recommendation"));
+    page.add_inner_button(__("执行监控"), () => frappe.set_route("execution-monitor"));
     page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">${__("正在加载建议动作...")}</div></div>`);
     load_action_inbox(page);
   };

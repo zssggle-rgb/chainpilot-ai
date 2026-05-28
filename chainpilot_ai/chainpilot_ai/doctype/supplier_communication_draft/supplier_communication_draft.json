@@ -1,0 +1,46 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:communication_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "communication_id",
+    "package_id",
+    "recommendation_id",
+    "supplier",
+    "sap_doc_no",
+    "status",
+    "subject",
+    "message",
+    "created_at"
+  ],
+  "fields": [
+    {"fieldname": "communication_id", "fieldtype": "Data", "in_list_view": 1, "label": "Communication ID", "reqd": 1, "unique": 1},
+    {"fieldname": "package_id", "fieldtype": "Link", "label": "Approval Package", "options": "Approval Package"},
+    {"fieldname": "recommendation_id", "fieldtype": "Link", "in_list_view": 1, "label": "Recommendation", "options": "Recommendation", "reqd": 1},
+    {"fieldname": "supplier", "fieldtype": "Data", "in_list_view": 1, "label": "Supplier"},
+    {"fieldname": "sap_doc_no", "fieldtype": "Data", "label": "SAP Document No"},
+    {"default": "Draft", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Draft\nReviewed\nSent\nCancelled", "reqd": 1},
+    {"fieldname": "subject", "fieldtype": "Data", "label": "Subject", "reqd": 1},
+    {"fieldname": "message", "fieldtype": "Long Text", "label": "Message", "reqd": 1},
+    {"fieldname": "created_at", "fieldtype": "Datetime", "label": "Created At"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Supplier Communication Draft",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"create": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Buyer", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Procurement Manager", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "created_at",
+  "sort_order": "DESC",
+  "states": []
+}

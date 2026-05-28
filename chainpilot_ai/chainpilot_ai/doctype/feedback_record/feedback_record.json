@@ -1,0 +1,44 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:feedback_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "feedback_id",
+    "package_id",
+    "recommendation_id",
+    "feedback_type",
+    "reason",
+    "comment",
+    "supplier_response",
+    "created_at"
+  ],
+  "fields": [
+    {"fieldname": "feedback_id", "fieldtype": "Data", "in_list_view": 1, "label": "Feedback ID", "reqd": 1, "unique": 1},
+    {"fieldname": "package_id", "fieldtype": "Link", "label": "Approval Package", "options": "Approval Package"},
+    {"fieldname": "recommendation_id", "fieldtype": "Link", "in_list_view": 1, "label": "Recommendation", "options": "Recommendation"},
+    {"fieldname": "feedback_type", "fieldtype": "Select", "in_list_view": 1, "label": "Feedback Type", "options": "Accepted\nRejected\nSupplier Feedback\nExecution Feedback", "reqd": 1},
+    {"fieldname": "reason", "fieldtype": "Data", "in_list_view": 1, "label": "Reason"},
+    {"fieldname": "comment", "fieldtype": "Small Text", "label": "Comment"},
+    {"fieldname": "supplier_response", "fieldtype": "Small Text", "label": "Supplier Response"},
+    {"fieldname": "created_at", "fieldtype": "Datetime", "label": "Created At"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Feedback Record",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"create": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Buyer", "share": 1, "write": 1},
+    {"create": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1, "write": 1}
+  ],
+  "sort_field": "created_at",
+  "sort_order": "DESC",
+  "states": []
+}
