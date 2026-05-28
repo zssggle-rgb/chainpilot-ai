@@ -1,0 +1,89 @@
+{
+  "optimization_sessions": [
+    {
+      "session_id": "CCO-202605-001",
+      "source_system": "AIPLAN_DB",
+      "source_report": "may_procurement_optimization_report.html",
+      "baseline_amount": 643568209,
+      "material_count": 5015,
+      "sample_count": 499,
+      "best_solution_count": 84,
+      "run_date": "2026-05-15",
+      "status": "Imported"
+    }
+  ],
+  "scenario_results": [
+    {
+      "result_id": "RST-202605-001",
+      "session_id": "CCO-202605-001",
+      "strategy_name": "精准分类方案",
+      "strategy_type": "Recommended",
+      "purchase_amount": 474000000,
+      "cash_release": 170000000,
+      "cash_release_rate": 26.4,
+      "risk_level": "Low",
+      "recommendation_count": 126,
+      "ai_recommendation": "节省空间大，安全库存不变，交期调整小，适合作为 MVP 推荐方案。"
+    },
+    {
+      "result_id": "RST-202605-002",
+      "session_id": "CCO-202605-001",
+      "strategy_name": "激进降本方案",
+      "strategy_type": "Aggressive",
+      "purchase_amount": 451000000,
+      "cash_release": 193000000,
+      "cash_release_rate": 30.0,
+      "risk_level": "Medium",
+      "recommendation_count": 148,
+      "ai_recommendation": "节省金额最高，但安全库存压缩明显，需更强监控。"
+    },
+    {
+      "result_id": "RST-202605-003",
+      "session_id": "CCO-202605-001",
+      "strategy_name": "交期提前方案",
+      "strategy_type": "Conservative",
+      "purchase_amount": 622000000,
+      "cash_release": 21450000,
+      "cash_release_rate": 3.3,
+      "risk_level": "Low",
+      "recommendation_count": 32,
+      "ai_recommendation": "调整幅度最小，适合先验证供应商交期协同。"
+    }
+  ],
+  "recommendations": [
+    {"recommendation_id": "REC-202605-000001", "result_id": "RST-202605-001", "action_type": "REDUCE_PR_QTY", "sap_object_type": "PR", "sap_doc_no": "1000123456", "sap_item_no": "00010", "material_code": "MAT-000001", "material_name": "控制板组件", "plant": "CN01", "supplier": "S000982", "purchasing_group": "PG01", "product_line": "空调", "before_qty": 12000, "after_qty": 9500, "before_date": "2026-06-15", "after_date": "2026-06-15", "cash_release": 860000, "saving_type": "Cash Release", "inventory_days_before": 48, "inventory_days_after": 36, "shortage_risk_before": 1.8, "shortage_risk_after": 2.4, "confidence_score": 0.87, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"},
+    {"recommendation_id": "REC-202605-000002", "result_id": "RST-202605-001", "action_type": "REDUCE_PR_QTY", "sap_object_type": "PR", "sap_doc_no": "1000123457", "sap_item_no": "00020", "material_code": "MAT-000002", "material_name": "风机电机", "plant": "CN01", "supplier": "S000116", "purchasing_group": "PG01", "product_line": "空调", "before_qty": 8000, "after_qty": 6900, "before_date": "2026-06-18", "after_date": "2026-06-18", "cash_release": 540000, "saving_type": "Cash Release", "inventory_days_before": 42, "inventory_days_after": 33, "shortage_risk_before": 1.6, "shortage_risk_after": 2.1, "confidence_score": 0.84, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"},
+    {"recommendation_id": "REC-202605-000003", "result_id": "RST-202605-001", "action_type": "DELAY_UNCONFIRMED_PO", "sap_object_type": "PO", "sap_doc_no": "4500098765", "sap_item_no": "00010", "material_code": "MAT-000003", "material_name": "压缩机支架", "plant": "CN01", "supplier": "S000219", "purchasing_group": "PG02", "product_line": "空调", "before_qty": 3000, "after_qty": 3000, "before_date": "2026-06-12", "after_date": "2026-06-26", "cash_release": 410000, "saving_type": "Purchase Deferral", "inventory_days_before": 55, "inventory_days_after": 41, "shortage_risk_before": 0.9, "shortage_risk_after": 1.7, "confidence_score": 0.82, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"},
+    {"recommendation_id": "REC-202605-000004", "result_id": "RST-202605-001", "action_type": "REDUCE_PR_QTY", "sap_object_type": "PR", "sap_doc_no": "1000123458", "sap_item_no": "00010", "material_code": "MAT-000004", "material_name": "铜管组件", "plant": "CN01", "supplier": "S000331", "purchasing_group": "PG02", "product_line": "空调", "before_qty": 15000, "after_qty": 12600, "before_date": "2026-06-20", "after_date": "2026-06-20", "cash_release": 920000, "saving_type": "Cash Release", "inventory_days_before": 46, "inventory_days_after": 34, "shortage_risk_before": 1.3, "shortage_risk_after": 2.2, "confidence_score": 0.86, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"},
+    {"recommendation_id": "REC-202605-000005", "result_id": "RST-202605-001", "action_type": "REVIEW_SAFETY_STOCK", "sap_object_type": "MRP_PARAM", "sap_doc_no": "MAT-000005", "sap_item_no": "CN01", "material_code": "MAT-000005", "material_name": "显示模块", "plant": "CN01", "supplier": "S000412", "purchasing_group": "PG03", "product_line": "彩电", "before_qty": 2500, "after_qty": 2200, "before_date": "2026-06-22", "after_date": "2026-06-22", "cash_release": 230000, "saving_type": "Book Saving", "inventory_days_before": 60, "inventory_days_after": 52, "shortage_risk_before": 1.0, "shortage_risk_after": 1.5, "confidence_score": 0.78, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"},
+    {"recommendation_id": "REC-202605-000006", "result_id": "RST-202605-002", "action_type": "REDUCE_PR_QTY", "sap_object_type": "PR", "sap_doc_no": "1000123459", "sap_item_no": "00030", "material_code": "MAT-000006", "material_name": "注塑外壳", "plant": "CN01", "supplier": "S000551", "purchasing_group": "PG04", "product_line": "空调", "before_qty": 22000, "after_qty": 17600, "before_date": "2026-06-28", "after_date": "2026-06-28", "cash_release": 1250000, "saving_type": "Cash Release", "inventory_days_before": 50, "inventory_days_after": 31, "shortage_risk_before": 2.1, "shortage_risk_after": 3.0, "confidence_score": 0.76, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"},
+    {"recommendation_id": "REC-202605-000007", "result_id": "RST-202605-002", "action_type": "DELAY_UNCONFIRMED_PO", "sap_object_type": "PO", "sap_doc_no": "4500098766", "sap_item_no": "00020", "material_code": "MAT-000007", "material_name": "包装纸箱", "plant": "CN01", "supplier": "S000678", "purchasing_group": "PG04", "product_line": "空调", "before_qty": 18000, "after_qty": 18000, "before_date": "2026-06-10", "after_date": "2026-06-25", "cash_release": 330000, "saving_type": "Purchase Deferral", "inventory_days_before": 62, "inventory_days_after": 49, "shortage_risk_before": 0.6, "shortage_risk_after": 1.2, "confidence_score": 0.8, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"},
+    {"recommendation_id": "REC-202605-000008", "result_id": "RST-202605-002", "action_type": "REVIEW_SUPPLIER_LEAD_TIME", "sap_object_type": "MRP_PARAM", "sap_doc_no": "MAT-000008", "sap_item_no": "CN01", "material_code": "MAT-000008", "material_name": "电源线", "plant": "CN01", "supplier": "S000712", "purchasing_group": "PG05", "product_line": "厨电", "before_qty": 10000, "after_qty": 10000, "before_date": "2026-07-01", "after_date": "2026-07-01", "cash_release": 180000, "saving_type": "Book Saving", "inventory_days_before": 38, "inventory_days_after": 38, "shortage_risk_before": 1.7, "shortage_risk_after": 1.7, "confidence_score": 0.72, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"},
+    {"recommendation_id": "REC-202605-000009", "result_id": "RST-202605-003", "action_type": "ADVANCE_RISK_MATERIAL", "sap_object_type": "PO", "sap_doc_no": "4500098767", "sap_item_no": "00010", "material_code": "MAT-000009", "material_name": "长交期芯片", "plant": "CN01", "supplier": "S000880", "purchasing_group": "PG06", "product_line": "彩电", "before_qty": 1200, "after_qty": 1200, "before_date": "2026-07-20", "after_date": "2026-07-10", "cash_release": 0, "saving_type": "Purchase Deferral", "inventory_days_before": 12, "inventory_days_after": 24, "shortage_risk_before": 5.5, "shortage_risk_after": 2.6, "confidence_score": 0.81, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"},
+    {"recommendation_id": "REC-202605-000010", "result_id": "RST-202605-003", "action_type": "REDUCE_PR_QTY", "sap_object_type": "PR", "sap_doc_no": "1000123460", "sap_item_no": "00010", "material_code": "MAT-000010", "material_name": "通用螺钉", "plant": "CN01", "supplier": "S000901", "purchasing_group": "PG06", "product_line": "空调", "before_qty": 50000, "after_qty": 45000, "before_date": "2026-06-30", "after_date": "2026-06-30", "cash_release": 75000, "saving_type": "Cash Release", "inventory_days_before": 90, "inventory_days_after": 76, "shortage_risk_before": 0.2, "shortage_risk_after": 0.3, "confidence_score": 0.91, "approval_status": "Pending", "writeback_status": "Not Created", "explanation_status": "Ready"}
+  ],
+  "evidence": [
+    {"evidence_id": "EVD-001", "recommendation_id": "REC-202605-000001", "source_type": "Snapshot", "source_id": "SAP_INVENTORY_CN01_MAT-000001", "metric_name": "inventory_days_after", "metric_value": "36", "threshold_value": "28", "verdict": "PASS", "summary": "调整后库存覆盖仍高于目标。"},
+    {"evidence_id": "EVD-002", "recommendation_id": "REC-202605-000002", "source_type": "Snapshot", "source_id": "SAP_INVENTORY_CN01_MAT-000002", "metric_name": "inventory_days_after", "metric_value": "33", "threshold_value": "28", "verdict": "PASS", "summary": "调整后库存覆盖仍高于目标。"},
+    {"evidence_id": "EVD-003", "recommendation_id": "REC-202605-000003", "source_type": "Rule", "source_id": "SUPPLIER_CONFIRMATION_PO_4500098765", "metric_name": "confirmation_status", "metric_value": "Unconfirmed", "threshold_value": "Unconfirmed", "verdict": "PASS", "summary": "PO 尚未确认，可进入延期建议。"},
+    {"evidence_id": "EVD-004", "recommendation_id": "REC-202605-000004", "source_type": "Snapshot", "source_id": "SAP_INVENTORY_CN01_MAT-000004", "metric_name": "inventory_days_after", "metric_value": "34", "threshold_value": "28", "verdict": "PASS", "summary": "调整后库存覆盖仍高于目标。"},
+    {"evidence_id": "EVD-005", "recommendation_id": "REC-202605-000005", "source_type": "Rule", "source_id": "SAFETY_STOCK_REVIEW_MAT-000005", "metric_name": "inventory_days_after", "metric_value": "52", "threshold_value": "35", "verdict": "PASS", "summary": "安全库存复核不会降低到阈值以下。"},
+    {"evidence_id": "EVD-006", "recommendation_id": "REC-202605-000006", "source_type": "Simulation", "source_id": "RISK_SIM_REC-202605-000006", "metric_name": "shortage_risk_after", "metric_value": "3.0", "threshold_value": "3.5", "verdict": "WARN", "summary": "激进方案风险接近阈值，需要计划经理审批。"},
+    {"evidence_id": "EVD-007", "recommendation_id": "REC-202605-000007", "source_type": "Rule", "source_id": "SUPPLIER_CONFIRMATION_PO_4500098766", "metric_name": "confirmation_status", "metric_value": "Unconfirmed", "threshold_value": "Unconfirmed", "verdict": "PASS", "summary": "PO 尚未确认，可进入延期建议。"},
+    {"evidence_id": "EVD-008", "recommendation_id": "REC-202605-000008", "source_type": "Report", "source_id": "LEAD_TIME_VARIANCE_MAT-000008", "metric_name": "lead_time_variance_days", "metric_value": "6", "threshold_value": "5", "verdict": "WARN", "summary": "供应商实际交期偏差超过阈值，需主数据复核。"},
+    {"evidence_id": "EVD-009", "recommendation_id": "REC-202605-000009", "source_type": "Simulation", "source_id": "RISK_SIM_REC-202605-000009", "metric_name": "shortage_risk_after", "metric_value": "2.6", "threshold_value": "3.5", "verdict": "PASS", "summary": "提前长交期芯片后缺料风险下降。"},
+    {"evidence_id": "EVD-010", "recommendation_id": "REC-202605-000010", "source_type": "Snapshot", "source_id": "SAP_INVENTORY_CN01_MAT-000010", "metric_name": "inventory_days_after", "metric_value": "76", "threshold_value": "28", "verdict": "PASS", "summary": "通用件覆盖天数充足，可小幅下调 PR。"}
+  ],
+  "constraint_checks": [
+    {"check_id": "CHK-001", "recommendation_id": "REC-202605-000001", "rule_code": "SAFETY_STOCK", "verdict": "PASS", "message": "调整后不低于安全库存。", "evidence_id": "EVD-001"},
+    {"check_id": "CHK-002", "recommendation_id": "REC-202605-000002", "rule_code": "SAFETY_STOCK", "verdict": "PASS", "message": "调整后不低于安全库存。", "evidence_id": "EVD-002"},
+    {"check_id": "CHK-003", "recommendation_id": "REC-202605-000003", "rule_code": "SUPPLIER_CONFIRMATION", "verdict": "PASS_WITH_APPROVAL", "message": "PO 延期需采购经理确认。", "evidence_id": "EVD-003"},
+    {"check_id": "CHK-004", "recommendation_id": "REC-202605-000004", "rule_code": "MOQ_MPQ", "verdict": "PASS", "message": "建议数量满足包装倍数。", "evidence_id": "EVD-004"},
+    {"check_id": "CHK-005", "recommendation_id": "REC-202605-000005", "rule_code": "SAFETY_STOCK", "verdict": "PASS_WITH_APPROVAL", "message": "MRP 参数复核需计划经理审批。", "evidence_id": "EVD-005"},
+    {"check_id": "CHK-006", "recommendation_id": "REC-202605-000006", "rule_code": "RISK_LIMIT", "verdict": "PASS_WITH_APPROVAL", "message": "风险接近阈值，需升级审批。", "evidence_id": "EVD-006"},
+    {"check_id": "CHK-007", "recommendation_id": "REC-202605-000007", "rule_code": "SUPPLIER_CONFIRMATION", "verdict": "PASS_WITH_APPROVAL", "message": "PO 延期需采购经理确认。", "evidence_id": "EVD-007"},
+    {"check_id": "CHK-008", "recommendation_id": "REC-202605-000008", "rule_code": "MASTER_DATA_REVIEW", "verdict": "PASS_WITH_APPROVAL", "message": "供应商交期主数据需复核。", "evidence_id": "EVD-008"},
+    {"check_id": "CHK-009", "recommendation_id": "REC-202605-000009", "rule_code": "RISK_MATERIAL", "verdict": "PASS", "message": "长交期风险物料允许提前。", "evidence_id": "EVD-009"},
+    {"check_id": "CHK-010", "recommendation_id": "REC-202605-000010", "rule_code": "MOQ_MPQ", "verdict": "PASS", "message": "建议数量满足包装倍数。", "evidence_id": "EVD-010"}
+  ]
+}

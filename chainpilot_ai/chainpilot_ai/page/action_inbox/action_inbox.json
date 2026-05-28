@@ -1,0 +1,22 @@
+{
+  "creation": "2026-05-28 00:00:00.000000",
+  "docstatus": 0,
+  "doctype": "Page",
+  "idx": 0,
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "action-inbox",
+  "owner": "Administrator",
+  "page_name": "action-inbox",
+  "roles": [
+    {"role": "ChainPilot Admin"},
+    {"role": "ChainPilot Planner"},
+    {"role": "ChainPilot Buyer"},
+    {"role": "ChainPilot Procurement Manager"}
+  ],
+  "script": null,
+  "standard": "Yes",
+  "style": null,
+  "system_page": 0,
+  "title": "Action Inbox"
+}

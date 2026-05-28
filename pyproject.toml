@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chainpilot-ai"
+version = "0.0.1"
+description = "SAP-connected supply chain AI decision and execution agent"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "ChainPilot AI Team" }]
+dependencies = [
+  "pyodata>=1.10.1",
+  "requests>=2.31.0"
+]
+
+[tool.setuptools]
+packages = { find = { include = ["chainpilot_ai*"] } }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,29 @@
+[
+  {
+    "doctype": "Workspace",
+    "name": "ChainPilot AI",
+    "label": "ChainPilot AI",
+    "title": "ChainPilot AI",
+    "module": "ChainPilot AI",
+    "public": 1,
+    "is_hidden": 0,
+    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"AI Command Center\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Action Inbox\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
+    "shortcuts": [
+      {
+        "label": "AI Command Center",
+        "type": "Page",
+        "link_to": "chainpilot-ai-command-center"
+      },
+      {
+        "label": "Action Inbox",
+        "type": "Page",
+        "link_to": "action-inbox"
+      },
+      {
+        "label": "Recommendations",
+        "type": "DocType",
+        "link_to": "Recommendation"
+      }
+    ]
+  }
+]

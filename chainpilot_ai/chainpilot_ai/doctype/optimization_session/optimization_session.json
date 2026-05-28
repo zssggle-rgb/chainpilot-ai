@@ -1,0 +1,44 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:session_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "session_id",
+    "source_system",
+    "source_report",
+    "baseline_amount",
+    "material_count",
+    "sample_count",
+    "best_solution_count",
+    "run_date",
+    "status"
+  ],
+  "fields": [
+    {"fieldname": "session_id", "fieldtype": "Data", "in_list_view": 1, "label": "Session ID", "reqd": 1, "unique": 1},
+    {"fieldname": "source_system", "fieldtype": "Data", "in_list_view": 1, "label": "Source System", "reqd": 1},
+    {"fieldname": "source_report", "fieldtype": "Data", "label": "Source Report", "reqd": 1},
+    {"fieldname": "baseline_amount", "fieldtype": "Currency", "in_list_view": 1, "label": "Baseline Amount", "reqd": 1},
+    {"fieldname": "material_count", "fieldtype": "Int", "label": "Material Count", "reqd": 1},
+    {"fieldname": "sample_count", "fieldtype": "Int", "label": "Sample Count", "reqd": 1},
+    {"fieldname": "best_solution_count", "fieldtype": "Int", "label": "Best Solution Count", "reqd": 1},
+    {"fieldname": "run_date", "fieldtype": "Date", "in_list_view": 1, "label": "Run Date", "reqd": 1},
+    {"fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Draft\nImported\nVerified\nFailed", "reqd": 1}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Optimization Session",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

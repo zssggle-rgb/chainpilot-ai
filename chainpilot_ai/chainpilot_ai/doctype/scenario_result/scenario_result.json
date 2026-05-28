@@ -1,0 +1,46 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:result_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "result_id",
+    "session_id",
+    "strategy_name",
+    "strategy_type",
+    "purchase_amount",
+    "cash_release",
+    "cash_release_rate",
+    "risk_level",
+    "recommendation_count",
+    "ai_recommendation"
+  ],
+  "fields": [
+    {"fieldname": "result_id", "fieldtype": "Data", "in_list_view": 1, "label": "Result ID", "reqd": 1, "unique": 1},
+    {"fieldname": "session_id", "fieldtype": "Link", "in_list_view": 1, "label": "Optimization Session", "options": "Optimization Session", "reqd": 1},
+    {"fieldname": "strategy_name", "fieldtype": "Data", "in_list_view": 1, "label": "Strategy Name", "reqd": 1},
+    {"fieldname": "strategy_type", "fieldtype": "Select", "in_list_view": 1, "label": "Strategy Type", "options": "Conservative\nRecommended\nAggressive", "reqd": 1},
+    {"fieldname": "purchase_amount", "fieldtype": "Currency", "in_list_view": 1, "label": "Purchase Amount", "reqd": 1},
+    {"fieldname": "cash_release", "fieldtype": "Currency", "in_list_view": 1, "label": "Cash Release", "reqd": 1},
+    {"fieldname": "cash_release_rate", "fieldtype": "Percent", "label": "Cash Release Rate", "reqd": 1},
+    {"fieldname": "risk_level", "fieldtype": "Select", "in_list_view": 1, "label": "Risk Level", "options": "Low\nMedium\nHigh", "reqd": 1},
+    {"fieldname": "recommendation_count", "fieldtype": "Int", "label": "Recommendation Count", "reqd": 1},
+    {"fieldname": "ai_recommendation", "fieldtype": "Small Text", "label": "AI Recommendation"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Scenario Result",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

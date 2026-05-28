@@ -1,0 +1,39 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:check_id",
+  "creation": "2026-05-28 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "check_id",
+    "recommendation_id",
+    "rule_code",
+    "verdict",
+    "message",
+    "evidence_id"
+  ],
+  "fields": [
+    {"fieldname": "check_id", "fieldtype": "Data", "in_list_view": 1, "label": "Check ID", "reqd": 1, "unique": 1},
+    {"fieldname": "recommendation_id", "fieldtype": "Link", "in_list_view": 1, "label": "Recommendation", "options": "Recommendation", "reqd": 1},
+    {"fieldname": "rule_code", "fieldtype": "Data", "in_list_view": 1, "label": "Rule Code", "reqd": 1},
+    {"fieldname": "verdict", "fieldtype": "Select", "in_list_view": 1, "label": "Verdict", "options": "PASS\nPASS_WITH_APPROVAL\nBLOCKED", "reqd": 1},
+    {"fieldname": "message", "fieldtype": "Small Text", "label": "Message", "reqd": 1},
+    {"fieldname": "evidence_id", "fieldtype": "Link", "label": "Evidence", "options": "Recommendation Evidence"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-28 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Constraint Check Result",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Buyer", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}
