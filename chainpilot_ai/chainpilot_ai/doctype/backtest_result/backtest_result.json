@@ -1,0 +1,44 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:result_id",
+  "creation": "2026-05-29 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "result_id",
+    "backtest_run",
+    "result_type",
+    "material_code",
+    "metric_name",
+    "metric_value",
+    "expected_value",
+    "verdict",
+    "detail_json"
+  ],
+  "fields": [
+    {"fieldname": "result_id", "fieldtype": "Data", "in_list_view": 1, "label": "Result ID", "reqd": 1, "unique": 1},
+    {"fieldname": "backtest_run", "fieldtype": "Link", "in_list_view": 1, "label": "Backtest Run", "options": "Backtest Run", "reqd": 1},
+    {"fieldname": "result_type", "fieldtype": "Data", "in_list_view": 1, "label": "Result Type", "reqd": 1},
+    {"fieldname": "material_code", "fieldtype": "Data", "in_list_view": 1, "label": "Material Code"},
+    {"fieldname": "metric_name", "fieldtype": "Data", "label": "Metric Name"},
+    {"fieldname": "metric_value", "fieldtype": "Data", "label": "Metric Value"},
+    {"fieldname": "expected_value", "fieldtype": "Data", "label": "Expected Value"},
+    {"fieldname": "verdict", "fieldtype": "Data", "in_list_view": 1, "label": "Verdict"},
+    {"fieldname": "detail_json", "fieldtype": "Long Text", "label": "Detail JSON"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-29 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Backtest Result",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

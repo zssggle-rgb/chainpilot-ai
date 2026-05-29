@@ -7,7 +7,7 @@
     "module": "ChainPilot AI",
     "public": 1,
     "is_hidden": 0,
-    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"采购决策\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-ai-copilot\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"智能助手\",\"link_to\":\"ai-copilot\",\"type\":\"Page\"}},{\"id\":\"chainpilot-execution-monitor\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"执行监控\",\"link_to\":\"execution-monitor\",\"type\":\"Page\"}},{\"id\":\"chainpilot-learning-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"学习中心\",\"link_to\":\"learning-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-scenario-studio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"方案测算\",\"link_to\":\"scenario-studio\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP 连接\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"采购建议\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
+    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"采购决策\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-ai-copilot\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"智能助手\",\"link_to\":\"ai-copilot\",\"type\":\"Page\"}},{\"id\":\"chainpilot-execution-monitor\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"执行监控\",\"link_to\":\"execution-monitor\",\"type\":\"Page\"}},{\"id\":\"chainpilot-learning-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"学习中心\",\"link_to\":\"learning-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-scenario-studio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"方案测算\",\"link_to\":\"scenario-studio\",\"type\":\"Page\"}},{\"id\":\"chainpilot-strategy-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"策略优化\",\"link_to\":\"strategy-optimization-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP 连接\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"采购建议\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
     "shortcuts": [
       {
         "label": "采购决策",
@@ -38,6 +38,11 @@
         "label": "方案测算",
         "type": "Page",
         "link_to": "scenario-studio"
+      },
+      {
+        "label": "策略优化",
+        "type": "Page",
+        "link_to": "strategy-optimization-center"
       },
       {
         "label": "SAP 连接",

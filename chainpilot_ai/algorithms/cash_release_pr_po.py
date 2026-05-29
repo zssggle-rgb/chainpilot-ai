@@ -14,14 +14,15 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
     mrp = {(row["material_code"], row["plant"]): row for row in snapshot.get("mrp_parameters", [])}
     demand_45d = _demand_by_material(snapshot.get("planned_demands", []))
     base_date = _snapshot_date(snapshot)
+    approval_cash_threshold = float(scenario.get("approval_cash_threshold") or 5_000_000)
 
     candidates: list[dict[str, Any]] = []
     for row in snapshot.get("pr_lines", []):
-        candidates.append(_pr_candidate(row, materials, inventory, mrp, demand_45d, base_date, freeze_window_days, minimum_inventory_days))
+        candidates.append(_pr_candidate(row, materials, inventory, mrp, demand_45d, base_date, freeze_window_days, minimum_inventory_days, approval_cash_threshold))
     for row in snapshot.get("po_lines", []):
         candidates.append(_po_candidate(row, materials, inventory, mrp, demand_45d, base_date, freeze_window_days, minimum_inventory_days))
 
-    selected = _select_actions(candidates)
+    selected = _select_actions(candidates, scenario)
     for row in selected:
         row["selected"] = True
     for row in candidates:
@@ -62,6 +63,7 @@ def _pr_candidate(
     base_date,
     freeze_window_days: int,
     minimum_inventory_days: float,
+    approval_cash_threshold: float,
 ) -> dict[str, Any]:
     key = (row["material_code"], row["plant"])
     material = materials.get(key, {})
@@ -91,6 +93,8 @@ def _pr_candidate(
         blocked_reason = "调整后数量低于 MOQ。"
     verdict = "BLOCKED" if blocked_reason else "PASS"
     risk_after = _risk_after(available, after_qty, demand, safety_stock)
+    cash_impact = round(max(0.0, open_qty - after_qty) * unit_price, 2)
+    recommendation_level = "L1_AUTO_RECOMMEND" if risk_after <= 0.03 and cash_impact < approval_cash_threshold else "L2_REVIEW"
     return {
         "result_type": "CASH_RELEASE_ACTION",
         "action_type": action_type,
@@ -104,12 +108,12 @@ def _pr_candidate(
         "after_qty": after_qty,
         "before_date": row["delivery_date"],
         "after_date": row["delivery_date"],
-        "cash_impact": round(max(0.0, open_qty - after_qty) * unit_price, 2),
+        "cash_impact": cash_impact,
         "risk_before": _risk_after(available, open_qty, demand, safety_stock),
         "risk_after": risk_after,
         "constraint_verdict": verdict,
         "blocked_reason": blocked_reason,
-        "recommendation_level": "L1_AUTO_RECOMMEND" if risk_after <= 0.03 else "L2_REVIEW",
+        "recommendation_level": recommendation_level,
         "inventory_days_after": round(((available + after_qty) / max(1.0, demand / 45.0)), 1),
         "minimum_inventory_days": minimum_inventory_days,
         "metric_name": "cash_impact",
@@ -203,10 +207,13 @@ def _risk_after(available: float, inbound_qty: float, demand: float, safety_stoc
     return round(min(0.99, 0.05 + shortage / max(1.0, demand + safety_stock)), 3)
 
 
-def _select_actions(candidates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _select_actions(candidates: list[dict[str, Any]], scenario: dict[str, Any]) -> list[dict[str, Any]]:
     allowed = [row for row in candidates if row["constraint_verdict"] != "BLOCKED" and float(row.get("cash_impact") or 0) > 0]
+    risk_penalty = float(scenario.get("risk_penalty") or 1_000_000)
+    supplier_penalty_value = float(scenario.get("supplier_confirmation_penalty") or 120_000)
+    max_selected = int(scenario.get("max_selected_actions") or 20)
     for row in allowed:
-        risk_penalty = float(row.get("risk_after") or 0) * 1_000_000
-        supplier_penalty = 120_000 if row.get("recommendation_level") == "L3_SUPPLIER_CONFIRM" else 0
-        row["objective_score"] = round(float(row.get("cash_impact") or 0) - risk_penalty - supplier_penalty, 2)
-    return sorted(allowed, key=lambda item: item["objective_score"], reverse=True)[:20]
+        risk_cost = float(row.get("risk_after") or 0) * risk_penalty
+        supplier_penalty = supplier_penalty_value if row.get("recommendation_level") == "L3_SUPPLIER_CONFIRM" else 0
+        row["objective_score"] = round(float(row.get("cash_impact") or 0) - risk_cost - supplier_penalty, 2)
+    return sorted(allowed, key=lambda item: item["objective_score"], reverse=True)[:max_selected]

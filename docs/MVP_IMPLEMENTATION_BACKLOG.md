@@ -185,6 +185,16 @@ v2.0 改进后，MVP 主闭环升级为：
 | M3R-05 | P1 | 方案与审批摘要 | Scenario Debate、Approval Summary | 摘要中的金额、数量、风险均来自业务对象 | Todo |
 | M3R-06 | P1 | 沟通、监控、学习 | Supplier Communication、Execution Monitoring、Learning Signaling | 只生成草稿和调权建议，必须人工确认 | Todo |
 
+### M4R 策略优化与回测中心
+
+| ID | 优先级 | 工作项 | 交付物 | 验收标准 | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| M4R-01 | P0 | 策略预设 | 保守、均衡、进取策略 | ABC/XYZ 服务水平、缺料阈值、冻结期、审批金额和惩罚参数可追溯 | Ready |
+| M4R-02 | P0 | Mock 历史快照 | `mock_history.py` | 可生成多期 SAP 历史快照和实际结果标签 | Ready |
+| M4R-03 | P0 | 回测调优服务 | `backtest.py`、`strategy/service.py` | 输出召回率、准确率、资金兑现、误干预、硬约束违规和策略评分 | Ready |
+| M4R-04 | P0 | 策略优化中心页面 | `strategy-optimization-center` | 页面展示策略对比、参数配置、回测样本和上线闸门 | Ready |
+| M4R-05 | P1 | 真实历史数据接入 | SAP 两年历史快照导入 | 替换 Mock 历史生成器，复用回测服务 | Todo |
+
 ## 7A. v2.0 Algorithm Runtime 改进项
 
 目标：把项目从静态报告导入 Demo 升级为 Mock SAP 明细数据驱动的专业轻量算法执行 Agent。

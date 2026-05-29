@@ -1,0 +1,40 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:strategy_id",
+  "creation": "2026-05-29 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "strategy_id",
+    "strategy_name",
+    "strategy_type",
+    "status",
+    "version",
+    "description",
+    "parameter_json"
+  ],
+  "fields": [
+    {"fieldname": "strategy_id", "fieldtype": "Data", "in_list_view": 1, "label": "Strategy ID", "reqd": 1, "unique": 1},
+    {"fieldname": "strategy_name", "fieldtype": "Data", "in_list_view": 1, "label": "Strategy Name", "reqd": 1},
+    {"fieldname": "strategy_type", "fieldtype": "Select", "in_list_view": 1, "label": "Strategy Type", "options": "Conservative\nRecommended\nAggressive", "reqd": 1},
+    {"default": "Draft", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Draft\nRecommended\nApproved\nActive\nRetired", "reqd": 1},
+    {"fieldname": "version", "fieldtype": "Data", "label": "Version", "reqd": 1},
+    {"fieldname": "description", "fieldtype": "Small Text", "label": "Description"},
+    {"fieldname": "parameter_json", "fieldtype": "Long Text", "label": "Parameter JSON", "reqd": 1}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-29 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Decision Strategy",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

@@ -6,6 +6,8 @@ from datetime import date, datetime, timedelta
 from statistics import mean, pstdev
 from typing import Any
 
+from chainpilot_ai.strategy.policy import policy_for_material
+
 
 def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dict[str, Any]:
     base_date = _snapshot_date(snapshot)
@@ -17,10 +19,14 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
     performance = _group(snapshot.get("supplier_performance", []), "material_code", "plant")
     po_lines = _group(snapshot.get("po_lines", []), "material_code", "plant")
     bom_by_material = _bom_index(snapshot.get("bom_components", []))
+    materials = {(row["material_code"], row["plant"]): row for row in snapshot.get("materials", [])}
 
     results = []
     for key, inv_row in inventory.items():
         material_code, plant = key
+        material = materials.get(key, {})
+        material_policy = policy_for_material(material, scenario)
+        alert_threshold = float(material_policy.get("shortage_alert_threshold") or (scenario or {}).get("default_shortage_alert_threshold") or 0.2)
         material_demands = demands.get(key, [])
         if not material_demands:
             continue
@@ -48,7 +54,7 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
                 shortage_qtys.append(worst_shortage)
 
         probability = round(len(shortage_days) / simulations, 3)
-        if probability < 0.2:
+        if probability < alert_threshold:
             continue
         shortage_day = _percentile(shortage_days, 0.5) if shortage_days else horizon_days
         shortage_qty_p90 = round(_percentile(shortage_qtys, 0.9), 2) if shortage_qtys else 0.0
@@ -77,6 +83,10 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
                 "demand_std": round(demand_std, 2),
                 "simulation_count": simulations,
                 "delay_samples": delay_samples,
+                "abc_class": material.get("abc_class"),
+                "xyz_class": material.get("xyz_class"),
+                "service_level": material_policy.get("service_level"),
+                "alert_threshold": alert_threshold,
             },
         }
         results.append(result)

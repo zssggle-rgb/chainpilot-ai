@@ -16,6 +16,7 @@
     page.set_secondary_action("SAP 连接", () => frappe.set_route("sap-integration-console"));
     page.add_inner_button("建议", () => frappe.set_route("action-inbox"));
     page.add_inner_button("方案", () => frappe.set_route("scenario-studio"));
+    page.add_inner_button("策略", () => frappe.set_route("strategy-optimization-center"));
     page.add_inner_button("智能", () => frappe.set_route("ai-copilot"));
     page.add_inner_button("监控", () => frappe.set_route("execution-monitor"));
     page.add_inner_button("学习", () => frappe.set_route("learning-center"));
