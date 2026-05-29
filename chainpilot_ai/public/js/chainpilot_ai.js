@@ -47,10 +47,17 @@ window.chainpilot.verdictTone = function (verdict) {
 window.chainpilot.actionLabel = function (actionType) {
   const labels = {
     REDUCE_PR_QTY: "下调采购申请数量",
+    CANCEL_PR_LINE: "取消采购申请行",
     DELAY_UNCONFIRMED_PO: "延后未确认采购订单",
+    SPLIT_PO_DELIVERY: "拆分采购订单交期",
     ADVANCE_RISK_MATERIAL: "提前风险物料采购",
+    EXPEDITE_PO: "催交采购订单",
+    CREATE_EMERGENCY_PR: "新建紧急采购申请",
+    USE_SUBSTITUTE_MATERIAL: "启用替代料",
     REVIEW_SAFETY_STOCK: "复核安全库存",
     REVIEW_SUPPLIER_LEAD_TIME: "复核供应商交期",
+    REVIEW_MOQ: "复核最小采购量",
+    REVIEW_SUPPLIER_PARAMETER: "复核供应商参数",
   };
   return labels[actionType] || actionType || "";
 };
@@ -66,6 +73,8 @@ window.chainpilot.statusLabel = function (value) {
     Ready: "已就绪",
     NEED_EVIDENCE: "缺少证据",
     Failed: "失败",
+    Queued: "排队中",
+    Running: "运行中",
     Success: "成功",
     Executed: "已执行",
     Sent: "已发送",

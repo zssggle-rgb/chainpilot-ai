@@ -10,6 +10,12 @@ MVP 只验证一条主闭环：
 
 > 真实 SAP 分析结果 -> 可浏览的优化场景 -> 单据行级 Recommendation -> 证据解释 -> 审批包 -> SAP 回写草稿 -> 执行反馈。
 
+v2.0 改进后，MVP 主闭环升级为：
+
+> Mock SAP Snapshot -> Algorithm Run -> Algorithm Result -> Recommendation -> Evidence -> AI Explanation -> Approval Package -> SAP Writeback Draft -> Execution Result。
+
+因此静态 `phase0_demo.json` 和 HTML 报告只能作为历史样例，不能再作为主演示数据。Algorithm Runtime 是后续 M1R/M2R/M3R 的验收主线。
+
 第一版不直接写 SAP 生产环境，不重写完整优化算法，不把 HTML 报告复刻成静态页面。HTML 报告只作为真实现状参考和 Demo 数据来源。
 
 ## 2. 交付节奏
@@ -178,6 +184,27 @@ MVP 只验证一条主闭环：
 | M3R-04 | P0 | 证据解释器 | Evidence Bundle 检索、解释生成、证据校验 | 正式解释 100% 引用有效 evidence_id | Todo |
 | M3R-05 | P1 | 方案与审批摘要 | Scenario Debate、Approval Summary | 摘要中的金额、数量、风险均来自业务对象 | Todo |
 | M3R-06 | P1 | 沟通、监控、学习 | Supplier Communication、Execution Monitoring、Learning Signaling | 只生成草稿和调权建议，必须人工确认 | Todo |
+
+## 7A. v2.0 Algorithm Runtime 改进项
+
+目标：把项目从静态报告导入 Demo 升级为 Mock SAP 明细数据驱动的专业轻量算法执行 Agent。
+
+| ID | 优先级 | 工作项 | 交付物 | 验收标准 | 状态 |
+| --- | --- | --- | --- | --- | --- |
+| M1R-01 | P0 | Mock SAP Snapshot 数据契约 | `demo_data/mock_sap_snapshot_v1.json` | 覆盖 materials、inventory、PR、PO、BOM、planned demand、consumption、supplier performance、MRP 参数 | Ready |
+| M1R-02 | P0 | SAP Snapshot Run 与明细 DocType | Snapshot Run + 9 类 Snapshot 明细 | 可基于 snapshot_id 导入和追溯 | Ready |
+| M1R-03 | P0 | Algorithm Definition / Run / Result | 三个核心 DocType | 可登记、运行、查看三大算法 | Ready |
+| M1R-04 | P0 | 算法定义种子 | `seed_algorithm_definitions.py` | 预置三大算法定义 | Ready |
+| M1R-05 | P0 | 一键运行三大算法 | `run_mvp_algorithms.py` | 生成 Algorithm Run 和 Algorithm Result | Ready |
+| M1R-06 | P0 | 结果转建议 | `result_to_recommendation.py` | Recommendation 必带 algorithm_run、snapshot_id 和 evidence | Ready |
+| M1R-07 | P0 | Runtime 验证 | `verify_algorithm_runtime.py` | 无 algorithm_run/evidence 的正式建议不能通过验证 | Ready |
+| M2R-01 | P0 | 缺料风险算法 | `SHORTAGE_RISK_14D_PROB` | 至少 5 条缺料风险结果 | Ready |
+| M2R-02 | P0 | 现金释放动作包算法 | `CASH_RELEASE_PR_PO_OPT` | 至少 20 条候选动作，selected/blocked 均有结果 | Ready |
+| M2R-03 | P0 | 主数据体检算法 | `MASTER_DATA_DIAGNOSIS_STAT` | 至少 15 条主数据异常 | Ready |
+| M2R-04 | P0 | 约束校验 | `constraint_checker.py` | 能解释 BLOCKED / PASS_WITH_APPROVAL 原因 | Ready |
+| M2R-05 | P1 | 算法方法说明 | Algorithm Definition assumptions/limitations | 每个算法保留方法、假设和局限说明 | Ready |
+| M3R-A1 | P0 | AI 与算法结果接线 | `explanation_service.py` | AI Explanation 只引用 Algorithm Result 和 Evidence | Ready |
+| M3R-A2 | P0 | Command Center 改造 | 算法运行 Dashboard | 首页展示三大算法结果，不再以静态报告 KPI 为主 | Ready |
 
 ## 8. M4 审批、沟通与回写草稿
 

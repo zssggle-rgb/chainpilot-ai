@@ -1,0 +1,44 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:explanation_id",
+  "creation": "2026-05-29 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "explanation_id",
+    "recommendation",
+    "algorithm_run",
+    "prompt_version",
+    "model_name",
+    "status",
+    "generated_text",
+    "evidence_ids_used"
+  ],
+  "fields": [
+    {"fieldname": "explanation_id", "fieldtype": "Data", "in_list_view": 1, "label": "Explanation ID", "reqd": 1, "unique": 1},
+    {"fieldname": "recommendation", "fieldtype": "Link", "in_list_view": 1, "label": "Recommendation", "options": "Recommendation", "reqd": 1},
+    {"fieldname": "algorithm_run", "fieldtype": "Link", "in_list_view": 1, "label": "Algorithm Run", "options": "Algorithm Run", "reqd": 1},
+    {"default": "algorithm-runtime-v1", "fieldname": "prompt_version", "fieldtype": "Data", "label": "Prompt Version"},
+    {"default": "Evidence Template", "fieldname": "model_name", "fieldtype": "Data", "label": "Model Name"},
+    {"default": "Ready", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Ready\nNEED_EVIDENCE\nFailed", "reqd": 1},
+    {"fieldname": "generated_text", "fieldtype": "Text", "label": "Generated Text", "reqd": 1},
+    {"fieldname": "evidence_ids_used", "fieldtype": "Small Text", "label": "Evidence IDs Used", "reqd": 1}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-29 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "AI Explanation",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Buyer", "share": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

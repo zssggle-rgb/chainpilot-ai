@@ -1,0 +1,51 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:algorithm_run_id",
+  "creation": "2026-05-29 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "algorithm_run_id",
+    "algorithm_code",
+    "snapshot_id",
+    "scenario_id",
+    "algorithm_version",
+    "status",
+    "started_at",
+    "finished_at",
+    "duration_ms",
+    "input_payload_json",
+    "summary_result_json",
+    "error_message"
+  ],
+  "fields": [
+    {"fieldname": "algorithm_run_id", "fieldtype": "Data", "in_list_view": 1, "label": "Algorithm Run ID", "reqd": 1, "unique": 1},
+    {"fieldname": "algorithm_code", "fieldtype": "Link", "in_list_view": 1, "label": "Algorithm Code", "options": "Algorithm Definition", "reqd": 1},
+    {"fieldname": "snapshot_id", "fieldtype": "Link", "in_list_view": 1, "label": "Snapshot ID", "options": "SAP Snapshot Run", "reqd": 1},
+    {"fieldname": "scenario_id", "fieldtype": "Link", "label": "Scenario", "options": "Scenario"},
+    {"default": "1.0.0", "fieldname": "algorithm_version", "fieldtype": "Data", "label": "Algorithm Version"},
+    {"default": "Queued", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Queued\nRunning\nSuccess\nFailed", "reqd": 1},
+    {"fieldname": "started_at", "fieldtype": "Datetime", "in_list_view": 1, "label": "Started At"},
+    {"fieldname": "finished_at", "fieldtype": "Datetime", "label": "Finished At"},
+    {"default": "0", "fieldname": "duration_ms", "fieldtype": "Int", "label": "Duration ms"},
+    {"fieldname": "input_payload_json", "fieldtype": "Code", "label": "Input Payload JSON", "options": "JSON"},
+    {"fieldname": "summary_result_json", "fieldtype": "Code", "label": "Summary Result JSON", "options": "JSON"},
+    {"fieldname": "error_message", "fieldtype": "Small Text", "label": "Error Message"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-29 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Algorithm Run",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "started_at",
+  "sort_order": "DESC",
+  "states": []
+}

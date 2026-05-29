@@ -1,0 +1,37 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:parameter_id",
+  "creation": "2026-05-29 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": ["parameter_id", "snapshot_run", "material_code", "plant", "planned_delivery_time", "safety_stock", "moq", "mpq", "lot_size_rule", "mrp_controller", "last_synced_at"],
+  "fields": [
+    {"fieldname": "parameter_id", "fieldtype": "Data", "in_list_view": 1, "label": "Parameter ID", "reqd": 1, "unique": 1},
+    {"fieldname": "snapshot_run", "fieldtype": "Link", "in_list_view": 1, "label": "Snapshot Run", "options": "SAP Snapshot Run", "reqd": 1},
+    {"fieldname": "material_code", "fieldtype": "Data", "in_list_view": 1, "label": "Material Code", "reqd": 1},
+    {"fieldname": "plant", "fieldtype": "Data", "in_list_view": 1, "label": "Plant", "reqd": 1},
+    {"fieldname": "planned_delivery_time", "fieldtype": "Int", "label": "Planned Delivery Time"},
+    {"fieldname": "safety_stock", "fieldtype": "Float", "label": "Safety Stock"},
+    {"fieldname": "moq", "fieldtype": "Float", "label": "MOQ"},
+    {"fieldname": "mpq", "fieldtype": "Float", "label": "MPQ"},
+    {"fieldname": "lot_size_rule", "fieldtype": "Data", "label": "Lot Size Rule"},
+    {"fieldname": "mrp_controller", "fieldtype": "Data", "label": "MRP Controller"},
+    {"fieldname": "last_synced_at", "fieldtype": "Datetime", "label": "Last Synced At"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-29 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "SAP MRP Parameter Snapshot",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

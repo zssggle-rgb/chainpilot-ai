@@ -1,0 +1,50 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:algorithm_code",
+  "creation": "2026-05-29 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "algorithm_code",
+    "algorithm_name",
+    "hard_goal_code",
+    "algorithm_level",
+    "implementation_mode",
+    "entrypoint",
+    "version",
+    "enabled",
+    "input_schema_json",
+    "output_schema_json",
+    "assumptions",
+    "limitations"
+  ],
+  "fields": [
+    {"fieldname": "algorithm_code", "fieldtype": "Data", "in_list_view": 1, "label": "Algorithm Code", "reqd": 1, "unique": 1},
+    {"fieldname": "algorithm_name", "fieldtype": "Data", "in_list_view": 1, "label": "Algorithm Name", "reqd": 1},
+    {"fieldname": "hard_goal_code", "fieldtype": "Data", "in_list_view": 1, "label": "Hard Goal Code", "reqd": 1},
+    {"default": "Professional-lite", "fieldname": "algorithm_level", "fieldtype": "Select", "in_list_view": 1, "label": "Algorithm Level", "options": "Rule\nProfessional-lite\nOptimization\nSimulation", "reqd": 1},
+    {"default": "Embedded Python", "fieldname": "implementation_mode", "fieldtype": "Select", "label": "Implementation Mode", "options": "Embedded Python\nExternal API\nResult Import\nOR-Tools\nPuLP\nPyomo", "reqd": 1},
+    {"fieldname": "entrypoint", "fieldtype": "Data", "label": "Entrypoint", "reqd": 1},
+    {"default": "1.0.0", "fieldname": "version", "fieldtype": "Data", "in_list_view": 1, "label": "Version", "reqd": 1},
+    {"default": "1", "fieldname": "enabled", "fieldtype": "Check", "in_list_view": 1, "label": "Enabled"},
+    {"fieldname": "input_schema_json", "fieldtype": "Code", "label": "Input Schema JSON", "options": "JSON"},
+    {"fieldname": "output_schema_json", "fieldtype": "Code", "label": "Output Schema JSON", "options": "JSON"},
+    {"fieldname": "assumptions", "fieldtype": "Small Text", "label": "Assumptions"},
+    {"fieldname": "limitations", "fieldtype": "Small Text", "label": "Limitations"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-29 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "Algorithm Definition",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

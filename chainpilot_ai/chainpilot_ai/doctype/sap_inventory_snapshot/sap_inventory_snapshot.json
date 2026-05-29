@@ -8,9 +8,11 @@
   "engine": "InnoDB",
   "field_order": [
     "snapshot_id",
+    "snapshot_run",
     "material_code",
     "plant",
     "storage_location",
+    "unrestricted_qty",
     "available_stock",
     "quality_stock",
     "blocked_stock",
@@ -22,9 +24,11 @@
   ],
   "fields": [
     {"fieldname": "snapshot_id", "fieldtype": "Data", "in_list_view": 1, "label": "Snapshot ID", "reqd": 1, "unique": 1},
+    {"fieldname": "snapshot_run", "fieldtype": "Link", "in_list_view": 1, "label": "Snapshot Run", "options": "SAP Snapshot Run"},
     {"fieldname": "material_code", "fieldtype": "Data", "in_list_view": 1, "label": "Material Code", "reqd": 1},
     {"fieldname": "plant", "fieldtype": "Data", "in_list_view": 1, "label": "Plant", "reqd": 1},
     {"fieldname": "storage_location", "fieldtype": "Data", "in_list_view": 1, "label": "Storage Location"},
+    {"fieldname": "unrestricted_qty", "fieldtype": "Float", "label": "Unrestricted Quantity"},
     {"fieldname": "available_stock", "fieldtype": "Float", "label": "Available Stock"},
     {"fieldname": "quality_stock", "fieldtype": "Float", "label": "Quality Stock"},
     {"fieldname": "blocked_stock", "fieldtype": "Float", "label": "Blocked Stock"},

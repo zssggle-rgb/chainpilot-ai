@@ -1,0 +1,39 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:performance_id",
+  "creation": "2026-05-29 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": ["performance_id", "snapshot_run", "supplier", "material_code", "plant", "po_create_date", "planned_delivery_date", "actual_gr_date", "delivered_qty", "ordered_qty", "quality_issue_flag", "last_synced_at"],
+  "fields": [
+    {"fieldname": "performance_id", "fieldtype": "Data", "in_list_view": 1, "label": "Performance ID", "reqd": 1, "unique": 1},
+    {"fieldname": "snapshot_run", "fieldtype": "Link", "in_list_view": 1, "label": "Snapshot Run", "options": "SAP Snapshot Run", "reqd": 1},
+    {"fieldname": "supplier", "fieldtype": "Data", "in_list_view": 1, "label": "Supplier", "reqd": 1},
+    {"fieldname": "material_code", "fieldtype": "Data", "in_list_view": 1, "label": "Material Code", "reqd": 1},
+    {"fieldname": "plant", "fieldtype": "Data", "in_list_view": 1, "label": "Plant", "reqd": 1},
+    {"fieldname": "po_create_date", "fieldtype": "Date", "label": "PO Create Date", "reqd": 1},
+    {"fieldname": "planned_delivery_date", "fieldtype": "Date", "label": "Planned Delivery Date", "reqd": 1},
+    {"fieldname": "actual_gr_date", "fieldtype": "Date", "label": "Actual GR Date", "reqd": 1},
+    {"fieldname": "delivered_qty", "fieldtype": "Float", "label": "Delivered Quantity"},
+    {"fieldname": "ordered_qty", "fieldtype": "Float", "label": "Ordered Quantity"},
+    {"default": "0", "fieldname": "quality_issue_flag", "fieldtype": "Check", "label": "Quality Issue"},
+    {"fieldname": "last_synced_at", "fieldtype": "Datetime", "label": "Last Synced At"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-29 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "SAP Supplier Performance Snapshot",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Planner", "share": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Buyer", "share": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "actual_gr_date",
+  "sort_order": "DESC",
+  "states": []
+}
