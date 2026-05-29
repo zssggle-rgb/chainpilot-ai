@@ -28,6 +28,7 @@
 
     page.set_primary_action("运行回测", () => persist_backtest(page));
     page.set_secondary_action("采购决策", () => frappe.set_route("chainpilot-ai-command-center"));
+    page.add_inner_button("模拟数据", () => frappe.set_route("mock-data-center"));
     page.add_inner_button("SAP 连接", () => frappe.set_route("sap-integration-console"));
     page.add_inner_button("建议", () => frappe.set_route("action-inbox"));
     page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载策略优化...</div></div>`);
@@ -77,13 +78,13 @@
         <div>
           <div class="chainpilot-eyebrow">回测调优</div>
           <h1 class="chainpilot-title">策略优化中心</h1>
-          <p class="chainpilot-subtitle">用模拟历史快照回放三类生产级算法，策略启用前必须人工确认。</p>
+          <p class="chainpilot-subtitle">用生产约束模拟快照回放三类算法，策略启用前必须人工确认；真实 SAP 历史接入后复用同一回测入口。</p>
         </div>
         <div class="chainpilot-meta-grid">
           ${meta_item("推荐策略", data.recommended_strategy_name || "-")}
           ${meta_item("历史窗口", `${chainpilot.number(data.history_days || 0)} 天`)}
+          ${meta_item("求解器", (best.summary_json && solver_name(best.summary_json)) || "混合整数规划")}
           ${meta_item("回写方式", data.sap_writeback_mode === "draft_only" ? "仅生成草稿" : "人工审批")}
-          ${meta_item("上线控制", data.requires_human_approval ? "需人工确认" : "自动")}
         </div>
       </section>
 
@@ -136,7 +137,7 @@
         <div class="chainpilot-panel-header">
           <div>
             <h2 class="chainpilot-panel-title">上线闸门</h2>
-            <p class="chainpilot-panel-note">Mock 阶段验证产品效果，真实 SAP 历史接入后复用同一回测入口。</p>
+            <p class="chainpilot-panel-note">模拟阶段验证产品效果，真实 SAP 历史接入后复用同一回测入口。</p>
           </div>
         </div>
         <div class="chainpilot-action-list">
@@ -232,5 +233,14 @@
 
   function empty_state(message) {
     return `<div class="chainpilot-empty">${chainpilot.escape(message)}</div>`;
+  }
+
+  function solver_name(summaryJson) {
+    try {
+      const parsed = JSON.parse(summaryJson);
+      return parsed.scenario ? "混合整数规划" : "";
+    } catch (error) {
+      return "";
+    }
   }
 })();

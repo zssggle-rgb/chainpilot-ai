@@ -21,6 +21,7 @@
       MOCK_READY: "模拟连接可用",
       DRY_RUN: "配置校验",
       "Dry Run": "配置校验",
+      "Config Ready": "配置已校验",
       Ready: "已就绪",
       Pending: "待处理",
     };
@@ -35,7 +36,9 @@
     });
 
     page.set_primary_action("同步", () => run_sync(page, "all"));
-    page.add_inner_button("测试连接", () => test_connection(page));
+    page.add_inner_button("测试模拟连接", () => test_connection(page, "mock"));
+    page.add_inner_button("校验真实配置", () => test_connection(page, "real"));
+    page.add_inner_button("编辑配置", () => frappe.set_route("Form", "SAP Connection"));
     page.add_inner_button("返回", () => frappe.set_route("chainpilot-ai-command-center"));
     page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载 SAP 连接...</div></div>`);
     load_dashboard(page);
@@ -59,6 +62,9 @@
     const jobs = data.jobs || [];
     const logs = data.logs || [];
     const counts = data.counts || {};
+    const templates = data.connection_templates || [];
+    const scopeParams = data.business_scope_parameters || [];
+    const readiness = data.readiness || {};
     const totalRows = Object.values(counts).reduce((sum, value) => sum + Number(value || 0), 0);
     const lastJob = jobs[0] || {};
 
@@ -68,14 +74,14 @@
           <div class="chainpilot-eyebrow">只读接入</div>
           <h1 class="chainpilot-title">SAP 连接</h1>
           <p class="chainpilot-subtitle">
-            当前使用模拟连接。接入真实 SAP 时，在这里配置接口地址、只读技术用户、接口、字段映射、同步任务和日志。
+            生产接入必须先配置连接方式、认证、业务范围、接口实体集和字段映射；系统只读同步数据，不自动写回 SAP。
           </p>
         </div>
         <div class="chainpilot-meta-grid">
           ${meta_item("连接状态", chainpilot.statusLabel(connection.last_test_status || "Mock Ready"))}
           ${meta_item("快照记录", chainpilot.number(totalRows))}
           ${meta_item("接口数量", chainpilot.number(endpoints.length))}
-          ${meta_item("最近同步", chainpilot.statusLabel(lastJob.status || "Not Run"))}
+          ${meta_item("配置完整性", readiness.ok ? "已满足必填项" : `缺少 ${chainpilot.number((readiness.missing || []).length)} 项`)}
         </div>
       </section>
 
@@ -84,17 +90,22 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">连接配置</h2>
-              <p class="chainpilot-panel-note">当前为模拟连接；真实账号通过平台密码字段或环境变量配置。</p>
+              <p class="chainpilot-panel-note">先保存 SAP Connection，再校验真实配置；校验通过后仍只做只读同步。</p>
             </div>
             ${chainpilot.badge(connection_mode_label(connection.mode), "blue")}
           </div>
           <div class="chainpilot-detail-grid">
             ${meta_item("模式", connection_mode_label(connection.mode))}
+            ${meta_item("接入方式", connection.connection_type || "OData")}
+            ${meta_item("SAP Client", connection.sap_client || "-")}
+            ${meta_item("试点工厂", connection.plants || "-")}
             ${meta_item("最后测试", connection.last_test_at || "-")}
             ${meta_item("测试结果", connection_message(connection))}
           </div>
           <div style="margin-top: 14px;">
-            <button class="chainpilot-link-button" data-test-connection="1">测试连接</button>
+            <button class="chainpilot-link-button" data-open-config="1">编辑配置</button>
+            <button class="chainpilot-filter" data-test-connection="real">校验真实配置</button>
+            <button class="chainpilot-filter" data-test-connection="mock">测试模拟连接</button>
             <button class="chainpilot-filter" data-sync-endpoint="all">同步</button>
           </div>
         </div>
@@ -112,6 +123,24 @@
             ${snapshot_count("采购申请", counts["SAP PR Line"])}
             ${snapshot_count("采购订单", counts["SAP PO Line"])}
           </div>
+        </div>
+      </section>
+
+      <section class="chainpilot-panel" style="margin-top: 18px;">
+        <div class="chainpilot-panel-header">
+          <div>
+            <h2 class="chainpilot-panel-title">真实 SAP 接入参数</h2>
+            <p class="chainpilot-panel-note">按接入方式准备参数；缺少必填项时不允许切到真实同步。</p>
+          </div>
+          ${chainpilot.badge(readiness.ok ? "配置可校验" : "配置不完整", readiness.ok ? "green" : "amber")}
+        </div>
+        <div class="chainpilot-action-list">
+          ${templates.map(template_card).join("")}
+        </div>
+        <div class="chainpilot-detail-grid" style="margin-top: 14px;">
+          ${meta_item("缺失字段", (readiness.missing || []).join("、") || "无")}
+          ${meta_item("业务范围", scopeParams.join("、"))}
+          ${meta_item("安全要求", (readiness.warnings || []).join("；") || "只读账号已确认")}
         </div>
       </section>
 
@@ -153,21 +182,23 @@
       </section>
     `);
 
-    page.main.find("[data-test-connection]").on("click", () => test_connection(page));
+    page.main.find("[data-open-config]").on("click", () => frappe.set_route("Form", "SAP Connection"));
+    page.main.find("[data-test-connection]").on("click", (event) => test_connection(page, $(event.currentTarget).data("test-connection")));
     page.main.find("[data-sync-endpoint]").on("click", (event) => {
       run_sync(page, $(event.currentTarget).data("sync-endpoint"));
     });
   }
 
-  async function test_connection(page) {
-    frappe.show_alert({ message: "正在测试模拟连接...", indicator: "blue" });
+  async function test_connection(page, mode = "mock") {
+    const isMock = mode === "mock";
+    frappe.show_alert({ message: isMock ? "正在测试模拟连接..." : "正在校验真实配置...", indicator: "blue" });
     const response = await frappe.call({
       method: "chainpilot_ai.sap_connector.service.test_connection_rpc",
-      args: { mode: "mock" },
+      args: { mode: isMock ? "mock" : "OData" },
     });
     const result = response.message || {};
     frappe.show_alert({
-      message: result.ok ? "模拟连接可用" : "连接测试未通过",
+      message: result.ok ? (isMock ? "模拟连接可用" : "真实配置已通过本地校验") : "连接测试未通过",
       indicator: result.ok ? "green" : "orange",
     });
     load_dashboard(page);
@@ -199,6 +230,25 @@
         <div>${metric(endpoint.enabled ? "启用" : "停用", "状态")}</div>
         <div>
           <button class="chainpilot-link-button" data-sync-endpoint="${chainpilot.escape(endpoint.endpoint_name || "")}">同步</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function template_card(template) {
+    return `
+      <div class="chainpilot-action-card">
+        <div class="chainpilot-action-main">
+          <div class="chainpilot-action-id">${chainpilot.escape(template.connection_type)}</div>
+          <div class="chainpilot-action-title">${chainpilot.escape(template.title)}</div>
+          <div class="chainpilot-action-subtitle">${chainpilot.escape(template.description)}</div>
+        </div>
+        <div>${metric((template.required || []).length, "必填参数")}</div>
+        <div>${metric((template.optional || []).length, "可选参数")}</div>
+        <div>${chainpilot.badge("只读", "green")}</div>
+        <div class="chainpilot-span-row">
+          <div class="chainpilot-action-subtitle">必填：${chainpilot.escape((template.required || []).join("、"))}</div>
+          <div class="chainpilot-action-subtitle">安全：${chainpilot.escape((template.security || []).join("；"))}</div>
         </div>
       </div>
     `;
@@ -286,6 +336,7 @@
 
   function connection_message(connection) {
     if ((connection.last_test_status || "") === "Mock Ready") return "模拟连接可用";
+    if ((connection.last_test_status || "") === "Config Ready") return "真实配置已通过本地校验";
     if ((connection.last_test_status || "") === "Dry Run") return "真实连接未配置，当前仅校验配置";
     return connection.last_test_message || "模拟连接可用";
   }
@@ -295,6 +346,8 @@
       mock: "模拟连接",
       Mock: "模拟连接",
       OData: "真实连接",
+      "BTP Destination": "BTP 连接",
+      RFC: "RFC 连接",
       "Dry Run": "配置校验",
     };
     return labels[value] || value || "-";

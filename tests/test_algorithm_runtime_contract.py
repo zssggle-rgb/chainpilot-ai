@@ -22,6 +22,8 @@ class AlgorithmRuntimeContractTest(unittest.TestCase):
         self.assertGreaterEqual(validation["counts"]["pr_lines"] + validation["counts"]["po_lines"], 20)
         self.assertGreaterEqual(validation["counts"]["planned_demands"], 10)
         self.assertEqual(DEFAULT_MOCK_SAP_SNAPSHOT_PATH.name, "mock_sap_snapshot_v1.json")
+        self.assertEqual(data["snapshot"]["source_system"], "SAP_MOCK_REALISTIC")
+        self.assertGreaterEqual(validation["counts"]["supplier_performance"], 100)
         snapshot_run = build_snapshot_run(data)
         self.assertEqual(snapshot_run["snapshot_id"], data["snapshot"]["snapshot_id"])
         self.assertEqual(snapshot_run["record_count_mrp_parameters"], validation["counts"]["mrp_parameters"])
@@ -36,6 +38,8 @@ class AlgorithmRuntimeContractTest(unittest.TestCase):
         cash_summary = next(run["summary"] for run in runtime["runs"] if run["run"]["algorithm_code"] == "CASH_RELEASE_PR_PO_OPT")
         self.assertGreaterEqual(cash_summary["selected_actions"], 10)
         self.assertGreaterEqual(cash_summary["blocked_actions"], 1)
+        self.assertIn(cash_summary["solver_name"], {"HiGHS MILP", "精确整数枚举"})
+        self.assertIn(cash_summary["solver_status"], {"OPTIMAL", "FEASIBLE", "TRUNCATED_OPTIMAL"})
 
     def test_algorithm_results_convert_to_traceable_recommendations(self) -> None:
         runtime = run_mvp_algorithms(load_mock_sap_snapshot())

@@ -10,7 +10,7 @@ from chainpilot_ai.approval.service import dry_run_package
 from chainpilot_ai.learning.service import build_rule_adjustment, calculate_learning_metrics
 from chainpilot_ai.optimization.service import calculate_cash_release
 from chainpilot_ai.recommendation.service import explanation_status
-from chainpilot_ai.sap_connector.service import get_entity_set, sync_endpoint, test_connection, upsert_snapshot
+from chainpilot_ai.sap_connector.service import get_entity_set, sync_endpoint, test_connection, upsert_snapshot, validate_connection_config
 from chainpilot_ai.scenario.service import parse_user_goal
 from chainpilot_ai.scripts.import_demo_data import DEFAULT_DEMO_PATH, load_demo_data, validate_demo_data
 from chainpilot_ai.scripts.verify_phase_0 import REQUIRED_DOCTYPES, REQUIRED_MODULES, ROOT
@@ -89,6 +89,7 @@ class Phase0ContractTest(unittest.TestCase):
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "ai_copilot" / "ai_copilot.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "execution_monitor" / "execution_monitor.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "learning_center" / "learning_center.js",
+            ROOT / "chainpilot_ai" / "chainpilot_ai" / "page" / "mock_data_center" / "mock_data_center.js",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "scenario" / "scenario.json",
             ROOT / "chainpilot_ai" / "public" / "css" / "chainpilot_ai.css",
             ROOT / "chainpilot_ai" / "chainpilot_ai" / "doctype" / "recommendation" / "recommendation.js",
@@ -102,6 +103,8 @@ class Phase0ContractTest(unittest.TestCase):
         self.assertEqual(next_state("CREATED"), "PARSE_USER_GOAL")
         self.assertEqual(test_connection({"mode": "mock"})["status"], "MOCK_READY")
         self.assertEqual(test_connection(None)["status"], "NOT_CONFIGURED")
+        real_config = validate_connection_config({"mode": "OData", "connection_type": "OData", "base_url": "https://sap.example.com", "sap_client": "100", "auth_type": "Basic", "username": "readonly", "password": "secret", "plants": "CN01", "read_only_confirmed": 1})
+        self.assertTrue(real_config["ok"], real_config)
         rows = get_entity_set("purchase_requisition_items", {"mode": "mock", "plant": "CN01"})
         self.assertGreaterEqual(len(rows), 1)
         material_rows = get_entity_set("material_master", {"mode": "mock", "plant": "CN01"})

@@ -17,6 +17,7 @@
     page.add_inner_button("建议", () => frappe.set_route("action-inbox"));
     page.add_inner_button("方案", () => frappe.set_route("scenario-studio"));
     page.add_inner_button("策略", () => frappe.set_route("strategy-optimization-center"));
+    page.add_inner_button("模拟数据", () => frappe.set_route("mock-data-center"));
     page.add_inner_button("智能", () => frappe.set_route("ai-copilot"));
     page.add_inner_button("监控", () => frappe.set_route("execution-monitor"));
     page.add_inner_button("学习", () => frappe.set_route("learning-center"));
@@ -49,7 +50,7 @@
           <div class="chainpilot-eyebrow">算法运行</div>
           <h1 class="chainpilot-title">供应链算法决策</h1>
           <p class="chainpilot-subtitle">
-            基于 Mock SAP 明细快照运行缺料风险、现金释放和主数据体检算法。
+            基于 SAP 模拟明细快照运行缺料风险、现金释放和主数据体检算法。
           </p>
         </div>
         <div class="chainpilot-meta-grid">

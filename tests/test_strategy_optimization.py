@@ -4,6 +4,7 @@ from chainpilot_ai.strategy.backtest import run_strategy_backtest, tune_strategy
 from chainpilot_ai.strategy.mock_history import generate_mock_history
 from chainpilot_ai.strategy.policy import scenario_from_strategy, strategy_presets
 from chainpilot_ai.strategy.service import get_strategy_optimization_dashboard
+from chainpilot_ai.snapshots.mock_dashboard import get_mock_data_dashboard
 
 
 def test_strategy_presets_are_draft_only() -> None:
@@ -32,6 +33,8 @@ def test_backtest_returns_strategy_metrics() -> None:
     assert 0 <= result["precision_rate"] <= 1
     assert result["cash_release_total"] > 0
     assert result["hard_constraint_violations"] == 0
+    assert result["recall_rate"] >= 0.8
+    assert result["precision_rate"] >= 0.8
 
 
 def test_strategy_dashboard_compares_three_presets() -> None:
@@ -47,3 +50,12 @@ def test_tune_strategy_presets_recommends_existing_strategy() -> None:
     tuned = tune_strategy_presets(history_days=45)
     strategy_ids = {strategy["strategy_id"] for strategy in tuned["strategies"]}
     assert tuned["recommended_strategy_id"] in strategy_ids
+
+
+def test_mock_dashboard_exposes_constraint_validation_set() -> None:
+    dashboard = get_mock_data_dashboard(45)
+    assert dashboard["ok"]
+    assert dashboard["counts"]["pr_lines"] >= 30
+    assert dashboard["cash_summary"]["solver_status"] in {"OPTIMAL", "FEASIBLE", "TRUNCATED_OPTIMAL"}
+    cases = {row["case"] for row in dashboard["constraint_cases"]}
+    assert {"冻结期", "MOQ/MPQ", "保护物料", "同物料多单联动", "审批容量"}.issubset(cases)

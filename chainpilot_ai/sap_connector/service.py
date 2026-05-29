@@ -200,6 +200,44 @@ SNAPSHOT_FIELDS: dict[str, tuple[str, ...]] = {
     ),
 }
 
+SAP_CONNECTION_TEMPLATES: list[dict[str, Any]] = [
+    {
+        "connection_type": "OData",
+        "title": "标准接口接入（OData）",
+        "description": "通过 SAP Gateway 暴露的标准 OData API 读取物料、库存、采购申请和采购订单。",
+        "required": ["SAP 网关地址", "SAP Client", "认证方式", "只读技术用户", "密码或密钥", "服务路径", "实体集", "字段映射"],
+        "optional": ["OAuth 令牌地址", "OAuth Client ID", "OAuth Client Secret", "CSRF Token", "超时时间", "校验证书"],
+        "security": ["账号只授予读取权限", "真实写回保持草稿模式", "接口日志不保存密码"],
+    },
+    {
+        "connection_type": "BTP Destination",
+        "title": "云目标接入（BTP Destination）",
+        "description": "通过 BTP Destination 和 Cloud Connector 访问企业内网 SAP。",
+        "required": ["BTP Destination 名称", "代理类型", "认证方式", "SAP Client", "Cloud Connector Location ID", "服务路径", "实体集"],
+        "optional": ["Principal Propagation", "OAuth 配置", "虚拟主机", "超时时间"],
+        "security": ["Destination 维护凭据", "Cloud Connector 限定虚拟主机和路径", "ChainPilot 只保存 Destination 名称"],
+    },
+    {
+        "connection_type": "RFC",
+        "title": "远程函数接入（RFC/BAPI）",
+        "description": "当 OData 不可用时，通过 RFC SDK 调用只读 BAPI 或自定义函数。",
+        "required": ["应用服务器地址", "系统编号", "SAP Client", "只读技术用户", "密码或密钥", "语言", "RFC 函数清单"],
+        "optional": ["消息服务器", "登录组", "SAProuter 字符串", "SNC", "字段映射"],
+        "security": ["需要部署 SAP NW RFC SDK", "函数白名单必须只读", "生产写回仍然禁用"],
+    },
+]
+
+SAP_BUSINESS_SCOPE_PARAMETERS = [
+    "公司代码",
+    "工厂",
+    "采购组织",
+    "采购组",
+    "物料类型",
+    "MRP 控制员",
+    "历史回溯起止日期",
+    "同步时区",
+]
+
 
 def _whitelist(fn):
     if frappe:
@@ -237,7 +275,38 @@ def test_connection(config: dict[str, Any] | None = None) -> dict[str, Any]:
         return {"ok": False, "status": "NOT_CONFIGURED", "message": "SAP 连接尚未配置。"}
     if mode == "mock":
         return {"ok": True, "status": "MOCK_READY", "message": "正在使用模拟 SAP 只读适配器。"}
-    return {"ok": False, "status": "DRY_RUN", "message": "真实 SAP 只读账号尚未配置，当前仅做配置校验。"}
+    validation = validate_connection_config(config)
+    if validation["ok"]:
+        return {"ok": True, "status": "CONFIG_READY", "message": "真实 SAP 参数已通过本地校验；当前仍不发起生产写回。", "validation": validation}
+    return {"ok": False, "status": "DRY_RUN", "message": "真实 SAP 参数不完整，当前仅做配置校验。", "validation": validation}
+
+
+def validate_connection_config(config: dict[str, Any] | None = None) -> dict[str, Any]:
+    config = config or {}
+    mode = str(config.get("mode") or "Mock")
+    connection_type = str(config.get("connection_type") or mode or "OData")
+    if mode == "Mock":
+        return {"ok": True, "missing": [], "warnings": [], "connection_type": "Mock"}
+    required_by_type = {
+        "OData": ["base_url", "sap_client", "auth_type"],
+        "BTP Destination": ["destination_name", "sap_client", "auth_type", "proxy_type"],
+        "RFC": ["application_server_host", "system_number", "sap_client", "username", "password", "language"],
+    }
+    required = list(required_by_type.get(connection_type, required_by_type["OData"]))
+    auth_type = str(config.get("auth_type") or "")
+    if auth_type == "Basic":
+        required += ["username", "password"]
+    elif auth_type == "OAuth2":
+        required += ["oauth_token_url", "oauth_client_id", "oauth_client_secret"]
+    missing = [field for field in required if not config.get(field)]
+    warnings = []
+    if not config.get("read_only_confirmed"):
+        warnings.append("需要确认技术用户只有读取权限。")
+    if connection_type in {"OData", "BTP Destination"} and not config.get("csrf_enabled", True):
+        warnings.append("建议启用 CSRF Token 获取，用于未来草稿写回前的安全校验。")
+    if not config.get("plants"):
+        warnings.append("建议先限定试点工厂，避免同步范围过大。")
+    return {"ok": not missing, "missing": missing, "warnings": warnings, "connection_type": connection_type}
 
 
 def get_entity_set(endpoint_name: str, params: dict[str, Any] | None = None) -> list[dict[str, Any]]:
@@ -454,9 +523,17 @@ def ensure_mock_configuration() -> dict[str, Any]:
     updated = 0
     connection = frappe.get_single("SAP Connection")
     connection.mode = "Mock"
+    if hasattr(connection, "connection_type"):
+        connection.connection_type = "OData"
     connection.auth_type = "None"
     connection.timeout_seconds = 30
     connection.verify_ssl = 1
+    if hasattr(connection, "csrf_enabled"):
+        connection.csrf_enabled = 1
+    if hasattr(connection, "timezone"):
+        connection.timezone = "Asia/Shanghai"
+    if hasattr(connection, "plants"):
+        connection.plants = "CN01"
     connection.last_test_status = "Mock Ready"
     connection.last_test_message = "正在使用确定性模拟 SAP 只读适配器。"
     connection.last_test_at = _now()
@@ -483,11 +560,36 @@ def ensure_mock_configuration() -> dict[str, Any]:
 
 @_whitelist
 def test_connection_rpc(mode: str = "mock") -> dict[str, Any]:
-    result = test_connection({"mode": mode})
+    config = {"mode": mode}
+    if _frappe_ready() and mode.lower() != "mock":
+        connection = frappe.get_single("SAP Connection")
+        config = {
+            "mode": connection.mode if connection.mode != "Mock" else mode,
+            "connection_type": getattr(connection, "connection_type", "OData"),
+            "base_url": getattr(connection, "base_url", None),
+            "destination_name": getattr(connection, "destination_name", None),
+            "sap_client": getattr(connection, "sap_client", None),
+            "auth_type": getattr(connection, "auth_type", None),
+            "username": getattr(connection, "username", None),
+            "password": getattr(connection, "password", None),
+            "oauth_token_url": getattr(connection, "oauth_token_url", None),
+            "oauth_client_id": getattr(connection, "oauth_client_id", None),
+            "oauth_client_secret": getattr(connection, "oauth_client_secret", None),
+            "proxy_type": getattr(connection, "proxy_type", None),
+            "application_server_host": getattr(connection, "application_server_host", None),
+            "system_number": getattr(connection, "system_number", None),
+            "language": getattr(connection, "language", None),
+            "read_only_confirmed": getattr(connection, "read_only_confirmed", None),
+            "csrf_enabled": getattr(connection, "csrf_enabled", None),
+            "plants": getattr(connection, "plants", None),
+        }
+    result = test_connection(config)
     if _frappe_ready():
         connection = frappe.get_single("SAP Connection")
         connection.mode = "Mock" if mode.lower() == "mock" else "OData"
-        connection.last_test_status = "Mock Ready" if result["ok"] else "Dry Run"
+        if hasattr(connection, "connection_type") and not connection.connection_type:
+            connection.connection_type = "OData"
+        connection.last_test_status = "Mock Ready" if result.get("status") == "MOCK_READY" else "Config Ready" if result.get("status") == "CONFIG_READY" else "Dry Run"
         connection.last_test_message = result["message"]
         connection.last_test_at = _now()
         connection.save(ignore_permissions=True)
@@ -517,6 +619,9 @@ def get_sync_dashboard() -> dict[str, Any]:
             "connection": test_connection({"mode": "mock"}),
             "endpoints": [config.__dict__ for config in DEFAULT_ENDPOINTS.values()],
             "counts": {config.target_doctype: len(MOCK_ENDPOINTS[config.endpoint_name]) for config in DEFAULT_ENDPOINTS.values()},
+            "connection_templates": SAP_CONNECTION_TEMPLATES,
+            "business_scope_parameters": SAP_BUSINESS_SCOPE_PARAMETERS,
+            "readiness": validate_connection_config({"mode": "Mock"}),
             "jobs": [],
             "logs": [],
         }
@@ -548,12 +653,47 @@ def get_sync_dashboard() -> dict[str, Any]:
         "ok": True,
         "connection": {
             "mode": connection.mode,
+            "connection_type": getattr(connection, "connection_type", "OData"),
+            "base_url": getattr(connection, "base_url", None),
+            "destination_name": getattr(connection, "destination_name", None),
+            "sap_client": getattr(connection, "sap_client", None),
+            "auth_type": getattr(connection, "auth_type", None),
+            "proxy_type": getattr(connection, "proxy_type", None),
+            "plants": getattr(connection, "plants", None),
+            "company_codes": getattr(connection, "company_codes", None),
+            "purchasing_organizations": getattr(connection, "purchasing_organizations", None),
+            "read_only_confirmed": getattr(connection, "read_only_confirmed", None),
+            "csrf_enabled": getattr(connection, "csrf_enabled", None),
             "last_test_status": connection.last_test_status,
             "last_test_message": connection.last_test_message,
             "last_test_at": connection.last_test_at,
         },
         "counts": counts,
         "endpoints": endpoints,
+        "connection_templates": SAP_CONNECTION_TEMPLATES,
+        "business_scope_parameters": SAP_BUSINESS_SCOPE_PARAMETERS,
+        "readiness": validate_connection_config(
+            {
+                "mode": connection.mode,
+                "connection_type": getattr(connection, "connection_type", "OData"),
+                "base_url": getattr(connection, "base_url", None),
+                "destination_name": getattr(connection, "destination_name", None),
+                "sap_client": getattr(connection, "sap_client", None),
+                "auth_type": getattr(connection, "auth_type", None),
+                "username": getattr(connection, "username", None),
+                "password": getattr(connection, "password", None),
+                "oauth_token_url": getattr(connection, "oauth_token_url", None),
+                "oauth_client_id": getattr(connection, "oauth_client_id", None),
+                "oauth_client_secret": getattr(connection, "oauth_client_secret", None),
+                "proxy_type": getattr(connection, "proxy_type", None),
+                "application_server_host": getattr(connection, "application_server_host", None),
+                "system_number": getattr(connection, "system_number", None),
+                "language": getattr(connection, "language", None),
+                "read_only_confirmed": getattr(connection, "read_only_confirmed", None),
+                "csrf_enabled": getattr(connection, "csrf_enabled", None),
+                "plants": getattr(connection, "plants", None),
+            }
+        ),
         "jobs": jobs,
         "logs": logs,
     }
