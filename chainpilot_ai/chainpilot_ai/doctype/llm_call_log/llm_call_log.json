@@ -1,0 +1,46 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:call_id",
+  "creation": "2026-05-29 00:00:00.000000",
+  "doctype": "DocType",
+  "editable_grid": 1,
+  "engine": "InnoDB",
+  "field_order": [
+    "call_id",
+    "task_code",
+    "provider",
+    "model",
+    "schema_version",
+    "status",
+    "duration_ms",
+    "input_hash",
+    "output_hash",
+    "error_message"
+  ],
+  "fields": [
+    {"fieldname": "call_id", "fieldtype": "Data", "in_list_view": 1, "label": "Call ID", "reqd": 1, "unique": 1},
+    {"fieldname": "task_code", "fieldtype": "Data", "in_list_view": 1, "label": "Task Code", "reqd": 1},
+    {"fieldname": "provider", "fieldtype": "Data", "label": "Provider", "reqd": 1},
+    {"fieldname": "model", "fieldtype": "Data", "in_list_view": 1, "label": "Model", "reqd": 1},
+    {"fieldname": "schema_version", "fieldtype": "Data", "label": "Schema Version", "reqd": 1},
+    {"default": "Success", "fieldname": "status", "fieldtype": "Select", "in_list_view": 1, "label": "Status", "options": "Success\nFailed", "reqd": 1},
+    {"default": "0", "fieldname": "duration_ms", "fieldtype": "Int", "label": "Duration ms"},
+    {"fieldname": "input_hash", "fieldtype": "Data", "label": "Input Hash", "reqd": 1},
+    {"fieldname": "output_hash", "fieldtype": "Data", "label": "Output Hash"},
+    {"fieldname": "error_message", "fieldtype": "Small Text", "label": "Error Message"}
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2026-05-29 00:00:00.000000",
+  "module": "ChainPilot AI",
+  "name": "LLM Call Log",
+  "owner": "Administrator",
+  "permissions": [
+    {"create": 1, "delete": 1, "email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Admin", "share": 1, "write": 1},
+    {"email": 1, "export": 1, "print": 1, "read": 1, "report": 1, "role": "ChainPilot Supply Chain Director", "share": 1}
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}
