@@ -77,17 +77,36 @@ def _generate_openai_compatible(
         "model": config.model,
         "temperature": temperature,
         "max_tokens": max_tokens,
+        "response_format": {"type": "json_object"},
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
         ],
     }
+    if _should_disable_thinking(config):
+        body["thinking"] = {"type": "disabled"}
     response = requests.post(
         url,
         headers={"Authorization": f"Bearer {config.api_key}", "Content-Type": "application/json"},
         json=body,
         timeout=config.timeout_seconds,
     )
+    if response.status_code == 400 and "response_format" in response.text:
+        body.pop("response_format", None)
+        response = requests.post(
+            url,
+            headers={"Authorization": f"Bearer {config.api_key}", "Content-Type": "application/json"},
+            json=body,
+            timeout=config.timeout_seconds,
+        )
+    if response.status_code == 400 and "thinking" in response.text:
+        body.pop("thinking", None)
+        response = requests.post(
+            url,
+            headers={"Authorization": f"Bearer {config.api_key}", "Content-Type": "application/json"},
+            json=body,
+            timeout=config.timeout_seconds,
+        )
     if response.status_code >= 400:
         raise LLMProviderError(f"LLM 调用失败：HTTP {response.status_code}，{_safe_error(response.text)}")
     payload = response.json()
@@ -160,6 +179,13 @@ def _config_value(site_key: str, env_key: str) -> str | None:
     except Exception:
         return None
     return None
+
+
+def _should_disable_thinking(config: LLMConfig) -> bool:
+    value = _config_value("chainpilot_llm_disable_thinking", "CHAINPILOT_LLM_DISABLE_THINKING")
+    if value is not None:
+        return str(value).lower() in {"1", "true", "yes", "on"}
+    return config.model.lower().startswith("glm-5")
 
 
 def _safe_error(text: str) -> str:

@@ -164,6 +164,6 @@ bench --site chainpilot.localhost execute chainpilot_ai.scripts.verify_algorithm
 ## 8. 仍需后续加强
 
 1. 当前现金释放优化为 Professional-lite 贪心实现，后续可替换 OR-Tools CP-SAT。
-2. 当前 Algorithm Runtime 默认仍使用证据模板解释；已新增 Volcengine Coding Plan OpenAI/Anthropic 兼容 Provider、LLM Call Log 和真实连接测试脚本。2026-05-29 本机测试已打到火山接口，但返回 `InvalidSubscription`，需账号具备有效 Coding Plan 订阅后复测。
+2. 当前 Algorithm Runtime 默认仍使用证据模板解释；已新增 Volcengine Ark Plan OpenAI/Anthropic 兼容 Provider、LLM Call Log 和真实连接测试脚本。2026-05-29 本机 `glm-5.1` 连接和证据绑定解释测试已通过；页面批量触发真实 LLM 解释仍需后续接线。
 3. 当前页面未新增独立 Shortage Radar、Cash Release Workbench、Master Data Health 页面，Command Center 已先承载三类结果。
 4. 当前真实 SAP OData 仍未接入，后续只替换 Snapshot Loader，不重写 Algorithm Runtime。

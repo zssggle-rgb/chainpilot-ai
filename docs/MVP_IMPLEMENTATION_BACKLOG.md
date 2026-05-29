@@ -178,10 +178,10 @@ v2.0 改进后，MVP 主闭环升级为：
 
 | ID | 优先级 | 工作项 | 交付物 | 验收标准 | 状态 |
 | --- | --- | --- | --- | --- | --- |
-| M3R-01 | P0 | AI Provider 基础设施 | Volcengine OpenAI/Anthropic 兼容 Provider、LLM Call Log、连接测试脚本 | 本地已配置 Coding Plan endpoint；真实调用返回 InvalidSubscription，需火山订阅有效后复测；密钥不入 Git | Blocked by Provider Subscription |
+| M3R-01 | P0 | AI Provider 基础设施 | Volcengine OpenAI/Anthropic 兼容 Provider、LLM Call Log、连接测试脚本 | 本地已配置 Ark Plan endpoint，`glm-5.1` 连接和证据解释测试通过；密钥不入 Git | Ready |
 | M3R-02 | P0 | 任务 SOP 与 Schema | 证据解释任务 Schema、业务校验器 | LLM 输出先过 JSON、evidence_id、越权回写校验 | Partial |
 | M3R-03 | P0 | 真实需求澄清器 | LLM 结构化解析 + 规则校验 | 20 条中文目标关键字段解析准确率不低于 90% | Todo |
-| M3R-04 | P0 | 证据解释器 | Evidence Bundle 检索、解释生成、证据校验 | 代码链路已接真实 Provider；待火山订阅有效后完成真实模型通过项 | Blocked by Provider Subscription |
+| M3R-04 | P0 | 证据解释器 | Evidence Bundle 检索、解释生成、证据校验 | 真实模型解释已通过，输出引用有效 evidence_id，仍需接入页面触发和批量重试机制 | Partial |
 | M3R-05 | P1 | 方案与审批摘要 | Scenario Debate、Approval Summary | 摘要中的金额、数量、风险均来自业务对象 | Todo |
 | M3R-06 | P1 | 沟通、监控、学习 | Supplier Communication、Execution Monitoring、Learning Signaling | 只生成草稿和调权建议，必须人工确认 | Todo |
 

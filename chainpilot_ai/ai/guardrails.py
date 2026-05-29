@@ -20,7 +20,8 @@ def parse_json_object(text: str) -> dict[str, Any]:
     except json.JSONDecodeError:
         match = re.search(r"\{.*\}", stripped, flags=re.S)
         if not match:
-            raise LLMGuardrailError("LLM 没有返回 JSON 对象")
+            excerpt = " ".join(stripped.split())[:300]
+            raise LLMGuardrailError(f"LLM 没有返回 JSON 对象。返回摘要：{excerpt or '<empty>'}")
         payload = json.loads(match.group(0))
     if not isinstance(payload, dict):
         raise LLMGuardrailError("LLM 输出必须是 JSON 对象")

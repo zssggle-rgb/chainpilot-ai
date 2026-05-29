@@ -2,15 +2,16 @@
 
 ## 当前配置
 
-本机 `chainpilot.localhost` 已配置 Volcengine Ark Coding Plan：
+本机 `chainpilot.localhost` 已配置 Volcengine Ark Plan：
 
 | 配置项 | 值 |
 | --- | --- |
 | provider | `volcengine_openai` |
-| OpenAI compatible base_url | `https://ark.cn-beijing.volces.com/api/coding/v3` |
-| Anthropic compatible base_url | `https://ark.cn-beijing.volces.com/api/coding` |
-| model | `MiniMax-M2.5` |
+| OpenAI compatible base_url | `https://ark.cn-beijing.volces.com/api/plan/v3` |
+| Anthropic compatible base_url | `https://ark.cn-beijing.volces.com/api/plan` |
+| model | `glm-5.1` |
 | timeout | `90` 秒 |
+| thinking | `disabled` |
 
 API Key 已写入本机 Frappe site config，不进入 Git、不写入日志。
 
@@ -33,15 +34,21 @@ bench --site chainpilot.localhost execute chainpilot_ai.scripts.test_llm_provide
 
 ```json
 {
-  "ok": false,
-  "stage": "connection",
-  "status": "Failed",
-  "error": "LLM 调用失败：HTTP 400，InvalidSubscription",
-  "hint": "请确认火山 Ark Coding Plan 订阅有效，且当前 key 有权访问配置的 Coding Plan endpoint。"
+  "ok": true,
+  "connection": {
+    "ok": true,
+    "provider": "volcengine_openai",
+    "model": "glm-5.1"
+  },
+  "explanation": {
+    "status": "Ready",
+    "model_name": "glm-5.1",
+    "prompt_version": "evidence-explanation-v1"
+  }
 }
 ```
 
-OpenAI 兼容和 Anthropic 兼容 endpoint 均返回相同的 `InvalidSubscription`，说明本地代码已连接到火山服务，阻塞点是账号 Coding Plan 订阅或 key 权限。
+`glm-5.1` 默认会消耗 token 输出 `reasoning_content`，可能导致 `message.content` 为空。当前 Provider 对 `glm-5` 系列默认发送 `thinking: {"type": "disabled"}`，用于稳定生成结构化业务 JSON。
 
 ## 安全边界
 
@@ -74,8 +81,9 @@ LLM 只用于：
 ```bash
 cd /Users/sjs/chainpilot-ai-bench
 bench --site chainpilot.localhost set-config chainpilot_llm_provider volcengine_openai
-bench --site chainpilot.localhost set-config chainpilot_llm_base_url https://ark.cn-beijing.volces.com/api/coding/v3
-bench --site chainpilot.localhost set-config chainpilot_llm_model MiniMax-M2.5
+bench --site chainpilot.localhost set-config chainpilot_llm_base_url https://ark.cn-beijing.volces.com/api/plan/v3
+bench --site chainpilot.localhost set-config chainpilot_llm_model glm-5.1
 bench --site chainpilot.localhost set-config chainpilot_llm_timeout_seconds 90
+bench --site chainpilot.localhost set-config chainpilot_llm_disable_thinking true
 bench --site chainpilot.localhost set-config chainpilot_llm_api_key "<YOUR_API_KEY>"
 ```

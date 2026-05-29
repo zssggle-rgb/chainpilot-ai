@@ -28,6 +28,8 @@ non_execution_impact: string
 approval_focus: string[]
 evidence_ids: string[]
 limitations: string[]
+输出示例：
+{"conclusion":"建议进入审批复核。","reasons":["证据显示该动作满足当前约束。"],"risks":["需确认供应商交付风险。"],"non_execution_impact":"不处理会保留当前库存或缺料风险。","approval_focus":["确认执行窗口。"],"evidence_ids":["EVD-EXAMPLE"],"limitations":["仅基于当前快照。"]}
 """
 
 
