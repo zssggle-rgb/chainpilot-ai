@@ -69,20 +69,22 @@
     const issues = data.issues || [];
     const counts = data.counts || {};
     const latest = runs[0] || {};
+    const assistant = data.assistant || {};
+    const llm = data.llm || {};
 
     page.main.find(".chainpilot-shell").html(`
       <section class="chainpilot-hero">
         <div>
-          <div class="chainpilot-eyebrow">智能生成</div>
-          <h1 class="chainpilot-title">智能助手</h1>
+          <div class="chainpilot-eyebrow">AI 工作台</div>
+          <h1 class="chainpilot-title">业务目标到采购动作</h1>
           <p class="chainpilot-subtitle">
-            输入业务目标，生成方案、优化建议、证据和约束校验。
+            输入资金、供应和审批目标，系统生成可复核的采购建议和执行材料。
           </p>
         </div>
         <div class="chainpilot-meta-grid">
+          ${meta_item("交互框", assistant.label || "内置业务助手")}
+          ${meta_item("模型", llm.configured ? llm.model : "未配置")}
           ${meta_item("运行次数", chainpilot.number(counts["Agent Run"] || 0))}
-          ${meta_item("工具日志", chainpilot.number(counts["Agent Tool Log"] || 0))}
-          ${meta_item("数据质量提示", chainpilot.number(counts["Data Quality Issue"] || 0))}
           ${meta_item("最近状态", chainpilot.statusLabel(latest.status || "Not Run"))}
         </div>
       </section>
@@ -92,13 +94,14 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">业务目标</h2>
-              <p class="chainpilot-panel-note">示例：减少 8000 万采购资金占用，不影响空调旺季生产，优先调整采购申请。</p>
+              <p class="chainpilot-panel-note">${chainpilot.escape(assistant.description || "内置助手负责目标理解和业务材料生成。")}</p>
             </div>
-            ${chainpilot.badge("模拟运行", "blue")}
+            ${chainpilot.badge(llm.configured ? "真实模型" : "规则降级", llm.configured ? "green" : "amber")}
           </div>
           <textarea class="form-control" rows="5" data-agent-goal>减少 8000 万采购资金占用，不影响空调旺季生产，优先调整采购申请，并保持安全库存不低于 28 天。</textarea>
           <div style="margin-top: 14px;">
             <button class="chainpilot-link-button" data-run-agent="1">生成方案和建议</button>
+            ${assistant.is_external && assistant.external_url ? `<button class="chainpilot-filter" data-open-assistant="${chainpilot.escape(assistant.external_url)}">打开${chainpilot.escape(assistant.label)}</button>` : ""}
             <button class="chainpilot-filter" data-route="action-inbox">查看建议</button>
           </div>
         </div>
@@ -107,7 +110,7 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">最近输出</h2>
-              <p class="chainpilot-panel-note">查看最近一次生成结果。</p>
+              <p class="chainpilot-panel-note">资金影响、风险和待处理动作。</p>
             </div>
           </div>
           ${latest.agent_run_id ? run_summary(latest) : empty_state("尚未运行智能助手。")}
@@ -119,7 +122,7 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">运行历史</h2>
-              <p class="chainpilot-panel-note">保留输入、状态、场景和输出摘要。</p>
+              <p class="chainpilot-panel-note">按目标追踪每次建议生成。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
@@ -129,8 +132,8 @@
         <div class="chainpilot-panel">
           <div class="chainpilot-panel-header">
             <div>
-              <h2 class="chainpilot-panel-title">工具调用</h2>
-              <p class="chainpilot-panel-note">记录解析、校验、优化、建议生成和证据收集。</p>
+              <h2 class="chainpilot-panel-title">处理记录</h2>
+              <p class="chainpilot-panel-note">模型理解、算法运行和证据准备。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
@@ -143,7 +146,7 @@
         <div class="chainpilot-panel-header">
           <div>
             <h2 class="chainpilot-panel-title">数据质量提示</h2>
-            <p class="chainpilot-panel-note">同步快照、字段映射和缺失字段的风险提示。</p>
+            <p class="chainpilot-panel-note">影响建议可信度的数据问题。</p>
           </div>
         </div>
         <div class="chainpilot-action-list">
@@ -154,6 +157,9 @@
 
     page.main.find("[data-run-agent]").on("click", () => run_agent(page));
     page.main.find("[data-route='action-inbox']").on("click", () => frappe.set_route("action-inbox"));
+    page.main.find("[data-open-assistant]").on("click", function () {
+      window.open($(this).data("open-assistant"), "_blank", "noopener,noreferrer");
+    });
   }
 
   async function run_agent(page) {

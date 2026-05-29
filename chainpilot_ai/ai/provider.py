@@ -80,7 +80,7 @@ def _generate_openai_compatible(
         "response_format": {"type": "json_object"},
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+            {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False, default=str)},
         ],
     }
     if _should_disable_thinking(config):
@@ -146,7 +146,7 @@ def _generate_anthropic_compatible(
             "system": system_prompt,
             "temperature": temperature,
             "max_tokens": max_tokens,
-            "messages": [{"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)}],
+            "messages": [{"role": "user", "content": json.dumps(user_payload, ensure_ascii=False, default=str)}],
         },
         timeout=config.timeout_seconds,
     )

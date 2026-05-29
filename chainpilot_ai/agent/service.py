@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 from time import perf_counter
 from typing import Any
 
+from chainpilot_ai.ai.assistant import get_assistant_surface_config
+from chainpilot_ai.ai.service import get_llm_runtime_summary, parse_goal_with_llm
 from chainpilot_ai.scenario.service import parse_user_goal
 from chainpilot_ai.scripts.import_demo_data import DEFAULT_DEMO_PATH, load_demo_data
 
@@ -72,7 +74,7 @@ def run_agent(user_goal: str, dry_run: bool = False) -> dict[str, Any]:
     started_at = _now()
     tool_logs: list[dict[str, Any]] = []
 
-    constraints = _record_tool(tool_logs, agent_run_id, "parse_user_goal", user_goal, lambda: parse_user_goal(user_goal))
+    constraints = _record_tool(tool_logs, agent_run_id, "parse_user_goal", user_goal, lambda: _parse_goal(user_goal))
     demo_data = load_demo_data(DEFAULT_DEMO_PATH)
     scenario = _record_tool(tool_logs, agent_run_id, "build_scenario_constraints", constraints, lambda: _build_scenario(agent_run_id, constraints, demo_data))
     issues = _record_tool(tool_logs, agent_run_id, "check_data_quality", scenario, lambda: _build_data_quality_issues(agent_run_id))
@@ -120,6 +122,8 @@ def get_agent_dashboard() -> dict[str, Any]:
             "tool_logs": [],
             "issues": [],
             "counts": {"Agent Run": 0, "Agent Tool Log": 0, "Data Quality Issue": 0},
+            "assistant": get_assistant_surface_config(),
+            "llm": get_llm_runtime_summary(),
         }
     return {
         "ok": True,
@@ -146,7 +150,18 @@ def get_agent_dashboard() -> dict[str, Any]:
             "Agent Tool Log": frappe.db.count("Agent Tool Log"),
             "Data Quality Issue": frappe.db.count("Data Quality Issue"),
         },
+        "assistant": get_assistant_surface_config(),
+        "llm": get_llm_runtime_summary(),
     }
+
+
+def _parse_goal(user_goal: str) -> dict[str, Any]:
+    try:
+        return parse_goal_with_llm(user_goal)
+    except Exception:
+        parsed = parse_user_goal(user_goal)
+        parsed["source"] = "rules:fallback"
+        return parsed
 
 
 def _record_tool(logs: list[dict[str, Any]], agent_run_id: str, tool_name: str, input_value: Any, fn):
@@ -365,7 +380,8 @@ def _tool_output_summary(tool_name: str, output: Any) -> str:
         target = output.get("cash_release_target") or 0
         protected = ",".join(output.get("protected_product_lines") or []) or "-"
         actions = "、".join(_action_label(action) for action in (output.get("preferred_actions") or [])) or "-"
-        return f"目标占用减少额 {target:,.0f} 元；保护品类 {protected}；优先建议类型 {actions}。"
+        source = "真实模型" if str(output.get("source") or "").startswith("llm:") else "规则解析"
+        return f"{source}识别：目标占用减少额 {target:,.0f} 元；保护品类 {protected}；优先建议类型 {actions}。"
     if tool_name == "build_scenario_constraints":
         return f"生成方案 {output.get('scenario_id')}，回写方式为仅生成草稿。"
     if tool_name == "check_data_quality":

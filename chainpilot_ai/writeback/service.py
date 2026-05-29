@@ -4,6 +4,8 @@ import json
 from datetime import datetime, timezone
 from typing import Any
 
+from chainpilot_ai.ai.service import build_supplier_communication_with_llm
+
 try:
     import frappe
 except Exception:  # pragma: no cover - local smoke tests can run without a Frappe site.
@@ -99,6 +101,18 @@ def create_execution_result(draft: dict[str, Any], recommendation: dict[str, Any
 def build_supplier_communication(recommendation: dict[str, Any], package_id: str) -> dict[str, Any] | None:
     if recommendation.get("sap_object_type") != "PO" and recommendation.get("action_type") != "DELAY_UNCONFIRMED_PO":
         return None
+    subject = f"采购订单 {recommendation.get('sap_doc_no')} 交期确认"
+    message = (
+        f"请确认采购订单 {recommendation.get('sap_doc_no')}/{recommendation.get('sap_item_no')} "
+        f"对应物料 {recommendation.get('material_code')} 的交期是否可由 {recommendation.get('before_date')} "
+        f"调整至 {recommendation.get('after_date')}。该内容为沟通草稿，不会自动发送。"
+    )
+    try:
+        generated = build_supplier_communication_with_llm(recommendation, package_id)
+        subject = generated["subject"]
+        message = generated["message"]
+    except Exception:
+        pass
     return {
         "communication_id": _unique_id("SUP"),
         "package_id": package_id,
@@ -106,12 +120,8 @@ def build_supplier_communication(recommendation: dict[str, Any], package_id: str
         "supplier": recommendation.get("supplier"),
         "sap_doc_no": recommendation.get("sap_doc_no"),
         "status": "Draft",
-        "subject": f"PO {recommendation.get('sap_doc_no')} delivery date coordination",
-        "message": (
-            f"Please confirm whether PO {recommendation.get('sap_doc_no')}/{recommendation.get('sap_item_no')} "
-            f"for material {recommendation.get('material_code')} can move from {recommendation.get('before_date')} "
-            f"to {recommendation.get('after_date')}. This is a draft communication and is not sent automatically."
-        ),
+        "subject": subject,
+        "message": message,
         "created_at": _now(),
     }
 

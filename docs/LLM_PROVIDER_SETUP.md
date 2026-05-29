@@ -18,6 +18,7 @@ API Key 已写入本机 Frappe site config，不进入 Git、不写入日志。
 ## 代码入口
 
 - Provider：`chainpilot_ai/ai/provider.py`
+- 助手交互框配置：`chainpilot_ai/ai/assistant.py`
 - 结构化输出与护栏：`chainpilot_ai/ai/guardrails.py`
 - 证据绑定解释服务：`chainpilot_ai/ai/service.py`
 - 真实连接测试：`chainpilot_ai/scripts/test_llm_provider.py`
@@ -61,9 +62,9 @@ LLM 不能直接决策：
 
 LLM 只用于：
 
+- 目标理解。
 - 中文解释。
 - 审批摘要。
-- 目标解析。
 - 供应商沟通草稿。
 - 反馈归因分类。
 
@@ -86,4 +87,26 @@ bench --site chainpilot.localhost set-config chainpilot_llm_model glm-5.1
 bench --site chainpilot.localhost set-config chainpilot_llm_timeout_seconds 90
 bench --site chainpilot.localhost set-config chainpilot_llm_disable_thinking true
 bench --site chainpilot.localhost set-config chainpilot_llm_api_key "<YOUR_API_KEY>"
+```
+
+## 助手交互框配置
+
+默认使用 ChainPilot 内置业务助手。它直接在 Frappe 页面中调用算法、证据、审批和 LLM 服务，适合生产试点。
+
+也可以把交互框配置为 OpenClaw、Goose 或企业自定义助手，但这些外部助手只负责对话入口；ChainPilot 仍负责算法、证据校验、审批边界和 SAP 回写草稿。
+
+```bash
+cd /Users/sjs/chainpilot-ai-bench
+
+# 可选值：builtin / openclaw / goose / custom
+bench --site chainpilot.localhost set-config chainpilot_assistant_surface builtin
+bench --site chainpilot.localhost set-config chainpilot_assistant_url ""
+bench --site chainpilot.localhost set-config chainpilot_assistant_label "内置业务助手"
+```
+
+如使用 OpenClaw 或 Goose：
+
+```bash
+bench --site chainpilot.localhost set-config chainpilot_assistant_surface openclaw
+bench --site chainpilot.localhost set-config chainpilot_assistant_url "https://your-openclaw.example.com"
 ```

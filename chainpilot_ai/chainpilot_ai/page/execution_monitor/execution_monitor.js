@@ -83,9 +83,9 @@
       <section class="chainpilot-hero">
         <div>
           <div class="chainpilot-eyebrow">审批与执行</div>
-          <h1 class="chainpilot-title">执行监控</h1>
+          <h1 class="chainpilot-title">审批与兑现跟踪</h1>
           <p class="chainpilot-subtitle">
-            跟踪审批、供应商沟通、回写草稿和兑现结果。
+            把待审批建议、供应商确认、回写草稿和兑现差异放在同一个工作台。
           </p>
         </div>
         <div class="chainpilot-meta-grid">
@@ -101,7 +101,7 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">审批包</h2>
-              <p class="chainpilot-panel-note">批量提交采购优化建议。</p>
+              <p class="chainpilot-panel-note">汇总金额、风险和审批关注点。</p>
             </div>
             <button class="chainpilot-link-button" data-create-package="1">生成审批包</button>
           </div>
@@ -113,7 +113,7 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">审批任务</h2>
-              <p class="chainpilot-panel-note">记录审批角色、结果和意见。</p>
+              <p class="chainpilot-panel-note">按角色推进复核和批准。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
@@ -126,7 +126,7 @@
         <div class="chainpilot-panel-header">
           <div>
             <h2 class="chainpilot-panel-title">SAP 回写草稿</h2>
-            <p class="chainpilot-panel-note">只生成草稿，不自动写入生产系统。</p>
+            <p class="chainpilot-panel-note">审批通过后生成，提交前仍需人工确认。</p>
           </div>
           <div>
             <button class="chainpilot-filter" data-approve-latest="1">批准最新包</button>
@@ -143,7 +143,7 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">供应商沟通草稿</h2>
-              <p class="chainpilot-panel-note">采购订单交期沟通消息，不自动发送。</p>
+              <p class="chainpilot-panel-note">采购员复核后再发送。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
@@ -154,7 +154,7 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">执行结果</h2>
-              <p class="chainpilot-panel-note">记录预计与实际兑现差异。</p>
+              <p class="chainpilot-panel-note">跟踪资金改善是否落地。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
@@ -168,7 +168,7 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">反馈记录</h2>
-              <p class="chainpilot-panel-note">记录拒绝原因、供应商反馈和执行反馈。</p>
+              <p class="chainpilot-panel-note">复盘未采纳或未兑现原因。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
@@ -179,7 +179,7 @@
           <div class="chainpilot-panel-header">
             <div>
               <h2 class="chainpilot-panel-title">学习信号</h2>
-              <p class="chainpilot-panel-note">用于后续建议排序和规则调权。</p>
+              <p class="chainpilot-panel-note">沉淀策略调整建议。</p>
             </div>
           </div>
           <div class="chainpilot-compact-list">
@@ -244,6 +244,7 @@
         <div>
           <div class="chainpilot-action-title">${chainpilot.escape(item.package_id)}</div>
           <div class="chainpilot-action-subtitle">包含 ${chainpilot.number(item.recommendation_count || 0)} 条建议，资金占用减少额 ${chainpilot.currency(item.total_cash_release || 0)}</div>
+          <div class="chainpilot-action-subtitle">${chainpilot.escape(clean_text(item.approval_summary || item.risk_summary || ""))}</div>
         </div>
         <div>
           ${chainpilot.badge(chainpilot.statusLabel(item.status) || "-", tone)}
@@ -287,8 +288,8 @@
     return `
       <div class="chainpilot-risk-row">
         <div>
-          <div class="chainpilot-action-title">采购订单 ${chainpilot.escape(item.sap_doc_no || "-")} 交期沟通</div>
-          <div class="chainpilot-action-subtitle">${chainpilot.escape(item.supplier || "-")} · 消息草稿待人工复核</div>
+          <div class="chainpilot-action-title">${chainpilot.escape(item.subject || `采购订单 ${item.sap_doc_no || "-"} 交期沟通`)}</div>
+          <div class="chainpilot-action-subtitle">${chainpilot.escape(item.supplier || "-")} · ${chainpilot.escape(clean_text(item.message || "草稿待人工复核"))}</div>
         </div>
         <div>${chainpilot.badge(chainpilot.statusLabel(item.status) || "-", "blue")}</div>
       </div>

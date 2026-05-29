@@ -4,6 +4,7 @@ import json
 from datetime import datetime, timezone
 from typing import Any
 
+from chainpilot_ai.ai.service import build_approval_summary_with_llm
 from chainpilot_ai.writeback.service import create_writeback_drafts_for_package
 
 try:
@@ -55,10 +56,10 @@ def build_approval_summary(recommendations: list[dict[str, Any]]) -> dict[str, A
     summary.update(
         {
             "risk_count": risk_count,
-            "risk_summary": f"{risk_count} high-attention actions; {po_count} PO coordination items; {pr_count} PR quantity changes.",
+            "risk_summary": f"{risk_count} 条需重点关注；{po_count} 条采购订单需供应商确认；{pr_count} 条采购申请数量调整。",
             "approval_summary": (
-                f"Package covers {len(recommendations)} SAP line actions with expected cash release {total:,.0f}. "
-                f"Review focus: safety stock, supplier confirmation, and draft-only SAP writeback payloads."
+                f"本审批包包含 {len(recommendations)} 条单据行建议，预计减少资金占用 {total:,.0f} 元。"
+                "请重点复核安全库存、供应商确认和回写草稿内容。"
             ),
         }
     )
@@ -69,7 +70,7 @@ def dry_run_package(limit: int = 5) -> dict[str, Any]:
     from chainpilot_ai.scripts.import_demo_data import DEFAULT_DEMO_PATH, load_demo_data
 
     recommendations = load_demo_data(DEFAULT_DEMO_PATH)["recommendations"][:limit]
-    summary = build_approval_summary(recommendations)
+    summary = _enhance_summary_with_llm(recommendations, build_approval_summary(recommendations))
     return {
         "package_id": _unique_id("APKG"),
         "status": "Submitted",
@@ -85,7 +86,7 @@ def create_approval_package_rpc(limit: int = 5) -> dict[str, Any]:
     recommendations = _eligible_recommendations(int(limit))
     if not recommendations:
         raise ValueError("No eligible Recommendation found. Need Pending/Ready recommendations with evidence and no BLOCKED constraint.")
-    summary = build_approval_summary(recommendations)
+    summary = _enhance_summary_with_llm(recommendations, build_approval_summary(recommendations))
     package_id = _unique_id("APKG")
     scenario_result = recommendations[0].get("result_id")
     package = {
@@ -216,6 +217,17 @@ def _eligible_recommendations(limit: int) -> list[dict[str, Any]]:
         if len(eligible) >= limit:
             break
     return eligible
+
+
+def _enhance_summary_with_llm(recommendations: list[dict[str, Any]], rule_summary: dict[str, Any]) -> dict[str, Any]:
+    try:
+        llm_summary = build_approval_summary_with_llm(recommendations, rule_summary)
+    except Exception:
+        return rule_summary
+    enhanced = dict(rule_summary)
+    enhanced["approval_summary"] = llm_summary["approval_summary"]
+    enhanced["risk_summary"] = llm_summary["risk_summary"]
+    return enhanced
 
 
 def _build_approval_tasks(package_id: str, total_cash_release: float, risk_count: int) -> list[dict[str, Any]]:

@@ -7,7 +7,30 @@ from typing import Any
 from chainpilot_ai.ai.contracts import LLMGuardrailError, validate_evidence_explanation_schema
 
 
-BLOCKED_WRITEBACK_TERMS = ("直接写入 SAP", "自动写入 SAP", "无需审批写入", "direct_write", "直接回写")
+BLOCKED_WRITEBACK_TERMS = ("直接写入 SAP", "直接写入SAP", "自动写入 SAP", "自动写入SAP", "无需审批写入", "direct_write", "直接回写")
+SAFE_WRITEBACK_NEGATIONS = (
+    "不直接写入 SAP",
+    "不直接写入SAP",
+    "不会直接写入 SAP",
+    "不会直接写入SAP",
+    "不能直接写入 SAP",
+    "不能直接写入SAP",
+    "不可直接写入 SAP",
+    "不可直接写入SAP",
+    "禁止直接写入 SAP",
+    "禁止直接写入SAP",
+    "严禁直接写入 SAP",
+    "严禁直接写入SAP",
+    "不得直接写入 SAP",
+    "不得直接写入SAP",
+    "不直接回写",
+    "不会直接回写",
+    "不能直接回写",
+    "不可直接回写",
+    "禁止直接回写",
+    "严禁直接回写",
+    "不得直接回写",
+)
 
 
 def parse_json_object(text: str) -> dict[str, Any]:
@@ -38,7 +61,10 @@ def validate_evidence_bound_output(payload: dict[str, Any], evidence: list[dict[
     if unknown:
         raise LLMGuardrailError(f"LLM 引用了不存在的证据 ID：{', '.join(unknown)}")
     text = json.dumps(payload, ensure_ascii=False)
-    if any(term in text for term in BLOCKED_WRITEBACK_TERMS):
+    safe_text = text
+    for term in SAFE_WRITEBACK_NEGATIONS:
+        safe_text = safe_text.replace(term, "")
+    if any(term in safe_text for term in BLOCKED_WRITEBACK_TERMS):
         raise LLMGuardrailError("LLM 输出包含越权回写表述")
     if re.search(r"\b[A-Z_]{8,}\b", text):
         raise LLMGuardrailError("LLM 输出包含面向用户不友好的内部编码")

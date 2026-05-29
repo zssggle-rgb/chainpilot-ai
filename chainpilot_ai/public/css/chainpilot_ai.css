@@ -370,6 +370,19 @@
   margin-bottom: 18px;
 }
 
+.chainpilot-product-form .form-page,
+.chainpilot-product-form .form-footer,
+.chainpilot-product-form .form-sidebar,
+.chainpilot-product-form .timeline {
+  display: none !important;
+}
+
+.chainpilot-product-form .layout-main-section {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
 .chainpilot-detail-grid,
 .chainpilot-evidence-grid {
   display: grid;
@@ -387,6 +400,23 @@
 
 .chainpilot-evidence-item {
   padding: 12px;
+}
+
+.chainpilot-ai-panel {
+  border-color: #bfd7ee;
+  background: #f8fbff;
+}
+
+.chainpilot-ai-explanation {
+  display: grid;
+  gap: 8px;
+}
+
+.chainpilot-ai-explanation p {
+  margin: 0;
+  color: var(--cp-ink);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .chainpilot-table {

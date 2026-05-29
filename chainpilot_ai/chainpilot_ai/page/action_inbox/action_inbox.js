@@ -56,9 +56,9 @@
       <section class="chainpilot-hero">
         <div>
           <div class="chainpilot-eyebrow">采购优化</div>
-          <h1 class="chainpilot-title">采购建议</h1>
+          <h1 class="chainpilot-title">待处理采购建议</h1>
           <p class="chainpilot-subtitle">
-            集中查看采购建议、风险等级和资金占用影响。
+            先处理金额影响大、风险可控、证据完整的采购申请和采购订单。
           </p>
         </div>
         <div class="chainpilot-meta-grid">
@@ -90,15 +90,9 @@
       render_action_inbox(page, state);
     });
     page.main.find("[data-refresh]").on("click", () => load_action_inbox(page));
-    page.main.find("[data-detail-id]").on("click", function () {
+    page.main.find("[data-open-id]").on("click", function () {
       const recommendationId = $(this).data("detail-id");
-      const item = state.recommendations.find((row) => row.recommendation_id === recommendationId);
-      if (!item) return;
-      frappe.msgprint({
-        title: "建议详情",
-        message: detail_message(item, state.checksByRecommendation[recommendationId] || [], state.evidenceByRecommendation[recommendationId] || []),
-        wide: true,
-      });
+      frappe.set_route("Form", "Recommendation", recommendationId);
     });
   }
 
@@ -158,7 +152,7 @@
           <div style="margin-top: 7px;">${chainpilot.badge(chainpilot.statusLabel(primaryCheck.verdict) || "无约束", chainpilot.verdictTone(primaryCheck.verdict))}</div>
           <div style="margin-top: 6px;">${chainpilot.badge(chainpilot.statusLabel(primaryEvidence.verdict) || "无证据", chainpilot.verdictTone(primaryEvidence.verdict))}</div>
         </div>
-        <button class="chainpilot-link-button" data-detail-id="${chainpilot.escape(item.recommendation_id)}">查看详情</button>
+        <button class="chainpilot-link-button" data-open-id="${chainpilot.escape(item.recommendation_id)}" data-detail-id="${chainpilot.escape(item.recommendation_id)}">打开建议</button>
       </article>
     `;
   }
