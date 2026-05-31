@@ -5,7 +5,162 @@ from typing import Any
 
 
 BASE_DATE = date(2026, 5, 29)
-PLANT = "CN01"
+PLANTS = ("CN01", "CN02")
+MOCK_SCALE = 10
+
+BASE_MATERIAL_SPECS = [
+    ("MAT-100001", "变频压缩机控制板", "ELEC", "空调", "A", "Y", 920, 0, "P01", 1),
+    ("MAT-100002", "冷凝风机组件", "MECH", "空调", "A", "Z", 680, 0, "P01", 1),
+    ("MAT-100003", "长交期功率芯片", "ELEC", "空调", "A", "Z", 1550, 1, "P02", 1),
+    ("MAT-100004", "铜管组件", "METAL", "空调", "B", "Y", 126, 0, "P02", 0),
+    ("MAT-100005", "注塑外壳", "PLASTIC", "空调", "B", "X", 46, 0, "P03", 0),
+    ("MAT-100006", "通用固定支架", "MECH", "空调", "C", "X", 18, 0, "P03", 0),
+    ("MAT-100007", "包装纸箱", "PACK", "空调", "C", "Y", 8, 0, "P04", 0),
+    ("MAT-100008", "遥控器组件", "ELEC", "空调", "B", "Z", 72, 0, "P04", 0),
+    ("MAT-100009", "显示面板", "DISPLAY", "商显", "A", "Y", 1180, 0, "P05", 1),
+    ("MAT-100010", "背光模组", "DISPLAY", "商显", "A", "Z", 960, 0, "P05", 1),
+    ("MAT-100011", "电源线束", "ELEC", "商显", "B", "Y", 52, 0, "P06", 0),
+    ("MAT-100012", "泡棉缓冲件", "PACK", "商显", "C", "X", 5, 0, "P06", 0),
+    ("MAT-100013", "压缩机减振垫", "RUBBER", "空调", "B", "X", 22, 0, "P03", 0),
+    ("MAT-100014", "电机轴承", "MECH", "空调", "A", "Y", 210, 0, "P01", 1),
+    ("MAT-100015", "控制器散热片", "METAL", "空调", "B", "Y", 38, 0, "P02", 0),
+    ("MAT-100016", "说明书套装", "PACK", "通用", "C", "X", 2.4, 0, "P04", 0),
+    ("MAT-100017", "无线通信模块", "ELEC", "商显", "A", "Z", 145, 0, "P05", 1),
+    ("MAT-100018", "标准螺钉包", "MECH", "通用", "C", "X", 3.6, 0, "P06", 0),
+]
+
+BASE_INVENTORY_LEVELS = {
+    "MAT-100001": (760, 0, 0, 900),
+    "MAT-100002": (620, 0, 0, 850),
+    "MAT-100003": (410, 0, 0, 520),
+    "MAT-100004": (14500, 120, 0, 3800),
+    "MAT-100005": (42000, 0, 0, 9000),
+    "MAT-100006": (98000, 0, 800, 16000),
+    "MAT-100007": (155000, 0, 1200, 28000),
+    "MAT-100008": (5400, 0, 0, 2600),
+    "MAT-100009": (520, 0, 0, 720),
+    "MAT-100010": (430, 0, 0, 680),
+    "MAT-100011": (18500, 0, 0, 6200),
+    "MAT-100012": (210000, 0, 0, 42000),
+    "MAT-100013": (66000, 0, 0, 11000),
+    "MAT-100014": (1250, 0, 0, 1150),
+    "MAT-100015": (32000, 0, 0, 7200),
+    "MAT-100016": (260000, 0, 0, 50000),
+    "MAT-100017": (960, 0, 0, 1200),
+    "MAT-100018": (310000, 0, 0, 58000),
+}
+
+BASE_MRP_PARAMS = {
+    "MAT-100001": (14, 900, 200, 100, "EX", "M01"),
+    "MAT-100002": (12, 850, 200, 100, "EX", "M01"),
+    "MAT-100003": (42, 520, 100, 50, "EX", "M02"),
+    "MAT-100004": (8, 3800, 2000, 500, "HB", "M02"),
+    "MAT-100005": (7, 9000, 5000, 1000, "HB", "M03"),
+    "MAT-100006": (5, 16000, 10000, 2000, "HB", "M03"),
+    "MAT-100007": (4, 28000, 20000, 5000, "HB", "M04"),
+    "MAT-100008": (10, 2600, 1000, 200, "EX", "M04"),
+    "MAT-100009": (28, 720, 100, 50, "EX", "M05"),
+    "MAT-100010": (24, 680, 100, 50, "EX", "M05"),
+    "MAT-100011": (9, 6200, 2000, 500, "EX", "M06"),
+    "MAT-100012": (5, 42000, 20000, 5000, "HB", "M06"),
+    "MAT-100013": (7, 11000, 5000, 1000, "HB", "M03"),
+    "MAT-100014": (15, 1150, 300, 100, "EX", "M01"),
+    "MAT-100015": (8, 7200, 3000, 500, "HB", "M02"),
+    "MAT-100016": (3, 50000, 30000, 5000, "HB", "M04"),
+    "MAT-100017": (30, 1200, 300, 100, "EX", "M05"),
+    "MAT-100018": (4, 58000, 30000, 10000, "HB", "M06"),
+}
+
+BASE_DEMAND_PLAN = {
+    "MAT-100001": [(5, 780), (12, 520), (25, 380)],
+    "MAT-100002": [(4, 820), (10, 460), (21, 360)],
+    "MAT-100003": [(9, 420), (18, 260)],
+    "MAT-100004": [(9, 5400), (17, 4200), (31, 3800)],
+    "MAT-100005": [(10, 9000), (24, 7800), (39, 6400)],
+    "MAT-100006": [(8, 13000), (24, 11000), (41, 9000)],
+    "MAT-100007": [(6, 26000), (22, 21000), (38, 19000)],
+    "MAT-100008": [(7, 2400), (17, 1900), (34, 1600)],
+    "MAT-100009": [(6, 520), (14, 330), (28, 260)],
+    "MAT-100010": [(5, 460), (13, 380), (32, 280)],
+    "MAT-100011": [(11, 5200), (26, 4300)],
+    "MAT-100012": [(8, 34000), (23, 30000), (37, 26000)],
+    "MAT-100013": [(12, 9000), (30, 7200)],
+    "MAT-100014": [(6, 760), (15, 480), (34, 360)],
+    "MAT-100015": [(10, 5400), (24, 4800), (42, 3600)],
+    "MAT-100016": [(9, 46000), (20, 42000), (35, 38000)],
+    "MAT-100017": [(8, 860), (16, 620), (31, 420)],
+    "MAT-100018": [(7, 52000), (19, 45000), (36, 39000)],
+}
+
+BASE_PR_SPECS = [
+    ("1000200101", "MAT-100004", "S200401", 6000, 18, 126),
+    ("1000200102", "MAT-100004", "S200401", 5000, 33, 126),
+    ("1000200103", "MAT-100005", "S200501", 18000, 20, 46),
+    ("1000200104", "MAT-100005", "S200501", 14000, 29, 46),
+    ("1000200105", "MAT-100006", "S200601", 36000, 17, 18),
+    ("1000200106", "MAT-100006", "S200602", 26000, 27, 18),
+    ("1000200107", "MAT-100007", "S200701", 62000, 16, 8),
+    ("1000200108", "MAT-100007", "S200701", 48000, 31, 8),
+    ("1000200109", "MAT-100011", "S201101", 12000, 21, 52),
+    ("1000200110", "MAT-100011", "S201101", 8000, 38, 52),
+    ("1000200111", "MAT-100012", "S201201", 90000, 19, 5),
+    ("1000200112", "MAT-100012", "S201201", 70000, 36, 5),
+    ("1000200113", "MAT-100013", "S201301", 22000, 23, 22),
+    ("1000200114", "MAT-100013", "S201301", 16000, 40, 22),
+    ("1000200115", "MAT-100015", "S201501", 16000, 20, 38),
+    ("1000200116", "MAT-100015", "S201502", 13000, 35, 38),
+    ("1000200117", "MAT-100016", "S201601", 120000, 15, 2.4),
+    ("1000200118", "MAT-100016", "S201601", 95000, 30, 2.4),
+    ("1000200119", "MAT-100018", "S201801", 140000, 18, 3.6),
+    ("1000200120", "MAT-100018", "S201801", 120000, 32, 3.6),
+    ("1000200121", "MAT-100001", "S200101", 700, 9, 920),
+    ("1000200122", "MAT-100002", "S200201", 900, 8, 680),
+    ("1000200123", "MAT-100003", "S200301", 300, 45, 1550),
+    ("1000200124", "MAT-100009", "S200901", 420, 24, 1180),
+    ("1000200125", "MAT-100010", "S201001", 360, 22, 960),
+    ("1000200126", "MAT-100014", "S201401", 700, 6, 210),
+    ("1000200127", "MAT-100017", "S201701", 800, 29, 145),
+    ("1000200128", "MAT-100008", "S200801", 2600, 5, 72),
+    ("1000200129", "MAT-100005", "S200501", 9000, 6, 46),
+    ("1000200130", "MAT-100006", "S200602", 18000, 4, 18),
+    ("1000200131", "MAT-100004", "S200403", 1400, 26, 126),
+    ("1000200132", "MAT-100015", "S201502", 1800, 28, 38),
+]
+
+BASE_PO_SPECS = [
+    ("4500100101", "MAT-100001", "S200101", 1300, 8, False, 920),
+    ("4500100102", "MAT-100002", "S200201", 1200, 7, False, 680),
+    ("4500100103", "MAT-100003", "S200301", 520, 17, True, 1550),
+    ("4500100104", "MAT-100004", "S200401", 4200, 11, False, 126),
+    ("4500100105", "MAT-100004", "S200402", 3600, 24, True, 126),
+    ("4500100106", "MAT-100005", "S200501", 16000, 12, False, 46),
+    ("4500100107", "MAT-100005", "S200501", 12000, 26, True, 46),
+    ("4500100108", "MAT-100006", "S200601", 22000, 10, False, 18),
+    ("4500100109", "MAT-100006", "S200602", 18000, 25, True, 18),
+    ("4500100110", "MAT-100007", "S200701", 42000, 9, False, 8),
+    ("4500100111", "MAT-100007", "S200701", 36000, 23, True, 8),
+    ("4500100112", "MAT-100008", "S200801", 3100, 13, False, 72),
+    ("4500100113", "MAT-100009", "S200901", 620, 9, False, 1180),
+    ("4500100114", "MAT-100010", "S201001", 580, 11, False, 960),
+    ("4500100115", "MAT-100011", "S201101", 7200, 18, False, 52),
+    ("4500100116", "MAT-100012", "S201201", 78000, 13, False, 5),
+    ("4500100117", "MAT-100013", "S201301", 18000, 16, False, 22),
+    ("4500100118", "MAT-100014", "S201401", 900, 5, False, 210),
+    ("4500100119", "MAT-100015", "S201501", 12000, 14, False, 38),
+    ("4500100120", "MAT-100016", "S201601", 105000, 12, False, 2.4),
+    ("4500100121", "MAT-100017", "S201701", 760, 19, False, 145),
+    ("4500100122", "MAT-100018", "S201801", 130000, 15, False, 3.6),
+    ("4500100123", "MAT-100005", "S200501", 9000, 3, False, 46),
+    ("4500100124", "MAT-100006", "S200601", 12000, 2, False, 18),
+    ("4500100125", "MAT-100012", "S201201", 50000, 4, True, 5),
+    ("4500100126", "MAT-100018", "S201801", 70000, 6, True, 3.6),
+    ("4500100127", "MAT-100004", "S200402", 1200, 6, True, 126),
+    ("4500100128", "MAT-100015", "S201501", 2500, 7, False, 38),
+]
+
+VARIANT_LABELS = ("基准", "华东", "华南", "出口", "高配", "节能", "北方", "商用", "备份", "改型")
+SHORTAGE_BASE_NUMBERS = {1, 2, 9, 10, 17}
+SURPLUS_BASE_NUMBERS = {5, 6, 7, 12, 13, 16, 18}
 
 
 def build_realistic_mock_sap_snapshot() -> dict[str, Any]:
@@ -23,8 +178,8 @@ def build_realistic_mock_sap_snapshot() -> dict[str, Any]:
             "snapshot_id": "SNAP-MOCK-REALISTIC-20260529",
             "source_type": "Mock",
             "source_system": "SAP_MOCK_REALISTIC",
-            "plant_scope": PLANT,
-            "material_scope": "SUPPLY_CHAIN_CONSTRAINT_VALIDATION",
+            "plant_scope": ",".join(PLANTS),
+            "material_scope": "PURCHASING_OPTIMIZATION_VALIDATION_10X",
             "snapshot_time": f"{BASE_DATE.isoformat()} 08:00:00",
         },
         "materials": materials,
@@ -41,269 +196,155 @@ def build_realistic_mock_sap_snapshot() -> dict[str, Any]:
 
 
 def _materials() -> list[dict[str, Any]]:
-    rows = [
-        ("MAT-100001", "变频压缩机控制板", "ELEC", "空调", "A", "Y", 920, 0, "P01", 1),
-        ("MAT-100002", "冷凝风机组件", "MECH", "空调", "A", "Z", 680, 0, "P01", 1),
-        ("MAT-100003", "长交期功率芯片", "ELEC", "空调", "A", "Z", 1550, 1, "P02", 1),
-        ("MAT-100004", "铜管组件", "METAL", "空调", "B", "Y", 126, 0, "P02", 0),
-        ("MAT-100005", "注塑外壳", "PLASTIC", "空调", "B", "X", 46, 0, "P03", 0),
-        ("MAT-100006", "通用固定支架", "MECH", "空调", "C", "X", 18, 0, "P03", 0),
-        ("MAT-100007", "包装纸箱", "PACK", "空调", "C", "Y", 8, 0, "P04", 0),
-        ("MAT-100008", "遥控器组件", "ELEC", "空调", "B", "Z", 72, 0, "P04", 0),
-        ("MAT-100009", "显示面板", "DISPLAY", "商显", "A", "Y", 1180, 0, "P05", 1),
-        ("MAT-100010", "背光模组", "DISPLAY", "商显", "A", "Z", 960, 0, "P05", 1),
-        ("MAT-100011", "电源线束", "ELEC", "商显", "B", "Y", 52, 0, "P06", 0),
-        ("MAT-100012", "泡棉缓冲件", "PACK", "商显", "C", "X", 5, 0, "P06", 0),
-        ("MAT-100013", "压缩机减振垫", "RUBBER", "空调", "B", "X", 22, 0, "P03", 0),
-        ("MAT-100014", "电机轴承", "MECH", "空调", "A", "Y", 210, 0, "P01", 1),
-        ("MAT-100015", "控制器散热片", "METAL", "空调", "B", "Y", 38, 0, "P02", 0),
-        ("MAT-100016", "说明书套装", "PACK", "通用", "C", "X", 2.4, 0, "P04", 0),
-        ("MAT-100017", "WiFi 通信模块", "ELEC", "商显", "A", "Z", 145, 0, "P05", 1),
-        ("MAT-100018", "标准螺钉包", "MECH", "通用", "C", "X", 3.6, 0, "P06", 0),
-    ]
-    return [
-        {
-            "material_code": code,
-            "material_name": name,
-            "plant": PLANT,
-            "material_group": group,
-            "product_line": line,
-            "abc_class": abc,
-            "xyz_class": xyz,
-            "unit_price": price,
-            "is_protected": protected,
-            "purchasing_group": buyer,
-            "critical_flag": critical,
-        }
-        for code, name, group, line, abc, xyz, price, protected, buyer, critical in rows
-    ]
+    rows = []
+    for variant in range(MOCK_SCALE):
+        for base_code, name, group, line, abc, xyz, price, protected, buyer, critical in BASE_MATERIAL_SPECS:
+            base_number = _base_number(base_code)
+            rows.append(
+                {
+                    "material_code": _material_code(base_code, variant),
+                    "material_name": _material_name(name, variant),
+                    "plant": _plant_for_variant(variant),
+                    "material_group": group,
+                    "product_line": line,
+                    "abc_class": abc,
+                    "xyz_class": xyz,
+                    "unit_price": round(float(price) * _price_factor(variant, base_number), 2),
+                    "is_protected": protected,
+                    "purchasing_group": _buyer_group(buyer, variant),
+                    "critical_flag": critical,
+                }
+            )
+    return rows
 
 
 def _inventory() -> list[dict[str, Any]]:
-    levels = {
-        "MAT-100001": (760, 0, 0, 900),
-        "MAT-100002": (620, 0, 0, 850),
-        "MAT-100003": (410, 0, 0, 520),
-        "MAT-100004": (14500, 120, 0, 3800),
-        "MAT-100005": (42000, 0, 0, 9000),
-        "MAT-100006": (98000, 0, 800, 16000),
-        "MAT-100007": (155000, 0, 1200, 28000),
-        "MAT-100008": (5400, 0, 0, 2600),
-        "MAT-100009": (520, 0, 0, 720),
-        "MAT-100010": (430, 0, 0, 680),
-        "MAT-100011": (18500, 0, 0, 6200),
-        "MAT-100012": (210000, 0, 0, 42000),
-        "MAT-100013": (66000, 0, 0, 11000),
-        "MAT-100014": (1250, 0, 0, 1150),
-        "MAT-100015": (32000, 0, 0, 7200),
-        "MAT-100016": (260000, 0, 0, 50000),
-        "MAT-100017": (960, 0, 0, 1200),
-        "MAT-100018": (310000, 0, 0, 58000),
-    }
-    return [
-        {
-            "material_code": material,
-            "plant": PLANT,
-            "storage_location": "1000",
-            "unrestricted_qty": unrestricted,
-            "quality_qty": quality,
-            "blocked_qty": blocked,
-            "safety_stock": safety,
-            "snapshot_date": BASE_DATE.isoformat(),
-        }
-        for material, (unrestricted, quality, blocked, safety) in levels.items()
-    ]
+    rows = []
+    for variant in range(MOCK_SCALE):
+        for base_code, (unrestricted, quality, blocked, safety) in BASE_INVENTORY_LEVELS.items():
+            base_number = _base_number(base_code)
+            factor = _volume_factor(variant, base_number)
+            rows.append(
+                {
+                    "material_code": _material_code(base_code, variant),
+                    "plant": _plant_for_variant(variant),
+                    "storage_location": "1000" if variant % 2 == 0 else "2000",
+                    "unrestricted_qty": _business_qty(unrestricted * factor),
+                    "quality_qty": _business_qty(quality * factor),
+                    "blocked_qty": _business_qty(blocked * factor),
+                    "safety_stock": _business_qty(safety * factor),
+                    "snapshot_date": BASE_DATE.isoformat(),
+                }
+            )
+    return rows
 
 
 def _mrp_parameters() -> list[dict[str, Any]]:
-    params = {
-        "MAT-100001": (14, 900, 200, 100, "EX", "M01"),
-        "MAT-100002": (12, 850, 200, 100, "EX", "M01"),
-        "MAT-100003": (42, 520, 100, 50, "EX", "M02"),
-        "MAT-100004": (8, 3800, 2000, 500, "HB", "M02"),
-        "MAT-100005": (7, 9000, 5000, 1000, "HB", "M03"),
-        "MAT-100006": (5, 16000, 10000, 2000, "HB", "M03"),
-        "MAT-100007": (4, 28000, 20000, 5000, "HB", "M04"),
-        "MAT-100008": (10, 2600, 1000, 200, "EX", "M04"),
-        "MAT-100009": (28, 720, 100, 50, "EX", "M05"),
-        "MAT-100010": (24, 680, 100, 50, "EX", "M05"),
-        "MAT-100011": (9, 6200, 2000, 500, "EX", "M06"),
-        "MAT-100012": (5, 42000, 20000, 5000, "HB", "M06"),
-        "MAT-100013": (7, 11000, 5000, 1000, "HB", "M03"),
-        "MAT-100014": (15, 1150, 300, 100, "EX", "M01"),
-        "MAT-100015": (8, 7200, 3000, 500, "HB", "M02"),
-        "MAT-100016": (3, 50000, 30000, 5000, "HB", "M04"),
-        "MAT-100017": (30, 1200, 300, 100, "EX", "M05"),
-        "MAT-100018": (4, 58000, 30000, 10000, "HB", "M06"),
-    }
-    return [
-        {
-            "material_code": material,
-            "plant": PLANT,
-            "planned_delivery_time": lead_time,
-            "safety_stock": safety,
-            "moq": moq,
-            "mpq": mpq,
-            "lot_size_rule": lot_size,
-            "mrp_controller": controller,
-        }
-        for material, (lead_time, safety, moq, mpq, lot_size, controller) in params.items()
-    ]
+    rows = []
+    for variant in range(MOCK_SCALE):
+        for base_code, (lead_time, safety, moq, mpq, lot_size, controller) in BASE_MRP_PARAMS.items():
+            base_number = _base_number(base_code)
+            factor = _volume_factor(variant, base_number)
+            rows.append(
+                {
+                    "material_code": _material_code(base_code, variant),
+                    "plant": _plant_for_variant(variant),
+                    "planned_delivery_time": max(1, int(lead_time + (variant % 3) - 1)),
+                    "safety_stock": _business_qty(safety * factor),
+                    "moq": _business_qty(moq * factor),
+                    "mpq": max(1, _business_qty(mpq * factor)),
+                    "lot_size_rule": lot_size,
+                    "mrp_controller": _mrp_controller(controller, variant),
+                }
+            )
+    return rows
 
 
 def _planned_demands() -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    demand_plan = {
-        "MAT-100001": [(5, 780), (12, 520), (25, 380)],
-        "MAT-100002": [(4, 820), (10, 460), (21, 360)],
-        "MAT-100003": [(9, 420), (18, 260)],
-        "MAT-100004": [(9, 5400), (17, 4200), (31, 3800)],
-        "MAT-100005": [(10, 9000), (24, 7800), (39, 6400)],
-        "MAT-100006": [(8, 13000), (24, 11000), (41, 9000)],
-        "MAT-100007": [(6, 26000), (22, 21000), (38, 19000)],
-        "MAT-100008": [(7, 2400), (17, 1900), (34, 1600)],
-        "MAT-100009": [(6, 520), (14, 330), (28, 260)],
-        "MAT-100010": [(5, 460), (13, 380), (32, 280)],
-        "MAT-100011": [(11, 5200), (26, 4300)],
-        "MAT-100012": [(8, 34000), (23, 30000), (37, 26000)],
-        "MAT-100013": [(12, 9000), (30, 7200)],
-        "MAT-100014": [(6, 760), (15, 480), (34, 360)],
-        "MAT-100015": [(10, 5400), (24, 4800), (42, 3600)],
-        "MAT-100016": [(9, 46000), (20, 42000), (35, 38000)],
-        "MAT-100017": [(8, 860), (16, 620), (31, 420)],
-        "MAT-100018": [(7, 52000), (19, 45000), (36, 39000)],
-    }
     seq = 1
-    for material, entries in demand_plan.items():
-        for offset, qty in entries:
-            rows.append(
-                {
-                    "demand_id": f"DEM-{seq:04d}",
-                    "material_code": material,
-                    "plant": PLANT,
-                    "demand_date": _day(offset),
-                    "demand_qty": qty,
-                    "source_type": "MO" if seq % 3 else "SO",
-                    "production_order": f"MO-{20000 + seq}",
-                    "finished_good": _finished_good(material),
-                }
-            )
-            seq += 1
+    for variant in range(MOCK_SCALE):
+        for base_code, entries in BASE_DEMAND_PLAN.items():
+            base_number = _base_number(base_code)
+            factor = _volume_factor(variant, base_number)
+            for entry_index, (offset, qty) in enumerate(entries, start=1):
+                rows.append(
+                    {
+                        "demand_id": f"DEM-{seq:05d}",
+                        "material_code": _material_code(base_code, variant),
+                        "plant": _plant_for_variant(variant),
+                        "demand_date": _day(_delivery_offset(offset, variant, entry_index)),
+                        "demand_qty": _business_qty(qty * factor),
+                        "source_type": "MO" if seq % 3 else "SO",
+                        "production_order": f"MO-{20000 + seq}",
+                        "finished_good": _finished_good(base_code, variant),
+                    }
+                )
+                seq += 1
     return rows
 
 
 def _pr_lines() -> list[dict[str, Any]]:
-    specs = [
-        ("1000200101", "MAT-100004", "S200401", 6000, 18, 126),
-        ("1000200102", "MAT-100004", "S200401", 5000, 33, 126),
-        ("1000200103", "MAT-100005", "S200501", 18000, 20, 46),
-        ("1000200104", "MAT-100005", "S200501", 14000, 29, 46),
-        ("1000200105", "MAT-100006", "S200601", 36000, 17, 18),
-        ("1000200106", "MAT-100006", "S200602", 26000, 27, 18),
-        ("1000200107", "MAT-100007", "S200701", 62000, 16, 8),
-        ("1000200108", "MAT-100007", "S200701", 48000, 31, 8),
-        ("1000200109", "MAT-100011", "S201101", 12000, 21, 52),
-        ("1000200110", "MAT-100011", "S201101", 8000, 38, 52),
-        ("1000200111", "MAT-100012", "S201201", 90000, 19, 5),
-        ("1000200112", "MAT-100012", "S201201", 70000, 36, 5),
-        ("1000200113", "MAT-100013", "S201301", 22000, 23, 22),
-        ("1000200114", "MAT-100013", "S201301", 16000, 40, 22),
-        ("1000200115", "MAT-100015", "S201501", 16000, 20, 38),
-        ("1000200116", "MAT-100015", "S201502", 13000, 35, 38),
-        ("1000200117", "MAT-100016", "S201601", 120000, 15, 2.4),
-        ("1000200118", "MAT-100016", "S201601", 95000, 30, 2.4),
-        ("1000200119", "MAT-100018", "S201801", 140000, 18, 3.6),
-        ("1000200120", "MAT-100018", "S201801", 120000, 32, 3.6),
-        ("1000200121", "MAT-100001", "S200101", 700, 9, 920),
-        ("1000200122", "MAT-100002", "S200201", 900, 8, 680),
-        ("1000200123", "MAT-100003", "S200301", 300, 45, 1550),
-        ("1000200124", "MAT-100009", "S200901", 420, 24, 1180),
-        ("1000200125", "MAT-100010", "S201001", 360, 22, 960),
-        ("1000200126", "MAT-100014", "S201401", 700, 6, 210),
-        ("1000200127", "MAT-100017", "S201701", 800, 29, 145),
-        ("1000200128", "MAT-100008", "S200801", 2600, 5, 72),
-        ("1000200129", "MAT-100005", "S200501", 9000, 6, 46),
-        ("1000200130", "MAT-100006", "S200602", 18000, 4, 18),
-        ("1000200131", "MAT-100004", "S200403", 1400, 26, 126),
-        ("1000200132", "MAT-100015", "S201502", 1800, 28, 38),
-    ]
-    buyer_by_material = {row["material_code"]: row["purchasing_group"] for row in _materials()}
-    return [
-        {
-            "pr_no": pr_no,
-            "pr_item": "00010",
-            "material_code": material,
-            "plant": PLANT,
-            "supplier": supplier,
-            "open_qty": qty,
-            "delivery_date": _day(offset),
-            "unit_price": unit_price,
-            "status": "Open",
-            "purchasing_group": buyer_by_material.get(material, "P01"),
-        }
-        for pr_no, material, supplier, qty, offset, unit_price in specs
-    ]
+    material_buyers = {(row["material_code"], row["plant"]): row["purchasing_group"] for row in _materials()}
+    rows = []
+    for variant in range(MOCK_SCALE):
+        for item_index, (pr_no, base_code, supplier, qty, offset, unit_price) in enumerate(BASE_PR_SPECS, start=1):
+            base_number = _base_number(base_code)
+            material_code = _material_code(base_code, variant)
+            plant = _plant_for_variant(variant)
+            rows.append(
+                {
+                    "pr_no": _document_no(pr_no, variant),
+                    "pr_item": "00010",
+                    "material_code": material_code,
+                    "plant": plant,
+                    "supplier": _supplier_code(supplier, variant),
+                    "open_qty": _business_qty(qty * _volume_factor(variant, base_number)),
+                    "delivery_date": _day(_delivery_offset(offset, variant, item_index)),
+                    "unit_price": round(float(unit_price) * _price_factor(variant, base_number), 2),
+                    "status": "Open",
+                    "purchasing_group": material_buyers.get((material_code, plant), "P01"),
+                }
+            )
+    return rows
 
 
 def _po_lines() -> list[dict[str, Any]]:
-    specs = [
-        ("4500100101", "MAT-100001", "S200101", 1300, 8, False, 920),
-        ("4500100102", "MAT-100002", "S200201", 1200, 7, False, 680),
-        ("4500100103", "MAT-100003", "S200301", 520, 17, True, 1550),
-        ("4500100104", "MAT-100004", "S200401", 4200, 11, False, 126),
-        ("4500100105", "MAT-100004", "S200402", 3600, 24, True, 126),
-        ("4500100106", "MAT-100005", "S200501", 16000, 12, False, 46),
-        ("4500100107", "MAT-100005", "S200501", 12000, 26, True, 46),
-        ("4500100108", "MAT-100006", "S200601", 22000, 10, False, 18),
-        ("4500100109", "MAT-100006", "S200602", 18000, 25, True, 18),
-        ("4500100110", "MAT-100007", "S200701", 42000, 9, False, 8),
-        ("4500100111", "MAT-100007", "S200701", 36000, 23, True, 8),
-        ("4500100112", "MAT-100008", "S200801", 3100, 13, False, 72),
-        ("4500100113", "MAT-100009", "S200901", 620, 9, False, 1180),
-        ("4500100114", "MAT-100010", "S201001", 580, 11, False, 960),
-        ("4500100115", "MAT-100011", "S201101", 7200, 18, False, 52),
-        ("4500100116", "MAT-100012", "S201201", 78000, 13, False, 5),
-        ("4500100117", "MAT-100013", "S201301", 18000, 16, False, 22),
-        ("4500100118", "MAT-100014", "S201401", 900, 5, False, 210),
-        ("4500100119", "MAT-100015", "S201501", 12000, 14, False, 38),
-        ("4500100120", "MAT-100016", "S201601", 105000, 12, False, 2.4),
-        ("4500100121", "MAT-100017", "S201701", 760, 19, False, 145),
-        ("4500100122", "MAT-100018", "S201801", 130000, 15, False, 3.6),
-        ("4500100123", "MAT-100005", "S200501", 9000, 3, False, 46),
-        ("4500100124", "MAT-100006", "S200601", 12000, 2, False, 18),
-        ("4500100125", "MAT-100012", "S201201", 50000, 4, True, 5),
-        ("4500100126", "MAT-100018", "S201801", 70000, 6, True, 3.6),
-        ("4500100127", "MAT-100004", "S200402", 1200, 6, True, 126),
-        ("4500100128", "MAT-100015", "S201501", 2500, 7, False, 38),
-    ]
-    return [
-        {
-            "po_no": po_no,
-            "po_item": "00010",
-            "material_code": material,
-            "plant": PLANT,
-            "supplier": supplier,
-            "open_qty": qty,
-            "delivery_date": _day(offset),
-            "confirmed_flag": confirmed,
-            "unit_price": unit_price,
-            "status": "Open",
-        }
-        for po_no, material, supplier, qty, offset, confirmed, unit_price in specs
-    ]
+    rows = []
+    for variant in range(MOCK_SCALE):
+        for item_index, (po_no, base_code, supplier, qty, offset, confirmed, unit_price) in enumerate(BASE_PO_SPECS, start=1):
+            base_number = _base_number(base_code)
+            rows.append(
+                {
+                    "po_no": _document_no(po_no, variant),
+                    "po_item": "00010",
+                    "material_code": _material_code(base_code, variant),
+                    "plant": _plant_for_variant(variant),
+                    "supplier": _supplier_code(supplier, variant),
+                    "open_qty": _business_qty(qty * _volume_factor(variant, base_number)),
+                    "delivery_date": _day(_delivery_offset(offset, variant, item_index)),
+                    "confirmed_flag": bool(confirmed),
+                    "unit_price": round(float(unit_price) * _price_factor(variant, base_number), 2),
+                    "status": "Open",
+                }
+            )
+    return rows
 
 
 def _bom_components(materials: list[dict[str, Any]]) -> list[dict[str, Any]]:
     rows = []
-    for index, material in enumerate(materials, start=1):
+    for material in materials:
+        base_code = _base_code(material["material_code"])
+        variant = _variant_for_material(material["material_code"])
+        base_number = _base_number(base_code)
         rows.append(
             {
-                "finished_good": _finished_good(material["material_code"]),
+                "finished_good": _finished_good(base_code, variant),
                 "component_material": material["material_code"],
-                "plant": PLANT,
+                "plant": material["plant"],
                 "usage_qty": 1 if material["abc_class"] != "C" else 2,
                 "valid_from": "2026-01-01",
-                "alternative_group": "MAIN" if index % 5 else "ALT-A",
+                "alternative_group": "MAIN" if base_number % 5 else "ALT-A",
             }
         )
     return rows
@@ -311,7 +352,71 @@ def _bom_components(materials: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def _supplier_performance() -> list[dict[str, Any]]:
     rows = []
-    suppliers = {
+    for variant in range(MOCK_SCALE):
+        for index, (base_code, supplier) in enumerate(_base_supplier_map().items(), start=1):
+            base_number = _base_number(base_code)
+            for sample in range(6):
+                planned = BASE_DATE - timedelta(days=72 - sample * 9 - index % 4 - variant % 3)
+                delay = [0, 1, 2, 4, 7, 10][(sample + index + variant) % 6]
+                if base_number in SHORTAGE_BASE_NUMBERS:
+                    delay += 2 + (1 if variant % 4 == 2 else 0)
+                rows.append(
+                    {
+                        "supplier": _supplier_code(supplier, variant),
+                        "material_code": _material_code(base_code, variant),
+                        "plant": _plant_for_variant(variant),
+                        "po_create_date": (planned - timedelta(days=20)).isoformat(),
+                        "planned_delivery_date": planned.isoformat(),
+                        "actual_gr_date": (planned + timedelta(days=delay)).isoformat(),
+                        "delivered_qty": _business_qty((1000 + index * 75 + sample * 40) * _volume_factor(variant, base_number)),
+                        "ordered_qty": _business_qty((1000 + index * 75 + sample * 40) * _volume_factor(variant, base_number)),
+                        "quality_issue_flag": bool(base_number in {3, 10} and sample in {3, 4}),
+                    }
+                )
+    return rows
+
+
+def _consumption_history() -> list[dict[str, Any]]:
+    rows = []
+    demand_by_material = {}
+    for demand in _planned_demands():
+        key = (demand["material_code"], demand["plant"])
+        demand_by_material[key] = demand_by_material.get(key, 0.0) + float(demand["demand_qty"])
+    for index, ((material, plant), total_demand) in enumerate(demand_by_material.items(), start=1):
+        weekly_base = max(20, total_demand / 7)
+        for week in range(8):
+            variation = 1 + ((week % 3) - 1) * 0.08 + (0.04 if index % 4 == 0 else 0)
+            rows.append(
+                {
+                    "material_code": material,
+                    "plant": plant,
+                    "posting_date": (BASE_DATE - timedelta(days=7 * (8 - week))).isoformat(),
+                    "actual_consumption_qty": round(weekly_base * variation, 2),
+                }
+            )
+    return rows
+
+
+def _expectations() -> dict[str, Any]:
+    return {
+        "purpose": "用于验证采购计划优化算法在接近 SAP 明细结构的数据上是否能稳定工作。",
+        "scale_factor": MOCK_SCALE,
+        "constraint_cases": [
+            {"case": "冻结期", "examples": [_material_code("MAT-100005", 0), _material_code("MAT-100006", 1), _material_code("MAT-100008", 2), _material_code("MAT-100014", 3)]},
+            {"case": "最小采购量/包装量", "examples": [_material_code("MAT-100004", 0), _material_code("MAT-100015", 4)]},
+            {"case": "保护物料", "examples": [_material_code("MAT-100003", 0), _material_code("MAT-100003", 5)]},
+            {"case": "供应商确认", "examples": [_document_no("4500100103", 0), _document_no("4500100105", 1), _document_no("4500100111", 2)]},
+            {"case": "同物料多单联动", "examples": [_material_code("MAT-100004", 0), _material_code("MAT-100005", 1), _material_code("MAT-100006", 2), _material_code("MAT-100018", 3)]},
+            {"case": "审批容量", "examples": ["高金额采购申请和采购订单组合"]},
+        ],
+        "expected_shortage_materials": [_material_code(base, variant) for variant in range(MOCK_SCALE) for base in ("MAT-100001", "MAT-100002", "MAT-100009", "MAT-100010", "MAT-100017")],
+        "expected_cash_materials": [_material_code(base, variant) for variant in range(MOCK_SCALE) for base in ("MAT-100005", "MAT-100006", "MAT-100007", "MAT-100012", "MAT-100013", "MAT-100016", "MAT-100018")],
+        "expected_blocked_reasons": ["冻结期", "保护物料", "供应商已确认", "服务水平余量不足", "最小采购量/包装量"],
+    }
+
+
+def _base_supplier_map() -> dict[str, str]:
+    return {
         "MAT-100001": "S200101",
         "MAT-100002": "S200201",
         "MAT-100003": "S200301",
@@ -331,73 +436,85 @@ def _supplier_performance() -> list[dict[str, Any]]:
         "MAT-100017": "S201701",
         "MAT-100018": "S201801",
     }
-    for index, material in enumerate(suppliers, start=1):
-        for sample in range(6):
-            planned = BASE_DATE - timedelta(days=72 - sample * 9 - index % 4)
-            delay = [0, 1, 2, 4, 7, 10][(sample + index) % 6]
-            if material in {"MAT-100001", "MAT-100002", "MAT-100009", "MAT-100010", "MAT-100017"}:
-                delay += 2
-            rows.append(
-                {
-                    "supplier": suppliers[material],
-                    "material_code": material,
-                    "plant": PLANT,
-                    "po_create_date": (planned - timedelta(days=20)).isoformat(),
-                    "planned_delivery_date": planned.isoformat(),
-                    "actual_gr_date": (planned + timedelta(days=delay)).isoformat(),
-                    "delivered_qty": 1000 + index * 75 + sample * 40,
-                    "ordered_qty": 1000 + index * 75 + sample * 40,
-                    "quality_issue_flag": bool(material in {"MAT-100003", "MAT-100010"} and sample == 4),
-                }
-            )
-    return rows
 
 
-def _consumption_history() -> list[dict[str, Any]]:
-    rows = []
-    demand_by_material = {
-        row["material_code"]: sum(item["demand_qty"] for item in _planned_demands() if item["material_code"] == row["material_code"])
-        for row in _materials()
-    }
-    for index, material in enumerate(demand_by_material, start=1):
-        weekly_base = max(20, demand_by_material[material] / 7)
-        for week in range(8):
-            variation = 1 + ((week % 3) - 1) * 0.08 + (0.04 if index % 4 == 0 else 0)
-            rows.append(
-                {
-                    "material_code": material,
-                    "plant": PLANT,
-                    "posting_date": (BASE_DATE - timedelta(days=7 * (8 - week))).isoformat(),
-                    "actual_consumption_qty": round(weekly_base * variation, 2),
-                }
-            )
-    return rows
+def _material_code(base_code: str, variant: int) -> str:
+    return f"MAT-{100000 + variant * len(BASE_MATERIAL_SPECS) + _base_number(base_code):06d}"
 
 
-def _expectations() -> dict[str, Any]:
-    return {
-        "purpose": "用于验证生产级现金优化和缺料预测，而不是页面演示假数据。",
-        "constraint_cases": [
-            {"case": "冻结期", "examples": ["MAT-100005", "MAT-100006", "MAT-100008", "MAT-100014"]},
-            {"case": "MOQ/MPQ", "examples": ["MAT-100004", "MAT-100015"]},
-            {"case": "保护物料", "examples": ["MAT-100003"]},
-            {"case": "供应商确认", "examples": ["4500100103", "4500100105", "4500100111"]},
-            {"case": "同物料多单联动", "examples": ["MAT-100004", "MAT-100005", "MAT-100006", "MAT-100018"]},
-            {"case": "审批容量", "examples": ["高金额 PR/PO 组合需要被求解器筛选"]},
-        ],
-        "expected_shortage_materials": ["MAT-100001", "MAT-100002", "MAT-100009", "MAT-100010", "MAT-100017"],
-        "expected_cash_materials": ["MAT-100005", "MAT-100006", "MAT-100007", "MAT-100012", "MAT-100013", "MAT-100016", "MAT-100018"],
-        "expected_blocked_reasons": ["冻结期", "保护物料", "供应商已确认", "服务水平余量不足", "MOQ/MPQ"],
-    }
+def _base_code(material_code: str) -> str:
+    sequence = int(material_code.split("-")[-1]) - 100000
+    base_number = ((sequence - 1) % len(BASE_MATERIAL_SPECS)) + 1
+    return f"MAT-{100000 + base_number:06d}"
 
 
-def _finished_good(material: str) -> str:
-    number = int(material.split("-")[-1])
-    if number <= 8:
-        return "AC-PRO-900"
-    if number <= 12:
-        return "DS-PLUS-75"
-    return "GEN-ASSY-01"
+def _variant_for_material(material_code: str) -> int:
+    sequence = int(material_code.split("-")[-1]) - 100000
+    return (sequence - 1) // len(BASE_MATERIAL_SPECS)
+
+
+def _base_number(base_code: str) -> int:
+    return int(base_code.split("-")[-1]) - 100000
+
+
+def _material_name(name: str, variant: int) -> str:
+    if variant == 0:
+        return name
+    return f"{name}{VARIANT_LABELS[variant]}平台"
+
+
+def _plant_for_variant(variant: int) -> str:
+    return PLANTS[variant % len(PLANTS)]
+
+
+def _buyer_group(base_buyer: str, variant: int) -> str:
+    return base_buyer if variant == 0 else f"P{variant + 10:02d}"
+
+
+def _mrp_controller(base_controller: str, variant: int) -> str:
+    return base_controller if variant == 0 else f"M{variant + 10:02d}"
+
+
+def _supplier_code(base_supplier: str, variant: int) -> str:
+    if variant == 0:
+        return base_supplier
+    return f"S{int(base_supplier[1:]) + variant * 10000:06d}"
+
+
+def _document_no(base_doc: str, variant: int) -> str:
+    return str(int(base_doc) + variant * 1000)
+
+
+def _volume_factor(variant: int, base_number: int) -> float:
+    product_mix = 0.86 + variant * 0.045
+    material_mix = 1 + ((base_number % 5) - 2) * 0.025
+    return round(product_mix * material_mix, 4)
+
+
+def _price_factor(variant: int, base_number: int) -> float:
+    return round(1 + variant * 0.018 + ((base_number % 4) - 1.5) * 0.012, 4)
+
+
+def _delivery_offset(offset: int, variant: int, item_index: int) -> int:
+    return max(2, offset + (variant % 5) - 2 + (item_index % 2))
+
+
+def _business_qty(value: float) -> float:
+    if abs(value) >= 1000:
+        return float(round(value / 10) * 10)
+    if abs(value) >= 100:
+        return float(round(value))
+    return round(value, 2)
+
+
+def _finished_good(base_code: str, variant: int) -> str:
+    base_number = _base_number(base_code)
+    suffix = f"{variant + 1:02d}"
+    if base_number <= 8:
+        return f"AC-PRO-900-{suffix}"
+    if base_number <= 12:
+        return f"DS-PLUS-75-{suffix}"
+    return f"GEN-ASSY-{suffix}"
 
 
 def _day(offset: int) -> str:

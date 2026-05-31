@@ -69,19 +69,24 @@ def _shift_date_value(value: str, delta_days: int) -> str:
 
 def _perturb_quantities(snapshot: dict[str, Any], index: int) -> None:
     rng = random.Random(4100 + index)
-    material_stress = {f"MAT-{number:06d}": 0.68 + 0.08 * ((index + number) % 3) for number in range(1, 6)}
-    material_surplus = {f"MAT-{number:06d}": 1.25 + 0.1 * ((index + number) % 2) for number in range(6, 11)}
     for row in snapshot.get("inventory", []):
         material = row["material_code"]
-        factor = material_stress.get(material) or material_surplus.get(material) or 1.0
+        base_number = _base_material_number(material)
+        if base_number in {1, 2, 9, 10, 17}:
+            factor = 0.68 + 0.08 * ((index + base_number) % 3)
+        elif base_number in {5, 6, 7, 12, 13, 16, 18}:
+            factor = 1.25 + 0.1 * ((index + base_number) % 2)
+        else:
+            factor = 1.0
         row["unrestricted_qty"] = round(float(row.get("unrestricted_qty") or 0) * factor * rng.uniform(0.92, 1.08), 2)
         row["available_stock"] = row["unrestricted_qty"]
     for row in snapshot.get("planned_demands", []):
         material = row["material_code"]
-        factor = 1.18 if material in material_stress else 0.92 if material in material_surplus else 1.0
+        base_number = _base_material_number(material)
+        factor = 1.18 if base_number in {1, 2, 9, 10, 17} else 0.92 if base_number in {5, 6, 7, 12, 13, 16, 18} else 1.0
         row["demand_qty"] = round(float(row.get("demand_qty") or 0) * factor * rng.uniform(0.88, 1.12), 2)
     for row in snapshot.get("supplier_performance", []):
-        if row.get("material_code") in material_stress and index % 3 == 1:
+        if _base_material_number(row.get("material_code") or "") in {1, 2, 9, 10, 17} and index % 3 == 1:
             actual = datetime.fromisoformat(row["actual_gr_date"]).date() + timedelta(days=3)
             row["actual_gr_date"] = actual.isoformat()
 
@@ -122,6 +127,14 @@ def _actual_outcomes(snapshot: dict[str, Any], snapshot_date: date) -> dict[str,
 
 def _snapshot_date(snapshot: dict[str, Any]) -> date:
     return _date(snapshot.get("snapshot", {}).get("snapshot_time") or "2026-05-29")
+
+
+def _base_material_number(material_code: str) -> int:
+    try:
+        sequence = int(str(material_code).split("-")[-1]) - 100000
+        return ((sequence - 1) % 18) + 1
+    except Exception:
+        return 0
 
 
 def _date(value: str) -> date:

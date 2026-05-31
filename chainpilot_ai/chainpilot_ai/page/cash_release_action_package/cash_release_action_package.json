@@ -1,0 +1,23 @@
+{
+  "content": null,
+  "creation": "2026-05-30 00:00:00.000000",
+  "docstatus": 0,
+  "doctype": "Page",
+  "idx": 0,
+  "modified": "2026-05-30 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "ChainPilot AI",
+  "name": "cash-release-action-package",
+  "owner": "Administrator",
+  "page_name": "cash-release-action-package",
+  "roles": [
+    {"role": "ChainPilot Admin"},
+    {"role": "ChainPilot Procurement Manager"},
+    {"role": "ChainPilot Finance BP"}
+  ],
+  "script": null,
+  "standard": "Yes",
+  "style": null,
+  "system_page": 0,
+  "title": "Procurement Action Worksheet"
+}

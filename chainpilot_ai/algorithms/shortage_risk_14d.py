@@ -10,9 +10,11 @@ from chainpilot_ai.strategy.policy import policy_for_material
 
 
 def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dict[str, Any]:
+    scenario = scenario or {}
     base_date = _snapshot_date(snapshot)
-    horizon_days = int((scenario or {}).get("horizon_days") or 14)
-    simulations = int((scenario or {}).get("simulations") or 600)
+    horizon_days = int(scenario.get("horizon_days") or 14)
+    simulations = int(scenario.get("simulations") or 600)
+    max_results = int(scenario.get("max_shortage_results") or 120)
     inventory = {(row["material_code"], row["plant"]): row for row in snapshot.get("inventory", [])}
     demands = _group(snapshot.get("planned_demands", []), "material_code", "plant")
     history = _group(snapshot.get("consumption_history", []), "material_code", "plant")
@@ -26,7 +28,7 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
         material_code, plant = key
         material = materials.get(key, {})
         material_policy = policy_for_material(material, scenario)
-        alert_threshold = float(material_policy.get("shortage_alert_threshold") or (scenario or {}).get("default_shortage_alert_threshold") or 0.2)
+        alert_threshold = float(material_policy.get("shortage_alert_threshold") or scenario.get("default_shortage_alert_threshold") or 0.2)
         material_demands = demands.get(key, [])
         if not material_demands:
             continue
@@ -92,13 +94,15 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
         results.append(result)
 
     results.sort(key=lambda item: item["shortage_probability_14d"], reverse=True)
+    limited_results = results[:max_results]
     return {
-        "results": results[:10],
+        "results": limited_results,
         "summary": {
-            "result_count": len(results[:10]),
+            "result_count": len(limited_results),
             "high_risk_count": sum(1 for item in results if item["shortage_probability_14d"] >= 0.5),
             "simulation_count": simulations,
             "horizon_days": horizon_days,
+            "max_results": max_results,
         },
     }
 

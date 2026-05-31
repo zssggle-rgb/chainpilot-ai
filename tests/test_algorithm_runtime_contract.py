@@ -19,14 +19,27 @@ class AlgorithmRuntimeContractTest(unittest.TestCase):
         data = load_mock_sap_snapshot()
         validation = validate_mock_sap_snapshot(data)
         self.assertTrue(validation["ok"], validation["errors"])
-        self.assertGreaterEqual(validation["counts"]["pr_lines"] + validation["counts"]["po_lines"], 20)
-        self.assertGreaterEqual(validation["counts"]["planned_demands"], 10)
+        self.assertGreaterEqual(validation["counts"]["materials"], 180)
+        self.assertGreaterEqual(validation["counts"]["pr_lines"], 300)
+        self.assertGreaterEqual(validation["counts"]["po_lines"], 250)
+        self.assertGreaterEqual(validation["counts"]["planned_demands"], 500)
         self.assertEqual(DEFAULT_MOCK_SAP_SNAPSHOT_PATH.name, "mock_sap_snapshot_v1.json")
         self.assertEqual(data["snapshot"]["source_system"], "SAP_MOCK_REALISTIC")
-        self.assertGreaterEqual(validation["counts"]["supplier_performance"], 100)
+        self.assertGreaterEqual(validation["counts"]["supplier_performance"], 1000)
         snapshot_run = build_snapshot_run(data)
         self.assertEqual(snapshot_run["snapshot_id"], data["snapshot"]["snapshot_id"])
         self.assertEqual(snapshot_run["record_count_mrp_parameters"], validation["counts"]["mrp_parameters"])
+
+    def test_mock_sap_snapshot_references_are_consistent(self) -> None:
+        data = load_mock_sap_snapshot()
+        materials = {(row["material_code"], row["plant"]) for row in data["materials"]}
+        for section in ("inventory", "mrp_parameters", "planned_demands", "consumption_history", "supplier_performance", "pr_lines", "po_lines"):
+            missing = [
+                (row["material_code"], row["plant"])
+                for row in data[section]
+                if (row["material_code"], row["plant"]) not in materials
+            ]
+            self.assertEqual(missing, [], section)
 
     def test_algorithm_runtime_outputs_required_counts(self) -> None:
         runtime = run_mvp_algorithms(load_mock_sap_snapshot())

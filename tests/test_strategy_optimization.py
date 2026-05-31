@@ -55,7 +55,11 @@ def test_tune_strategy_presets_recommends_existing_strategy() -> None:
 def test_mock_dashboard_exposes_constraint_validation_set() -> None:
     dashboard = get_mock_data_dashboard(45)
     assert dashboard["ok"]
-    assert dashboard["counts"]["pr_lines"] >= 30
+    assert dashboard["counts"]["materials"] >= 180
+    assert dashboard["counts"]["pr_lines"] >= 300
+    assert dashboard["counts"]["po_lines"] >= 250
     assert dashboard["cash_summary"]["solver_status"] in {"OPTIMAL", "FEASIBLE", "TRUNCATED_OPTIMAL"}
+    assert all(row["status"] == "通过" for row in dashboard["relationship_checks"])
+    assert len(dashboard["sample_tables"]) >= 6
     cases = {row["case"] for row in dashboard["constraint_cases"]}
-    assert {"冻结期", "MOQ/MPQ", "保护物料", "同物料多单联动", "审批容量"}.issubset(cases)
+    assert {"冻结期", "最小采购量/包装量", "保护物料", "同物料多单联动", "审批容量"}.issubset(cases)

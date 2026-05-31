@@ -7,47 +7,42 @@
     "module": "ChainPilot AI",
     "public": 1,
     "is_hidden": 0,
-    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"采购决策\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-ai-copilot\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"智能助手\",\"link_to\":\"ai-copilot\",\"type\":\"Page\"}},{\"id\":\"chainpilot-execution-monitor\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"执行监控\",\"link_to\":\"execution-monitor\",\"type\":\"Page\"}},{\"id\":\"chainpilot-learning-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"学习中心\",\"link_to\":\"learning-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-scenario-studio\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"方案测算\",\"link_to\":\"scenario-studio\",\"type\":\"Page\"}},{\"id\":\"chainpilot-strategy-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"策略优化\",\"link_to\":\"strategy-optimization-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP 连接\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"采购建议\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}}]",
+    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI Planner Workspace\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Planning Model\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-shortage-war-room\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shortage Exception Worksheet\",\"link_to\":\"shortage-risk-war-room\",\"type\":\"Page\"}},{\"id\":\"chainpilot-cash-package\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Procurement Action Worksheet\",\"link_to\":\"cash-release-action-package\",\"type\":\"Page\"}},{\"id\":\"chainpilot-master-data-health\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Master Data Inputs\",\"link_to\":\"master-data-health\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Action Queue\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}},{\"id\":\"chainpilot-recommendation-detail\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Line Item Detail\",\"link_to\":\"recommendation-detail\",\"type\":\"Page\"}},{\"id\":\"chainpilot-algorithm-run-detail\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Optimizer Runs\",\"link_to\":\"algorithm-run-detail\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP 连接\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}}]",
     "shortcuts": [
       {
-        "label": "采购决策",
+        "label": "Supply Planning Model",
         "type": "Page",
         "link_to": "chainpilot-ai-command-center"
       },
       {
-        "label": "采购建议",
+        "label": "Shortage Exception Worksheet",
+        "type": "Page",
+        "link_to": "shortage-risk-war-room"
+      },
+      {
+        "label": "Procurement Action Worksheet",
+        "type": "Page",
+        "link_to": "cash-release-action-package"
+      },
+      {
+        "label": "Master Data Inputs",
+        "type": "Page",
+        "link_to": "master-data-health"
+      },
+      {
+        "label": "Action Queue",
         "type": "Page",
         "link_to": "action-inbox"
       },
       {
-        "label": "智能助手",
+        "label": "Line Item Detail",
         "type": "Page",
-        "link_to": "ai-copilot"
+        "link_to": "recommendation-detail"
       },
       {
-        "label": "执行监控",
+        "label": "Optimizer Runs",
         "type": "Page",
-        "link_to": "execution-monitor"
-      },
-      {
-        "label": "学习中心",
-        "type": "Page",
-        "link_to": "learning-center"
-      },
-      {
-        "label": "方案测算",
-        "type": "Page",
-        "link_to": "scenario-studio"
-      },
-      {
-        "label": "策略优化",
-        "type": "Page",
-        "link_to": "strategy-optimization-center"
-      },
-      {
-        "label": "模拟数据",
-        "type": "Page",
-        "link_to": "mock-data-center"
+        "link_to": "algorithm-run-detail"
       },
       {
         "label": "SAP 连接",

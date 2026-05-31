@@ -1,22 +1,23 @@
 {
-  "creation": "2026-05-28 00:00:00.000000",
+  "content": null,
+  "creation": "2026-05-30 00:00:00.000000",
   "docstatus": 0,
   "doctype": "Page",
   "idx": 0,
-  "modified": "2026-05-28 00:00:00.000000",
+  "modified": "2026-05-30 00:00:00.000000",
+  "modified_by": "Administrator",
   "module": "ChainPilot AI",
-  "name": "action-inbox",
+  "name": "recommendation-detail",
   "owner": "Administrator",
-  "page_name": "action-inbox",
+  "page_name": "recommendation-detail",
   "roles": [
     {"role": "ChainPilot Admin"},
     {"role": "ChainPilot Planner"},
-    {"role": "ChainPilot Buyer"},
     {"role": "ChainPilot Procurement Manager"}
   ],
   "script": null,
   "standard": "Yes",
   "style": null,
   "system_page": 0,
-  "title": "Action Queue"
+  "title": "Line Item Detail"
 }
