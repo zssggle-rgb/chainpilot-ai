@@ -2,7 +2,7 @@
   frappe.pages["cash-release-action-package"].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
       parent: wrapper,
-      title: "Procurement Action Worksheet",
+      title: "采购动作表",
       single_column: true,
     });
     page.set_primary_action("提交审批", () => frappe.set_route("recommendation-detail"));

@@ -11,10 +11,12 @@ ChainPilot AI 前端定位为企业级供应链 Planner Workspace，而不是报
 
 ## 2. 风格基准
 
-风格名：Industrial Command Center
+风格名：Anaplan-like Planning Model Canvas
 
 参考方向：
 
+- Anaplan UX：Board / Worksheet / Context Selector / Insights Panel。
+- Anaplan Supply Planning：场景计划、物料约束、库存与产能、采购/生产订单建议。
 - SAP IBP：供应链计划、供需平衡、物料和地点维度。
 - SAP Fiori：企业软件密度、工作清单、对象页、审计信息下沉。
 - Blue Yonder Supply Chain Planning：异常队列、计划动作包、可执行工作台。
@@ -26,6 +28,27 @@ ChainPilot AI 前端定位为企业级供应链 Planner Workspace，而不是报
 - 不使用大面积渐变、玻璃拟态或营销式 Hero。
 - AI 只作为证据解释抽屉，不占据主视觉。
 - KPI 不超过 6 个，且必须连接具体物料、SAP 单据或动作。
+
+## 2.0 Anaplan 参考规则
+
+本轮界面验收不再只参考单张截图，而是按 Anaplan 公开产品和 Anapedia 文档抽象成可实现规则：
+
+- 主页面必须像 Planning Model Canvas：顶部是计划上下文选择器，主体是表格、图表、KPI 和动作卡组成的模型画布。
+- Worksheet 规则：中心必须有 primary grid，用于计划员分析、编辑或触发动作；右侧 Insights panel 只放相关洞察、快捷入口和补充卡片。
+- Board 规则：卡片用于比较分析，允许 KPI、chart、grid、action、field 等卡片，但不能堆成普通 KPI 大屏。
+- Context Selector 规则：计划周期、工厂、产品线、场景、版本放在顶部，切换后应影响全页数据语义。
+- Supply Planning 规则：页面必须展示 BOM/物料、库存、需求、供应、约束、场景、订单建议，不只展示总数。
+- AI 规则：AI 体现为预测、优化、解释、协同洞察，嵌入计划模型，不以聊天框或“AI 建议如下”作为主视觉。
+
+参考来源：
+
+- Anaplan Worksheet pages: https://help.anaplan.com/worksheet-pages-1cc11f1c-1447-4510-833d-cc393e8d9846
+- Anaplan Board pages: https://help.anaplan.com/board-pages-1294b62a-4655-4bcd-a0c5-e9ebb53e4501
+- Anaplan Worksheet or board: https://help.anaplan.com/worksheet-or-board-e080869d-92fe-4142-8755-e8deb2196819
+- Anaplan Primary grids: https://help.anaplan.com/work-with-primary-grids-3485da86-6267-47d6-a2fa-48d8dffca974
+- Anaplan Supply Planning application: https://www.anaplan.com/applications/supply-planning-app/
+- Anaplan Intelligence: https://www.anaplan.com/platform/intelligence/
+- Anaplan PlanIQ: https://www.anaplan.com/platform/anaplan-planiq/
 
 ## 2.1 AI 能力边界
 

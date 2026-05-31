@@ -7,40 +7,40 @@
     "module": "ChainPilot AI",
     "public": 1,
     "is_hidden": 0,
-    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI Planner Workspace\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supply Planning Model\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-shortage-war-room\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Shortage Exception Worksheet\",\"link_to\":\"shortage-risk-war-room\",\"type\":\"Page\"}},{\"id\":\"chainpilot-cash-package\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Procurement Action Worksheet\",\"link_to\":\"cash-release-action-package\",\"type\":\"Page\"}},{\"id\":\"chainpilot-master-data-health\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Master Data Inputs\",\"link_to\":\"master-data-health\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Action Queue\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}},{\"id\":\"chainpilot-recommendation-detail\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Line Item Detail\",\"link_to\":\"recommendation-detail\",\"type\":\"Page\"}},{\"id\":\"chainpilot-algorithm-run-detail\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Optimizer Runs\",\"link_to\":\"algorithm-run-detail\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP 连接\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}}]",
+    "content": "[{\"id\":\"chainpilot-control-tower\",\"type\":\"header\",\"data\":{\"text\":\"ChainPilot AI 计划工作台\"}},{\"id\":\"chainpilot-command-center\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"供应计划目标设定\",\"link_to\":\"chainpilot-ai-command-center\",\"type\":\"Page\"}},{\"id\":\"chainpilot-shortage-war-room\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"缺料例外表\",\"link_to\":\"shortage-risk-war-room\",\"type\":\"Page\"}},{\"id\":\"chainpilot-cash-package\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"采购动作表\",\"link_to\":\"cash-release-action-package\",\"type\":\"Page\"}},{\"id\":\"chainpilot-master-data-health\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"主数据输入\",\"link_to\":\"master-data-health\",\"type\":\"Page\"}},{\"id\":\"chainpilot-action-inbox\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"动作队列\",\"link_to\":\"action-inbox\",\"type\":\"Page\"}},{\"id\":\"chainpilot-recommendation-detail\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"行项目详情\",\"link_to\":\"recommendation-detail\",\"type\":\"Page\"}},{\"id\":\"chainpilot-algorithm-run-detail\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"优化运行\",\"link_to\":\"algorithm-run-detail\",\"type\":\"Page\"}},{\"id\":\"chainpilot-sap-console\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"SAP 连接\",\"link_to\":\"sap-integration-console\",\"type\":\"Page\"}}]",
     "shortcuts": [
       {
-        "label": "Supply Planning Model",
+        "label": "供应计划目标设定",
         "type": "Page",
         "link_to": "chainpilot-ai-command-center"
       },
       {
-        "label": "Shortage Exception Worksheet",
+        "label": "缺料例外表",
         "type": "Page",
         "link_to": "shortage-risk-war-room"
       },
       {
-        "label": "Procurement Action Worksheet",
+        "label": "采购动作表",
         "type": "Page",
         "link_to": "cash-release-action-package"
       },
       {
-        "label": "Master Data Inputs",
+        "label": "主数据输入",
         "type": "Page",
         "link_to": "master-data-health"
       },
       {
-        "label": "Action Queue",
+        "label": "动作队列",
         "type": "Page",
         "link_to": "action-inbox"
       },
       {
-        "label": "Line Item Detail",
+        "label": "行项目详情",
         "type": "Page",
         "link_to": "recommendation-detail"
       },
       {
-        "label": "Optimizer Runs",
+        "label": "优化运行",
         "type": "Page",
         "link_to": "algorithm-run-detail"
       },

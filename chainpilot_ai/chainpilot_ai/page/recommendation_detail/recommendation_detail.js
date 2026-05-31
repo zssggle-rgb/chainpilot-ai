@@ -2,7 +2,7 @@
   frappe.pages["recommendation-detail"].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
       parent: wrapper,
-      title: "Line Item Detail",
+      title: "行项目详情",
       single_column: true,
     });
     page.set_primary_action("提交审批", () => frappe.set_route("action-inbox"));

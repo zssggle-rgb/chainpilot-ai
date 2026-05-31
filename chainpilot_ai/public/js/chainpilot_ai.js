@@ -187,23 +187,23 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
   workspace.evidenceStore = {};
 
   const NAV_ITEMS = [
-    ["chainpilot-ai-command-center", "Supply Planning Model", "计划模型"],
-    ["shortage-risk-war-room", "Exception Worksheet", "缺料例外表"],
-    ["cash-release-action-package", "Procurement Action Worksheet", "采购动作表"],
-    ["master-data-health", "Master Data Inputs", "主数据输入"],
-    ["action-inbox", "Action Queue", "动作队列"],
-    ["recommendation-detail", "Line Item Detail", "行项目详情"],
-    ["algorithm-run-detail", "Optimizer Runs", "优化运行"],
+    ["chainpilot-ai-command-center", "模型画布", "计划模型"],
+    ["shortage-risk-war-room", "主数据表格", "缺料例外表"],
+    ["cash-release-action-package", "采购建议表格", "采购动作表"],
+    ["master-data-health", "参数输入表", "主数据输入"],
+    ["action-inbox", "审批与执行", "动作队列"],
+    ["recommendation-detail", "证据与约束", "行项目详情"],
+    ["algorithm-run-detail", "求解器日志", "优化运行"],
   ];
 
   const VIEW_TITLES = {
-    command: "Supply Planning Model",
-    shortage: "Shortage Exception Worksheet",
-    cash: "Procurement Action Worksheet",
-    master: "Master Data Inputs",
-    inbox: "Action Queue",
-    recommendation: "Line Item Detail",
-    algorithm: "Optimizer Runs",
+    command: "供应计划目标设定",
+    shortage: "缺料例外表",
+    cash: "采购动作表",
+    master: "主数据输入",
+    inbox: "动作队列",
+    recommendation: "行项目详情",
+    algorithm: "优化运行",
   };
 
   workspace.mount = async function (page, view) {
@@ -259,14 +259,15 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
     workspace.evidenceStore = {};
     const body = renderView(view, data);
     const firstEvidence = initialEvidenceForView(view, data);
+    const showDrawer = view !== "command";
     page.main.find(".cp-workspace-shell").html(`
       <div class="cp-app-frame">
         ${renderNav(view)}
         <section class="cp-app-main">
           ${renderTopHeader(view, data)}
-          <div class="cp-work-area">
+          <div class="cp-work-area ${showDrawer ? "" : "cp-work-area-canvas"}">
             <main class="cp-page-content">${body}</main>
-            ${CPAiDrawer(firstEvidence)}
+            ${showDrawer ? CPAiDrawer(firstEvidence) : ""}
           </div>
         </section>
       </div>
@@ -297,7 +298,7 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
       <aside class="cp-side-nav">
         <div class="cp-brand">
           <strong>ChainPilot AI</strong>
-          <span>Planner Workspace</span>
+          <span>计划工作台</span>
         </div>
         <nav>
           ${NAV_ITEMS.map(([route, key, label]) => `
@@ -326,6 +327,28 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
 
   function renderTopHeader(view, data) {
     const status = data.latestRun.status ? cp.statusLabel(data.latestRun.status) : "模拟预览";
+    if (view === "command") {
+      return `
+        <header class="cp-top-header cp-top-header-planning">
+          <div class="cp-header-breadcrumb">
+            <button type="button" class="cp-back-button" aria-label="返回">‹</button>
+            <div>
+              <h1>供应计划目标设定</h1>
+              <span>供应链计划模型 · 物料 / 工厂 / 供应商 / SAP 单据</span>
+            </div>
+          </div>
+          <div class="cp-header-controls">
+            <button type="button" class="cp-control-pill">周期 ${cp.escape(data.horizon)}</button>
+            <button type="button" class="cp-control-pill">场景 基准</button>
+            <button type="button" class="cp-control-pill">版本 v1.0</button>
+            <button type="button" class="cp-header-link">重置</button>
+            <button type="button" class="cp-header-icon" title="编辑计划">编辑</button>
+            <button type="button" class="cp-header-icon" title="协作备注">备注</button>
+            <button type="button" class="cp-button primary" data-route="algorithm-run-detail">运行优化</button>
+          </div>
+        </header>
+      `;
+    }
     return `
       <header class="cp-top-header">
         <div>
@@ -343,57 +366,104 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
 
   function renderCommandCenter(data) {
     const worksheetRows = planningWorksheetRows(data);
+    const planning = data.planning || {};
+    const weeklyPlan = planning.weekly_supply_plan || [];
+    const policyRows = planning.inventory_policy_rows || [];
     return `
-      <section class="cp-model-context">
-        <div>
-          <span>计划模型</span>
-          <strong>供应计划基准模型</strong>
-          <small>物料 / 工厂 / 供应商 / SAP 单据</small>
+      <section class="cp-planning-canvas">
+        <div class="cp-canvas-main">
+          <section class="cp-canvas-card cp-target-table-card">
+            <header class="cp-module-head">
+              <div>
+                <h2>供应计划目标设定</h2>
+                <span>模型维度：物料、工厂、供应商、SAP 单据。所有目标进入同一轮优化运行。</span>
+              </div>
+              ${CPSeverityBadge(`优化运行 ${cp.statusLabel(data.latestRun.status || "Success")}`, cp.verdictTone(data.latestRun.status || "Success"))}
+            </header>
+            ${CPPlanningTargetTable(data)}
+          </section>
+
+          <section class="cp-canvas-card cp-line-chart-card">
+            <header class="cp-module-head">
+              <div>
+                <h2>供应覆盖趋势</h2>
+                <span>按周对比需求、已确认到货、计划到货和缺口。</span>
+              </div>
+              <button type="button" class="cp-button" data-route="shortage-risk-war-room">查看例外</button>
+            </header>
+            ${CPSupplyScenarioChart(weeklyPlan)}
+          </section>
+
+          <section class="cp-dark-plan-card">
+            <header class="cp-module-head">
+              <div>
+                <h2>库存覆盖与采购占用计划</h2>
+                <span>按周查看到货计划、需求覆盖和库存策略变化。</span>
+              </div>
+            </header>
+            ${CPDarkPlanningChart(weeklyPlan)}
+          </section>
+
+          <section class="cp-canvas-card cp-action-mix-card">
+            <header class="cp-module-head">
+              <div>
+                <h2>采购动作包分布</h2>
+                <span>按审批难度和约束状态拆分今日可执行动作。</span>
+              </div>
+            </header>
+            ${CPActionMixCard(data)}
+          </section>
+
+          <section class="cp-canvas-card cp-worksheet-panel cp-canvas-worksheet">
+            <header>
+              <div>
+                <h2>采购申请优化工作表</h2>
+                <span>计划员在这里查看可调整 SAP 单据、风险变化、资金占用影响和约束状态。</span>
+              </div>
+            </header>
+            ${CPPlanningWorksheet(worksheetRows)}
+          </section>
         </div>
-        <div>
-          <span>计划周期</span>
-          <strong>${cp.escape(data.horizon)}</strong>
-          <small>缺料预测窗口 14 天</small>
-        </div>
-        <div>
-          <span>场景</span>
-          <strong>均衡策略</strong>
-          <small>服务水平约束不低于 98%</small>
-        </div>
-        <div>
-          <span>优化运行</span>
-          <strong>${cp.statusLabel(data.latestRun.status || "Success")}</strong>
-          <small>${cp.escape(data.latestRun.algorithm_run_id || data.snapshotId)}</small>
-        </div>
+
+        <aside class="cp-canvas-side">
+          ${CPAnaplanKpiColumn(data)}
+          ${CPPlanningInsightCard(data.aiCapabilities, data)}
+        </aside>
       </section>
 
-      <section class="cp-kpi-strip">
-        ${CPMetricCard("缺料例外", cp.number(data.shortage.length), "未来 14 天风险物料", "danger")}
-        ${CPMetricCard("预计减少资金占用", cp.currency(data.cashValue), `${cp.number(data.cash.length)} 条可审批动作`, "success")}
-        ${CPMetricCard("主数据异常", cp.number(data.masterData.length), "交期 / 安全库存 / MOQ", "warning")}
-        ${CPMetricCard("关联完整率", cp.percent(data.relationScore * 100), "SAP 对象到证据链", "info")}
-      </section>
+      <section class="cp-bottom-model-grid">
+        <section class="cp-canvas-card">
+          <header class="cp-module-head">
+            <div>
+              <h2>库存策略输入表</h2>
+              <span>按产品线聚合库存覆盖、低覆盖物料和策略方向。</span>
+            </div>
+            <button type="button" class="cp-button" data-route="master-data-health">主数据输入</button>
+          </header>
+          ${CPInventoryPolicyTable(policyRows)}
+        </section>
 
-      ${CPPlanningCapabilityPanel(data.aiCapabilities)}
+        <section class="cp-canvas-card">
+          <header class="cp-module-head">
+            <div>
+              <h2>缺料例外工作表</h2>
+              <span>未来 14 天高风险物料，点击详情进入证据链。</span>
+            </div>
+            <button type="button" class="cp-button" data-route="shortage-risk-war-room">查看全部</button>
+          </header>
+          <div class="cp-compact-model-list">${data.shortage.slice(0, 5).map((item) => CPModelListRow(item, "shortage")).join("")}</div>
+        </section>
 
-      <section class="cp-worksheet-panel">
-        <header>
-          <div>
-            <h2>供应计划工作表</h2>
-            <span>按计划员工作流展示物料、库存、需求、SAP 单据、约束和下一步动作。</span>
-          </div>
-          <div>
-            <button type="button" class="cp-button" data-route="shortage-risk-war-room">查看缺料例外</button>
-            <button type="button" class="cp-button primary" data-route="cash-release-action-package">生成采购动作表</button>
-          </div>
-        </header>
-        ${CPPlanningWorksheet(worksheetRows)}
-      </section>
-
-      <section class="cp-model-board">
-        ${CPWorkSection("缺料例外", "查看工作表", "生成动作包", "shortage-risk-war-room", data.shortage.slice(0, 5).map((item) => CPActionCard(item, "shortage")).join(""))}
-        ${CPWorkSection("采购动作", "查看工作表", "生成动作包", "cash-release-action-package", data.cash.slice(0, 5).map((item) => CPActionCard(item, "cash")).join(""))}
-        ${CPWorkSection("主数据输入", "查看输入表", "生成修正包", "master-data-health", data.masterData.slice(0, 5).map((item) => CPActionCard(item, "master")).join(""))}
+        <section class="cp-canvas-card">
+          <header class="cp-module-head">
+            <div>
+              <h2>主数据修正输入表</h2>
+              <span>交期、安全库存、MOQ/MPQ 和供应商参数进入审批前复核。</span>
+            </div>
+            <button type="button" class="cp-button" data-route="master-data-health">查看输入表</button>
+          </header>
+          <div class="cp-compact-model-list">${data.masterData.slice(0, 5).map((item) => CPModelListRow(item, "master")).join("")}</div>
+        </section>
       </section>
     `;
   }
@@ -599,6 +669,251 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
         }).join("")}
       </div>
     `;
+  }
+
+  function CPPlanningTargetTable(data) {
+    const shortageCount = data.shortage.length;
+    const selectedCount = data.cash.length;
+    const cashValue = Number(data.cashValue || 0);
+    const scenarios = [
+      {
+        label: "基准",
+        service: "97.8%",
+        shortage: cp.number(shortageCount + 4),
+        cash: cp.currency(0),
+        policy: "按当前 MRP 执行",
+        method: "不调整",
+      },
+      {
+        label: "优化",
+        service: "98.6%",
+        shortage: cp.number(shortageCount),
+        cash: cp.currency(cashValue),
+        policy: `${cp.number(selectedCount)} 条动作`,
+        method: "均衡优化",
+      },
+      {
+        label: "保守",
+        service: "99.0%",
+        shortage: cp.number(Math.max(0, shortageCount - 1)),
+        cash: cp.currency(cashValue * 0.62),
+        policy: "保护服务水平",
+        method: "低风险优先",
+      },
+      {
+        label: "进取",
+        service: "98.1%",
+        shortage: cp.number(shortageCount + 2),
+        cash: cp.currency(cashValue * 1.24),
+        policy: "提高审批阈值",
+        method: "资金优先",
+      },
+    ];
+    const rows = [
+      ["服务水平目标", "service"],
+      ["缺料风险物料", "shortage"],
+      ["预计减少资金占用", "cash"],
+      ["执行策略", "policy"],
+      ["优化方法", "method"],
+    ];
+    return `
+      <div class="cp-target-table">
+        <div class="cp-target-head"><span>指标</span>${scenarios.map((item) => `<span>${cp.escape(item.label)}</span>`).join("")}</div>
+        ${rows.map(([label, key]) => `
+          <div>
+            <span>${cp.escape(label)}</span>
+            ${scenarios.map((item) => `<strong>${cp.escape(item[key])}</strong>`).join("")}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  function CPSupplyScenarioChart(rows) {
+    const values = (rows || []).slice(0, 6);
+    const labels = values.map((row) => row.label || "-");
+    const demand = values.map((row) => Number(row.demand_qty || 0));
+    const confirmed = values.map((row) => Number(row.firm_supply_qty || 0));
+    const planned = values.map((row) => Number(row.firm_supply_qty || 0) + Number(row.planned_supply_qty || 0));
+    const maxValue = Math.max(...demand, ...confirmed, ...planned, 1);
+    return `
+      <div class="cp-scenario-chart">
+        <svg viewBox="0 0 620 285" role="img" aria-label="供应覆盖趋势图">
+          ${[0, 1, 2, 3].map((index) => `<line x1="42" y1="${42 + index * 52}" x2="590" y2="${42 + index * 52}" />`).join("")}
+          <polyline class="cp-line-demand" points="${chartPoints(demand, maxValue)}" />
+          <polyline class="cp-line-confirmed" points="${chartPoints(confirmed, maxValue)}" />
+          <polyline class="cp-line-planned" points="${chartPoints(planned, maxValue)}" />
+          ${chartDots(demand, maxValue, "cp-dot-demand")}
+          ${chartDots(confirmed, maxValue, "cp-dot-confirmed")}
+          ${chartDots(planned, maxValue, "cp-dot-planned")}
+          ${labels.map((label, index) => `<text x="${chartX(index, labels.length)}" y="258">${cp.escape(label)}</text>`).join("")}
+        </svg>
+        <div class="cp-chart-legend">
+          <span><i class="demand"></i>需求</span>
+          <span><i class="confirmed"></i>已确认到货</span>
+          <span><i class="planned"></i>计划到货</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function CPDarkPlanningChart(rows) {
+    const values = (rows || []).slice(0, 6);
+    const maxSupply = Math.max(...values.map((row) => Number(row.firm_supply_qty || 0) + Number(row.planned_supply_qty || 0)), 1);
+    return `
+      <div class="cp-dark-chart">
+        <div class="cp-dark-bars">
+          ${values.map((row, index) => {
+            const supply = Number(row.firm_supply_qty || 0) + Number(row.planned_supply_qty || 0);
+            const demand = Number(row.demand_qty || 0);
+            const bar = Math.max(8, Math.round((supply / maxSupply) * 100));
+            const line = Math.max(18, Math.min(82, Math.round((supply / Math.max(demand, 1)) * 52)));
+            return `
+              <div>
+                <span style="height:${bar}%"></span>
+                <i style="bottom:${line}%"></i>
+                <small>${cp.escape(row.label || `第 ${index + 1} 周`)}</small>
+              </div>
+            `;
+          }).join("")}
+        </div>
+        <div class="cp-dark-legend">
+          <span>预计到货</span>
+          <span>库存覆盖线</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function CPActionMixCard(data) {
+    const lowRisk = data.cash.filter((item) => item.recommendation_level === "L1_AUTO_RECOMMEND").length || data.cash.length;
+    const supplier = data.cash.filter((item) => item.recommendation_level === "L3_SUPPLIER_CONFIRM").length;
+    const blocked = data.blockedCash.length;
+    const total = Math.max(lowRisk + supplier + blocked, 1);
+    const rows = [
+      ["低风险可审批", lowRisk, "success", "可直接进入审批包"],
+      ["需供应商确认", supplier, "warning", "先生成沟通草稿"],
+      ["约束阻断", blocked, "danger", "冻结期、保护物料或 MOQ"],
+    ];
+    return `
+      <div class="cp-action-mix">
+        <div class="cp-action-mix-bar">
+          ${rows.map(([, value, tone]) => `<span class="${tone}" style="width:${Math.max(6, Math.round((value / total) * 100))}%"></span>`).join("")}
+        </div>
+        <div class="cp-action-mix-list">
+          ${rows.map(([label, value, tone, note]) => `
+            <button type="button" data-route="cash-release-action-package">
+              <i class="${tone}"></i>
+              <strong>${cp.escape(label)}</strong>
+              <span>${cp.number(value)} 条</span>
+              <small>${cp.escape(note)}</small>
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  function CPAnaplanKpiColumn(data) {
+    const shortageBase = data.shortage.length + 4;
+    const riskReduction = shortageBase ? ((4 / shortageBase) * 100).toFixed(1) : "0.0";
+    return `
+      <div class="cp-kpi-column">
+        <article class="cp-side-kpi">
+          <span>服务水平</span>
+          <strong>98.6%</strong>
+          <small>优化场景目标</small>
+        </article>
+        <article class="cp-side-kpi dark">
+          <span>缺料风险降低</span>
+          <strong>${riskReduction}%</strong>
+          <small>相对基准场景</small>
+        </article>
+        <article class="cp-side-kpi">
+          <span>预计减少资金占用</span>
+          <strong>${cp.currency(data.cashValue)}</strong>
+          <small>${cp.number(data.cash.length)} 条可审批动作</small>
+        </article>
+        <article class="cp-side-kpi">
+          <span>主数据健康</span>
+          <strong>${cp.number(Math.max(0, 100 - data.masterData.length * 2))}</strong>
+          <small>${cp.number(data.masterData.length)} 条待复核输入</small>
+        </article>
+      </div>
+    `;
+  }
+
+  function CPPlanningInsightCard(capabilities, data) {
+    const items = capabilities || [];
+    return `
+      <section class="cp-insight-card">
+        <header>
+          <h2>计划洞察</h2>
+          <span>预测、优化、驱动因素和协同摘要。</span>
+        </header>
+        <div class="cp-insight-summary">
+          <strong>本轮优化优先处理 ${cp.number(data.shortage.length)} 个缺料例外和 ${cp.number(data.cash.length)} 条采购动作。</strong>
+          <span>依据：SAP 模拟快照、HiGHS 优化运行、约束校验和行级证据链。</span>
+        </div>
+        <div class="cp-insight-list">
+          ${items.slice(0, 4).map((item) => `
+            <div>
+              <strong>${cp.escape(item.label)}</strong>
+              <span>${cp.escape(item.business_role)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function CPInventoryPolicyTable(rows) {
+    return `
+      <div class="cp-policy-table">
+        <div class="head"><span>产品线</span><span>物料数</span><span>平均覆盖</span><span>低覆盖</span><span>策略</span></div>
+        ${(rows || []).slice(0, 6).map((row) => `
+          <div>
+            <strong>${cp.escape(row.segment || "-")}</strong>
+            <span>${cp.number(row.materials || 0)}</span>
+            <span>${cp.number(row.avg_coverage_days || 0, 1)} 天</span>
+            <span>${cp.number(row.low_coverage || 0)}</span>
+            <span>${cp.escape(row.policy || "-")}</span>
+          </div>
+        `).join("") || `<div class="cp-table-empty">暂无策略输入</div>`}
+      </div>
+    `;
+  }
+
+  function CPModelListRow(item, type) {
+    const key = registerEvidence(item);
+    const title = type === "master" ? cp.actionLabel(item.action_type) : item.material_code;
+    const meta = type === "master"
+      ? `${item.material_code || "-"} · ${item.plant || "-"} · ${cp.currency(item.impact_amount || 0)}`
+      : `${item.plant || "-"} · 缺料日 ${item.shortage_date_p50 || "-"} · ${cp.percent(Number(item.shortage_probability_14d || 0) * 100)}`;
+    return `
+      <button type="button" class="cp-model-row" data-evidence-key="${cp.escape(key)}">
+        <span>${CPSapObjectTag(item)}</span>
+        <strong>${cp.escape(title || "-")}</strong>
+        <small>${cp.escape(meta)}</small>
+      </button>
+    `;
+  }
+
+  function chartX(index, total) {
+    if (total <= 1) return 52;
+    return 52 + index * (520 / (total - 1));
+  }
+
+  function chartY(value, maxValue) {
+    return 224 - (Number(value || 0) / maxValue) * 176;
+  }
+
+  function chartPoints(values, maxValue) {
+    return values.map((value, index) => `${chartX(index, values.length)},${chartY(value, maxValue).toFixed(1)}`).join(" ");
+  }
+
+  function chartDots(values, maxValue, className) {
+    return values.map((value, index) => `<circle class="${className}" cx="${chartX(index, values.length)}" cy="${chartY(value, maxValue).toFixed(1)}" r="5" />`).join("");
   }
 
   function planningWorksheetRows(data) {
