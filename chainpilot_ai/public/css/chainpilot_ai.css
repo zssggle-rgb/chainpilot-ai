@@ -1678,6 +1678,111 @@
   white-space: nowrap;
 }
 
+.cp-page-tabs {
+  display: grid;
+  min-width: 0;
+}
+
+.cp-tabbar {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  border: 1px solid var(--cp-border);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: var(--cp-surface-subtle);
+}
+
+.cp-tab-button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 42px;
+  padding: 7px 14px;
+  border: 0;
+  border-right: 1px solid var(--cp-border);
+  background: transparent;
+  color: var(--cp-text-muted);
+  font-size: 12px;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.cp-tab-button span,
+.cp-tab-button small {
+  display: block;
+}
+
+.cp-tab-button small {
+  color: inherit;
+  font-size: 10px;
+  font-weight: 720;
+}
+
+.cp-tab-button.active {
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  box-shadow: inset 0 -3px 0 var(--cp-primary);
+}
+
+.cp-tab-panels {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--cp-border);
+  border-radius: 0 0 8px 8px;
+  background: var(--cp-surface);
+}
+
+.cp-tab-panel {
+  display: none;
+  min-width: 0;
+}
+
+.cp-tab-panel.active {
+  display: block;
+}
+
+.cp-tab-panel[hidden] {
+  display: none !important;
+}
+
+.cp-legacy-tabs .cp-tab-panel > section,
+.cp-legacy-tabs .cp-tab-panel > div {
+  margin-top: 0 !important;
+}
+
+.cp-flow-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.cp-flow-list > div {
+  min-height: 104px;
+  padding: 12px;
+  border: 1px solid var(--cp-border);
+  border-radius: 7px;
+  background: var(--cp-surface-subtle);
+}
+
+.cp-flow-list strong,
+.cp-flow-list span {
+  display: block;
+}
+
+.cp-flow-list strong {
+  color: var(--cp-text);
+  font-size: 13px;
+  font-weight: 790;
+}
+
+.cp-flow-list span {
+  margin-top: 8px;
+  color: var(--cp-text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .cp-object-header {
   display: grid;
   grid-template-columns: minmax(260px, 0.75fr) minmax(520px, 1.2fr) auto;
@@ -3613,6 +3718,10 @@
     border-bottom: 1px solid var(--cp-border);
   }
 
+  .cp-flow-list {
+    grid-template-columns: 1fr;
+  }
+
   .cp-fiori-legacy-content .chainpilot-hero,
   .cp-fiori-legacy-content .chainpilot-workbench-head,
   .cp-fiori-legacy-content .chainpilot-plan-header,
@@ -3671,6 +3780,15 @@
   .cp-header-controls {
     justify-content: flex-start;
     flex-wrap: wrap;
+  }
+
+  .cp-tabbar {
+    border-radius: 8px;
+  }
+
+  .cp-tab-button {
+    min-height: 38px;
+    padding: 6px 10px;
   }
 
   .cp-kpi-strip,

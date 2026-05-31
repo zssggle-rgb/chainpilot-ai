@@ -257,6 +257,7 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
       </div>
     `);
     bindWorkspace(page);
+    setupLegacySectionTabs(page);
   };
 
   function normalizeData(runtime, mock) {
@@ -420,16 +421,37 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
     const selected = rows[0] || {};
     return `
       <section class="cp-fiori-workspace">
-        ${CPMessageStrip(data)}
         ${CPObjectPageHeader(data)}
-        ${CPFilterBar(data)}
-        <section class="cp-fiori-split">
-          <main class="cp-list-report">
-            ${CPRecommendationTable(rows)}
-          </main>
-          ${CPObjectInspector(selected.raw || data.selectedItem)}
-        </section>
-        ${CPPlannerObjectLists(data)}
+        ${CPTabPage([
+          {
+            label: "推荐处理",
+            meta: `${cp.number(rows.length)} 条`,
+            content: `
+              ${CPMessageStrip(data)}
+              ${CPFilterBar(data)}
+              <section class="cp-fiori-split">
+                <main class="cp-list-report">
+                  ${CPRecommendationTable(rows)}
+                </main>
+                ${CPObjectInspector(selected.raw || data.selectedItem)}
+              </section>
+            `,
+          },
+          {
+            label: "对象队列",
+            meta: "缺料 / 采购 / 主数据",
+            content: CPPlannerObjectLists(data),
+          },
+          {
+            label: "使用流程",
+            meta: "计划员 SOP",
+            content: CPUsageFlow([
+              ["查看推荐", "先在推荐处理清单按优先级查看 SAP 单据、物料、工厂、供应商和建议动作。"],
+              ["打开证据", "点击行项目或“查看证据”，核对算法运行、约束校验和证据链。"],
+              ["形成动作包", "确认风险和资金影响后进入采购动作页生成审批包，不直接写入 SAP。"],
+            ]),
+          },
+        ])}
       </section>
     `;
   }
@@ -601,78 +623,75 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
 
   function renderShortageWarRoom(data) {
     const selected = data.shortage[0] || {};
-    return `
-      <section class="cp-war-room">
-        <aside class="cp-list-panel">
-          <div class="cp-panel-title">风险物料</div>
-          ${data.shortage.slice(0, 10).map((item) => CPActionCard(item, "shortage")).join("") || CPEmpty("暂无缺料风险")}
-        </aside>
-        <section class="cp-analysis-panel">
-          <div class="cp-panel-title">库存投影</div>
-          ${CPInventoryProjection(selected)}
-          <div class="cp-detail-grid">
-            ${CPMetricCard("预计缺料日", selected.shortage_date_p50 || "-", "P50 缺料日期", "danger")}
-            ${CPMetricCard("P90 缺口", cp.number(selected.shortage_qty_p90 || 0), "最坏情形缺口", "danger")}
-            ${CPMetricCard("缺料概率", cp.percent(Number(selected.shortage_probability_14d || 0) * 100), "14 天窗口", "warning")}
-            ${CPMetricCard("影响工单", (selected.affected_production_orders || []).slice(0, 3).join("、") || "-", "生产订单", "info")}
-          </div>
-          <section class="cp-panel">
-            <div class="cp-panel-title">建议动作</div>
-            <div class="cp-action-toolbar">
-              <button class="cp-button primary">催交采购订单</button>
-              <button class="cp-button">启用替代料</button>
-              <button class="cp-button">生成紧急采购申请</button>
-            </div>
-          </section>
-        </section>
+    const riskList = `
+      <aside class="cp-list-panel">
+        <div class="cp-panel-title">风险物料</div>
+        ${data.shortage.slice(0, 10).map((item) => CPActionCard(item, "shortage")).join("") || CPEmpty("暂无缺料风险")}
+      </aside>
+    `;
+    const projection = `
+      <section class="cp-analysis-panel">
+        <div class="cp-panel-title">库存投影</div>
+        ${CPInventoryProjection(selected)}
+        <div class="cp-detail-grid">
+          ${CPMetricCard("预计缺料日", selected.shortage_date_p50 || "-", "P50 缺料日期", "danger")}
+          ${CPMetricCard("P90 缺口", cp.number(selected.shortage_qty_p90 || 0), "最坏情形缺口", "danger")}
+          ${CPMetricCard("缺料概率", cp.percent(Number(selected.shortage_probability_14d || 0) * 100), "14 天窗口", "warning")}
+          ${CPMetricCard("影响工单", (selected.affected_production_orders || []).slice(0, 3).join("、") || "-", "生产订单", "info")}
+        </div>
       </section>
     `;
+    return CPTabPage([
+      { label: "风险物料", meta: `${cp.number(data.shortage.length)} 条`, content: `<section class="cp-war-room">${riskList}${projection}</section>` },
+      { label: "库存投影", meta: selected.material_code || "-", content: projection },
+      {
+        label: "处置动作",
+        meta: "催交 / 替代 / 紧急 PR",
+        content: `<section class="cp-panel"><div class="cp-panel-title">建议动作</div><div class="cp-action-toolbar"><button class="cp-button primary">催交采购订单</button><button class="cp-button">启用替代料</button><button class="cp-button">生成紧急采购申请</button></div></section>`,
+      },
+    ]);
   }
 
   function renderCashPackage(data) {
     const lowRisk = data.cash.filter((item) => item.recommendation_level === "L1_AUTO_RECOMMEND");
     const supplierConfirm = data.cash.filter((item) => item.recommendation_level === "L3_SUPPLIER_CONFIRM");
-    return `
-      <section class="cp-constraint-bar">
-        ${CPMetricCard("资金占用降低目标", cp.currency(data.cashValue), "今日动作包", "success")}
-        ${CPMetricCard("服务水平", "不低于 98%", "关键物料约束", "info")}
-        ${CPMetricCard("保护品类", "保护物料不可动", "硬约束", "warning")}
-        ${CPMetricCard("禁止动作", "冻结期 / 低于 MOQ", "自动阻断", "danger")}
-      </section>
-      <section class="cp-package-grid">
-        ${CPActionTable("低风险可审批", lowRisk, "success")}
-        ${CPActionTable("需供应商确认", supplierConfirm.length ? supplierConfirm : data.cash.slice(0, 3), "warning")}
-        ${CPActionTable("被阻断", data.blockedCash, "danger")}
-      </section>
-    `;
+    return CPTabPage([
+      {
+        label: "目标约束",
+        meta: cp.currency(data.cashValue),
+        content: `<section class="cp-constraint-bar">${CPMetricCard("资金占用降低目标", cp.currency(data.cashValue), "今日动作包", "success")}${CPMetricCard("服务水平", "不低于 98%", "关键物料约束", "info")}${CPMetricCard("保护品类", "保护物料不可动", "硬约束", "warning")}${CPMetricCard("禁止动作", "冻结期 / 低于 MOQ", "自动阻断", "danger")}</section>`,
+      },
+      { label: "低风险可审批", meta: `${cp.number(lowRisk.length)} 条`, content: CPActionTable("低风险可审批", lowRisk, "success") },
+      { label: "供应商确认", meta: `${cp.number((supplierConfirm.length ? supplierConfirm : data.cash.slice(0, 3)).length)} 条`, content: CPActionTable("需供应商确认", supplierConfirm.length ? supplierConfirm : data.cash.slice(0, 3), "warning") },
+      { label: "被阻断", meta: `${cp.number(data.blockedCash.length)} 条`, content: CPActionTable("被阻断", data.blockedCash, "danger") },
+    ]);
   }
 
   function renderMasterDataHealth(data) {
     const score = Math.max(0, 100 - data.masterData.length * 2);
-    return `
-      <section class="cp-kpi-strip">
-        ${CPMetricCard("主数据健康分", `${score}`, "按异常数量折算", score >= 85 ? "success" : "warning")}
-        ${CPMetricCard("异常项", cp.number(data.masterData.length), "需要计划员复核", "warning")}
-        ${CPMetricCard("影响金额", cp.currency(data.masterData.reduce((sum, item) => sum + Number(item.impact_amount || 0), 0)), "按物料单价估算", "danger")}
-        ${CPMetricCard("样本覆盖", "6+ 样本", "供应商履约历史", "info")}
-      </section>
-      <section class="cp-md-tabs">
-        ${CPMasterTab("计划交货期", data.masterData.filter((item) => item.action_type === "REVIEW_SUPPLIER_LEAD_TIME"))}
-        ${CPMasterTab("安全库存", data.masterData.filter((item) => item.action_type === "REVIEW_SAFETY_STOCK"))}
-        ${CPMasterTab("MOQ/MPQ", data.masterData.filter((item) => item.action_type === "REVIEW_MOQ"))}
-        ${CPMasterTab("供应商参数", data.masterData.filter((item) => item.action_type === "REVIEW_SUPPLIER_PARAMETER"))}
-      </section>
-    `;
+    const leadTime = data.masterData.filter((item) => item.action_type === "REVIEW_SUPPLIER_LEAD_TIME");
+    const safetyStock = data.masterData.filter((item) => item.action_type === "REVIEW_SAFETY_STOCK");
+    const moq = data.masterData.filter((item) => item.action_type === "REVIEW_MOQ");
+    const supplier = data.masterData.filter((item) => item.action_type === "REVIEW_SUPPLIER_PARAMETER");
+    return CPTabPage([
+      {
+        label: "健康概览",
+        meta: `${score} 分`,
+        content: `<section class="cp-kpi-strip">${CPMetricCard("主数据健康分", `${score}`, "按异常数量折算", score >= 85 ? "success" : "warning")}${CPMetricCard("异常项", cp.number(data.masterData.length), "需要计划员复核", "warning")}${CPMetricCard("影响金额", cp.currency(data.masterData.reduce((sum, item) => sum + Number(item.impact_amount || 0), 0)), "按物料单价估算", "danger")}${CPMetricCard("样本覆盖", "6+ 样本", "供应商履约历史", "info")}</section>`,
+      },
+      { label: "计划交货期", meta: `${cp.number(leadTime.length)} 条`, content: CPMasterTab("计划交货期", leadTime) },
+      { label: "安全库存", meta: `${cp.number(safetyStock.length)} 条`, content: CPMasterTab("安全库存", safetyStock) },
+      { label: "MOQ/MPQ", meta: `${cp.number(moq.length)} 条`, content: CPMasterTab("MOQ/MPQ", moq) },
+      { label: "供应商参数", meta: `${cp.number(supplier.length)} 条`, content: CPMasterTab("供应商参数", supplier) },
+    ]);
   }
 
   function renderActionInbox(data) {
-    return `
-      <section class="cp-command-grid">
-        ${CPWorkSection("待审批动作", "查看全部", "提交审批", "cash-release-action-package", data.cash.slice(0, 8).map((item) => CPActionCard(item, "cash")).join(""))}
-        ${CPWorkSection("缺料风险处理", "查看全部", "生成动作包", "shortage-risk-war-room", data.shortage.slice(0, 8).map((item) => CPActionCard(item, "shortage")).join(""))}
-        ${CPWorkSection("主数据复核", "查看全部", "生成修正包", "master-data-health", data.masterData.slice(0, 8).map((item) => CPActionCard(item, "master")).join(""))}
-      </section>
-    `;
+    return CPTabPage([
+      { label: "待审批动作", meta: `${cp.number(data.cash.length)} 条`, content: CPWorkSection("待审批动作", "查看全部", "提交审批", "cash-release-action-package", data.cash.slice(0, 8).map((item) => CPActionCard(item, "cash")).join("")) },
+      { label: "缺料风险处理", meta: `${cp.number(data.shortage.length)} 条`, content: CPWorkSection("缺料风险处理", "查看全部", "生成动作包", "shortage-risk-war-room", data.shortage.slice(0, 8).map((item) => CPActionCard(item, "shortage")).join("")) },
+      { label: "主数据复核", meta: `${cp.number(data.masterData.length)} 条`, content: CPWorkSection("主数据复核", "查看全部", "生成修正包", "master-data-health", data.masterData.slice(0, 8).map((item) => CPActionCard(item, "master")).join("")) },
+    ]);
   }
 
   function renderRecommendationDetail(data) {
@@ -691,13 +710,13 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
             <button class="cp-button">驳回</button>
           </div>
         </div>
-        <div class="cp-detail-grid two">
-          ${CPBeforeAfter(item)}
-          ${CPAlgorithmTrace(item, data.runs)}
-          ${CPEvidenceList(item)}
-          ${CPConstraintChecklist(item)}
-          ${CPExecutionTimeline(item)}
-        </div>
+        ${CPTabPage([
+          { label: "当前建议", meta: "Before / After", content: CPBeforeAfter(item) },
+          { label: "算法追踪", meta: item.algorithm_run || "-", content: CPAlgorithmTrace(item, data.runs) },
+          { label: "证据链", meta: "Evidence", content: CPEvidenceList(item) },
+          { label: "约束校验", meta: cp.statusLabel(item.constraint_verdict || "PASS"), content: CPConstraintChecklist(item) },
+          { label: "执行时间线", meta: "审批 / 回写", content: CPExecutionTimeline(item) },
+        ])}
       </section>
     `;
   }
@@ -712,17 +731,139 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
           </div>
           <button class="cp-button primary">重新运行算法</button>
         </div>
-        <div class="cp-run-list">
-          ${data.runs.map((run) => CPRunRow(run, data)).join("")}
-        </div>
-        <section class="cp-panel">
-          <div class="cp-panel-title">关联 SAP 对象</div>
-          <div class="cp-list-stack">
-            ${[...data.cash.slice(0, 3), ...data.shortage.slice(0, 2)].map((item) => CPActionCard(item, item.result_type === "SHORTAGE_RISK" ? "shortage" : "cash")).join("")}
-          </div>
-        </section>
+        ${CPTabPage([
+          { label: "运行列表", meta: `${cp.number(data.runs.length)} 次`, content: `<div class="cp-run-list">${data.runs.map((run) => CPRunRow(run, data)).join("")}</div>` },
+          { label: "关联 SAP 对象", meta: "推荐 / 缺料", content: `<section class="cp-panel"><div class="cp-panel-title">关联 SAP 对象</div><div class="cp-list-stack">${[...data.cash.slice(0, 3), ...data.shortage.slice(0, 2)].map((item) => CPActionCard(item, item.result_type === "SHORTAGE_RISK" ? "shortage" : "cash")).join("")}</div></section>` },
+        ])}
       </section>
     `;
+  }
+
+  function CPTabPage(tabs) {
+    workspace.tabGroupCounter = (workspace.tabGroupCounter || 0) + 1;
+    const group = `cp-tab-group-${workspace.tabGroupCounter}`;
+    const safeTabs = tabs.filter((tab) => tab && tab.label);
+    return `
+      <section class="cp-page-tabs" data-cp-tab-root>
+        <nav class="cp-tabbar" role="tablist">
+          ${safeTabs.map((tab, index) => {
+            const key = `${group}-${index}`;
+            return `<button type="button" class="cp-tab-button ${index === 0 ? "active" : ""}" data-cp-tab="${cp.escape(key)}" aria-selected="${index === 0 ? "true" : "false"}"><span>${cp.escape(tab.label)}</span>${tab.meta ? `<small>${cp.escape(tab.meta)}</small>` : ""}</button>`;
+          }).join("")}
+        </nav>
+        <div class="cp-tab-panels">
+          ${safeTabs.map((tab, index) => {
+            const key = `${group}-${index}`;
+            return `<section class="cp-tab-panel ${index === 0 ? "active" : ""}" data-cp-tab-panel="${cp.escape(key)}" ${index === 0 ? "" : "hidden"}>${tab.content || ""}</section>`;
+          }).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function CPUsageFlow(steps) {
+    return `
+      <section class="cp-panel">
+        <div class="cp-panel-title">页面使用流程</div>
+        <div class="cp-flow-list">
+          ${steps.map(([title, text], index) => `<div><strong>${index + 1}. ${cp.escape(title)}</strong><span>${cp.escape(text)}</span></div>`).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function setupLegacySectionTabs(page) {
+    const container = page.main.find("[data-chainpilot-legacy-content]")[0];
+    if (!container) return;
+
+    const schedule = () => {
+      window.clearTimeout(container.__cpLegacyTabTimer);
+      container.__cpLegacyTabTimer = window.setTimeout(() => normalizeLegacySections(container), 0);
+    };
+
+    schedule();
+
+    if (container.__cpLegacyTabObserver) return;
+    container.__cpLegacyTabObserver = new MutationObserver((mutations) => {
+      if (container.__cpLegacyTabApplying) return;
+      const hasNewContent = mutations.some((mutation) =>
+        Array.from(mutation.addedNodes || []).some((node) => node.nodeType === 1)
+      );
+      if (hasNewContent) schedule();
+    });
+    container.__cpLegacyTabObserver.observe(container, { childList: true });
+  }
+
+  function normalizeLegacySections(container) {
+    if (!container || container.__cpLegacyTabApplying) return;
+    const root = $(container);
+    if (root.children(".chainpilot-loading, .chainpilot-error").length) return;
+    if (root.children(".cp-page-tabs").length) return;
+
+    const directNodes = root.children().filter(function () {
+      return this.nodeType === 1 && !$(this).is("script, style");
+    }).toArray();
+    if (directNodes.length < 2) return;
+
+    const tabNodes = [];
+    directNodes.forEach((node, index) => {
+      const item = $(node);
+      const isIntro =
+        index === 0 &&
+        item.is(".chainpilot-hero, .chainpilot-workbench-head, .chainpilot-plan-header");
+      if (!isIntro) tabNodes.push(node);
+    });
+    if (tabNodes.length < 2) return;
+
+    workspace.tabGroupCounter = (workspace.tabGroupCounter || 0) + 1;
+    const group = `cp-tab-group-${workspace.tabGroupCounter}-legacy`;
+    const tabRoot = $(`
+      <section class="cp-page-tabs cp-legacy-tabs" data-cp-tab-root>
+        <nav class="cp-tabbar" role="tablist"></nav>
+        <div class="cp-tab-panels"></div>
+      </section>
+    `);
+    const nav = tabRoot.find(".cp-tabbar");
+    const panels = tabRoot.find(".cp-tab-panels");
+
+    container.__cpLegacyTabApplying = true;
+    $(tabNodes[0]).before(tabRoot);
+    tabNodes.forEach((node, index) => {
+      const key = `${group}-${index}`;
+      const label = legacySectionLabel($(node), index);
+      nav.append(
+        `<button type="button" class="cp-tab-button ${index === 0 ? "active" : ""}" data-cp-tab="${cp.escape(key)}" aria-selected="${index === 0 ? "true" : "false"}"><span>${cp.escape(label)}</span></button>`
+      );
+      const panel = $(`<section class="cp-tab-panel ${index === 0 ? "active" : ""}" data-cp-tab-panel="${cp.escape(key)}" ${index === 0 ? "" : "hidden"}></section>`);
+      panel.append(node);
+      panels.append(panel);
+    });
+    container.__cpLegacyTabApplying = false;
+  }
+
+  function legacySectionLabel(node, index) {
+    const directTitles = node
+      .find("> .chainpilot-panel .chainpilot-panel-title, > .chainpilot-plan-card .chainpilot-card-head h2, > .chainpilot-data-section-head h3")
+      .map(function () {
+        return $(this).text().trim();
+      })
+      .get()
+      .filter(Boolean);
+    if (directTitles.length > 1) return directTitles.slice(0, 2).join(" / ");
+
+    const title = node
+      .find(".chainpilot-panel-title, .chainpilot-card-head h2, .chainpilot-data-section-head h3, .chainpilot-side-section h3, h2, h3")
+      .first()
+      .text()
+      .trim();
+    if (title) return title;
+
+    if (node.is(".chainpilot-kpi-grid, .chainpilot-plan-kpis, .chainpilot-exec-grid")) return "指标概览";
+    if (node.is(".chainpilot-grid-2")) return "业务对象";
+    if (node.is(".chainpilot-action-list")) return "动作清单";
+    if (node.is(".chainpilot-table, .chainpilot-table-scroll")) return "明细表";
+    if (node.is(".chainpilot-scenario-list")) return "方案对比";
+    return `页面区块 ${index + 1}`;
   }
 
   function CPMetricCard(label, value, meta, tone = "info") {
@@ -1327,6 +1468,14 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
   function bindWorkspace(page) {
     page.main.off("click.chainpilotRoute", "[data-route]").on("click.chainpilotRoute", "[data-route]", function () {
       frappe.set_route($(this).attr("data-route"));
+    });
+    page.main.off("click.chainpilotTabs", "[data-cp-tab]").on("click.chainpilotTabs", "[data-cp-tab]", function () {
+      const target = $(this).attr("data-cp-tab");
+      const root = $(this).closest("[data-cp-tab-root]");
+      root.find("[data-cp-tab]").removeClass("active").attr("aria-selected", "false");
+      $(this).addClass("active").attr("aria-selected", "true");
+      root.find("[data-cp-tab-panel]").removeClass("active").attr("hidden", true);
+      root.find(`[data-cp-tab-panel="${target}"]`).addClass("active").removeAttr("hidden");
     });
     page.main.off("click.chainpilotEvidence", "[data-evidence-key]").on("click.chainpilotEvidence", "[data-evidence-key]", function () {
       const key = $(this).attr("data-evidence-key");
