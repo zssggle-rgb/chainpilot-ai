@@ -1621,8 +1621,8 @@
 
 .cp-object-header {
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(420px, 0.95fr) auto;
-  gap: 16px;
+  grid-template-columns: minmax(260px, 0.75fr) minmax(520px, 1.2fr) auto;
+  gap: 18px;
   align-items: center;
   padding: 16px;
   border: 1px solid var(--cp-border);
@@ -1652,41 +1652,40 @@
   line-height: 1.4;
 }
 
-.cp-object-facts {
+.cp-object-attributes {
   display: grid;
-  grid-template-columns: repeat(4, minmax(88px, 1fr));
-  border: 1px solid var(--cp-border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.cp-object-facts div {
-  min-height: 62px;
-  padding: 8px 10px;
+  grid-template-columns: repeat(3, minmax(132px, 1fr));
+  gap: 9px 18px;
+  min-width: 0;
+  padding: 2px 18px;
+  border-left: 1px solid var(--cp-border);
   border-right: 1px solid var(--cp-border);
-  background: var(--cp-surface-subtle);
 }
 
-.cp-object-facts div:last-child {
-  border-right: 0;
+.cp-object-attributes div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
 }
 
-.cp-object-facts span,
-.cp-object-facts small {
+.cp-object-attributes span {
   display: block;
   color: var(--cp-text-muted);
-  font-size: 11px;
-  font-weight: 670;
-  line-height: 1.25;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.02em;
 }
 
-.cp-object-facts strong {
+.cp-object-attributes strong {
   display: block;
-  margin: 4px 0 2px;
+  min-width: 0;
+  overflow: hidden;
   color: var(--cp-text);
-  font-size: 17px;
-  font-weight: 790;
-  line-height: 1.1;
+  font-size: 12px;
+  font-weight: 760;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .cp-object-actions,
@@ -1734,7 +1733,7 @@
 
 .cp-fiori-split {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   align-items: start;
 }
@@ -1798,25 +1797,29 @@
 .cp-analytical-table > div {
   display: grid;
   grid-template-columns:
-    68px
-    minmax(150px, 1fr)
-    minmax(126px, 0.9fr)
-    minmax(96px, 0.65fr)
-    minmax(144px, 1fr)
-    minmax(104px, 0.8fr)
-    minmax(104px, 0.8fr)
-    minmax(92px, 0.65fr)
-    minmax(112px, 0.8fr)
-    minmax(84px, 0.55fr)
-    88px;
+    62px
+    minmax(142px, 0.95fr)
+    minmax(126px, 0.85fr)
+    minmax(92px, 0.62fr)
+    minmax(142px, 0.95fr)
+    minmax(96px, 0.68fr)
+    minmax(96px, 0.68fr)
+    minmax(92px, 0.62fr)
+    minmax(112px, 0.78fr)
+    minmax(82px, 0.55fr)
+    82px;
   gap: 8px;
   align-items: center;
-  min-width: 1260px;
+  min-width: 1150px;
   min-height: 44px;
   padding: 8px 10px;
   border-bottom: 1px solid var(--cp-border);
   color: var(--cp-text);
   font-size: 11px;
+}
+
+.cp-analytical-table > div > span {
+  min-width: 0;
 }
 
 .cp-analytical-table > div:last-child {
@@ -1851,20 +1854,45 @@
   font-weight: 650;
 }
 
+.cp-analytical-table .cp-sap-tag {
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 5px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
 .cp-object-inspector {
-  position: sticky;
-  top: 76px;
   display: grid;
+  grid-template-columns: minmax(210px, 0.65fr) repeat(3, minmax(240px, 1fr));
   gap: 10px;
-  max-height: calc(100vh - 96px);
-  overflow: auto;
+  align-items: start;
+  overflow: hidden;
 }
 
 .cp-object-inspector header {
   display: grid;
   justify-content: stretch;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--cp-border);
+  gap: 5px;
+  margin: 0;
+  padding: 0 12px 0 0;
+  border-right: 1px solid var(--cp-border);
+}
+
+.cp-object-inspector .cp-panel {
+  height: 100%;
+  margin: 0;
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  background: var(--cp-surface-subtle);
+}
+
+.cp-object-inspector .cp-action-toolbar.vertical {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0;
 }
 
 .cp-object-list-grid {
@@ -3139,6 +3167,14 @@
     position: relative;
     top: 0;
     max-height: none;
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .cp-object-inspector header {
+    padding: 0 0 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--cp-border);
   }
 
   .cp-model-context > div {

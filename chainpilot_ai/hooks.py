@@ -10,5 +10,5 @@ fixtures = [
     {"doctype": "Workspace", "filters": [["name", "=", "ChainPilot AI"]]},
 ]
 
-app_include_css = ["/assets/chainpilot_ai/css/chainpilot_ai.css?v=20260531-fiori-workspace-2"]
-app_include_js = ["/assets/chainpilot_ai/js/chainpilot_ai.js?v=20260531-fiori-workspace-2"]
+app_include_css = ["/assets/chainpilot_ai/css/chainpilot_ai.css?v=20260531-fiori-workspace-3"]
+app_include_js = ["/assets/chainpilot_ai/js/chainpilot_ai.js?v=20260531-fiori-workspace-3"]

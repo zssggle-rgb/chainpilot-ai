@@ -395,7 +395,6 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
   }
 
   function CPObjectPageHeader(data) {
-    const totalActions = data.cash.length + data.shortage.length + data.masterData.length;
     return `
       <section class="cp-object-header">
         <div>
@@ -403,12 +402,7 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
           <h2>计划员处理工作台</h2>
           <p>面向物料、采购申请、采购订单、工厂和供应商的推荐处理清单。</p>
         </div>
-        <div class="cp-object-facts">
-          ${CPObjectFact("待处理对象", cp.number(totalActions), "推荐、缺料、主数据")}
-          ${CPObjectFact("采购动作", cp.number(data.cash.length), cp.currency(data.cashValue))}
-          ${CPObjectFact("缺料物料", cp.number(data.shortage.length), "未来 14 天")}
-          ${CPObjectFact("主数据异常", cp.number(data.masterData.length), "需复核")}
-        </div>
+        ${CPObjectAttributes(data)}
         <div class="cp-object-actions">
           <button type="button" class="cp-button" data-route="mock-data-center">查看数据账套</button>
           <button type="button" class="cp-button" data-route="strategy-optimization-center">回测策略</button>
@@ -418,8 +412,20 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
     `;
   }
 
-  function CPObjectFact(label, value, note) {
-    return `<div><span>${cp.escape(label)}</span><strong>${cp.escape(value)}</strong><small>${cp.escape(note)}</small></div>`;
+  function CPObjectAttributes(data) {
+    const attrs = [
+      ["计划周期", data.horizon || "-"],
+      ["工厂范围", data.plants || "-"],
+      ["快照时间", data.snapshotTime || "-"],
+      ["数据来源", "SAP 模拟快照"],
+      ["求解状态", cp.statusLabel(data.latestRun.status || "Success")],
+      ["推荐对象", `${cp.number(data.cash.length + data.shortage.length + data.masterData.length)} 条`],
+    ];
+    return `
+      <div class="cp-object-attributes">
+        ${attrs.map(([label, value]) => `<div><span>${cp.escape(label)}</span><strong>${cp.escape(value)}</strong></div>`).join("")}
+      </div>
+    `;
   }
 
   function CPFilterBar(data) {

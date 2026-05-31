@@ -14,8 +14,17 @@
   - https://www.sap.com/design-system/fiori-design-web/v1-71/page-types/page-layouts/dynamic-page-layout/usage
 - Frappe List View，用于保留 Frappe 原生对象列表、筛选、排序、行级按钮和表单跳转习惯。
   - https://docs.frappe.io/framework/user/en/api/list
+- ERPNext / Frappe，用于校准采购、库存、制造对象必须回到单据和主数据，而不是只做大屏摘要。
+  - https://github.com/frappe/frappe
+  - https://github.com/frappe/erpnext
+- OpenBoxes，用于校准供应链执行系统的信息组织：物料、库存、仓库、收发货、供应链对象必须能被逐条处理。
+  - https://github.com/openboxes/openboxes
+- metasfresh，用于参考现代 ERP Web UI 的交易对象页、REST/React 企业前端和高密度业务页面气质。
+  - https://github.com/metasfresh/metasfresh
 - Ant Design Pro 的 Table List / Advanced Form / Workplace，用于参考现代企业后台的信息密度和表格优先工作方式。
   - https://github.com/ant-design/ant-design-pro
+- Tabler，用于参考紧凑、清晰的中后台视觉组件密度，但不复制普通 KPI Dashboard 风格。
+  - https://github.com/tabler/tabler
 
 ## 2. 设计原则
 
@@ -41,10 +50,10 @@
 首页结构：
 
 1. Message Strip：说明当前为只读计划工作区，不直接写 SAP。
-2. Object Header：展示计划员处理工作台、待处理对象、采购动作、缺料物料、主数据异常和全局动作。
+2. Object Header：展示计划员处理工作台、计划周期、工厂范围、快照时间、数据来源、求解状态、推荐对象和全局动作。
 3. Filter Bar：工厂、SAP 对象、处理状态、风险等级、搜索。
 4. Recommendation Table：核心区域，列出优先级、SAP 对象、物料/工厂、供应商、推荐动作、当前值、建议值、资金影响、风险/缺口、约束和操作。
-5. Object Inspector：右侧对象页预览，点击表格行后显示当前/建议、约束校验、证据链和操作按钮。
+5. Object Inspector：表格下方对象页预览，点击表格行后显示当前/建议、约束校验、证据链和操作按钮；不占用首页主视觉。
 6. Object Lists：下方保留缺料风险、采购动作、主数据复核的对象清单入口。
 
 ## 4. 验收结果
@@ -67,6 +76,8 @@ http://chainpilot.localhost:8000/app/chainpilot-ai-command-center
 | 点击表格行后对象页预览更新 | 通过 |
 | 首页没有 AI 聊天框 | 通过 |
 | 首页没有 Algorithm Run 详情主视觉 | 通过 |
+| Object Header 不使用 KPI 卡片堆砌 | 通过 |
+| Recommendation 表格使用首屏全宽工作区 | 通过 |
 
 截图：
 
