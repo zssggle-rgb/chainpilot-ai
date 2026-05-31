@@ -5,13 +5,18 @@
   frappe.pages["scenario-studio"].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
       parent: wrapper,
-      title: "方案工作台",
+      title: "方案测算",
       single_column: true,
     });
 
     page.set_primary_action("返回", () => frappe.set_route("chainpilot-ai-command-center"));
     page.set_secondary_action("建议", () => frappe.set_route("action-inbox"));
-    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载方案工作台...</div></div>`);
+    window.chainpilot.workspace.mountLegacyShell(page, {
+      route: "scenario-studio",
+      title: "方案测算",
+      subtitle: "业务目标 / 约束条件 / 方案对比",
+      loading: "正在加载方案测算...",
+    });
     load_scenario_studio(page);
   };
 

@@ -53,7 +53,12 @@
     page.set_primary_action("生成学习快照", () => seed_learning(page));
     page.add_inner_button("监控", () => frappe.set_route("execution-monitor"));
     page.add_inner_button("智能", () => frappe.set_route("ai-copilot"));
-    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载学习中心...</div></div>`);
+    window.chainpilot.workspace.mountLegacyShell(page, {
+      route: "learning-center",
+      title: "学习中心",
+      subtitle: "反馈记录 / 策略信号 / 参数优化",
+      loading: "正在加载学习中心...",
+    });
     load_dashboard(page);
   };
 

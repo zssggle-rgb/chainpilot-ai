@@ -39,7 +39,7 @@
   frappe.pages["ai-copilot"].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
       parent: wrapper,
-      title: "智能助手",
+      title: "智能协同",
       single_column: true,
     });
 
@@ -47,7 +47,12 @@
     page.add_inner_button("建议", () => frappe.set_route("action-inbox"));
     page.add_inner_button("学习", () => frappe.set_route("learning-center"));
     page.add_inner_button("方案", () => frappe.set_route("scenario-studio"));
-    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载智能助手...</div></div>`);
+    window.chainpilot.workspace.mountLegacyShell(page, {
+      route: "ai-copilot",
+      title: "智能协同",
+      subtitle: "业务目标解析 / 方案生成 / 证据摘要",
+      loading: "正在加载智能协同工作台...",
+    });
     load_dashboard(page);
   };
 

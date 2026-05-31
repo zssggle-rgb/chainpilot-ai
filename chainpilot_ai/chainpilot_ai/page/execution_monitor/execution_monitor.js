@@ -51,7 +51,12 @@
     page.add_inner_button("拒绝最新审批包", () => reject_latest(page));
     page.add_inner_button("学习", () => frappe.set_route("learning-center"));
     page.add_inner_button("建议", () => frappe.set_route("action-inbox"));
-    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载执行监控...</div></div>`);
+    window.chainpilot.workspace.mountLegacyShell(page, {
+      route: "execution-monitor",
+      title: "执行监控",
+      subtitle: "审批包 / 回写草稿 / 供应商确认 / 兑现跟踪",
+      loading: "正在加载执行监控...",
+    });
     load_dashboard(page);
   };
 

@@ -22,7 +22,7 @@
   frappe.pages["mock-data-center"].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
       parent: wrapper,
-      title: "供应计划验证工作台",
+      title: "模拟数据中心",
       single_column: true,
     });
 
@@ -30,7 +30,12 @@
     page.set_secondary_action("采购决策", () => frappe.set_route("chainpilot-ai-command-center"));
     page.add_inner_button("SAP 连接", () => frappe.set_route("sap-integration-console"));
     page.add_inner_button("回测中心", () => frappe.set_route("strategy-optimization-center"));
-    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载计划场景...</div></div>`);
+    window.chainpilot.workspace.mountLegacyShell(page, {
+      route: "mock-data-center",
+      title: "模拟数据中心",
+      subtitle: "SAP 快照账套 / 数据关系 / 业务对象明细",
+      loading: "正在加载模拟数据中心...",
+    });
     load_dashboard(page);
   };
 

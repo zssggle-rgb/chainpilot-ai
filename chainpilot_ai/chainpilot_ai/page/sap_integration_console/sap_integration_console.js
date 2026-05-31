@@ -31,7 +31,7 @@
   frappe.pages["sap-integration-console"].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
       parent: wrapper,
-      title: "SAP 连接",
+      title: "SAP 接入配置",
       single_column: true,
     });
 
@@ -40,7 +40,12 @@
     page.add_inner_button("校验真实配置", () => test_connection(page, "real"));
     page.add_inner_button("编辑配置", () => frappe.set_route("Form", "SAP Connection"));
     page.add_inner_button("返回", () => frappe.set_route("chainpilot-ai-command-center"));
-    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载 SAP 连接...</div></div>`);
+    window.chainpilot.workspace.mountLegacyShell(page, {
+      route: "sap-integration-console",
+      title: "SAP 接入配置",
+      subtitle: "连接参数 / 端点同步 / 字段映射 / 只读校验",
+      loading: "正在加载 SAP 接入配置...",
+    });
     load_dashboard(page);
   };
 

@@ -1400,6 +1400,62 @@
   flex: 0 0 100%;
 }
 
+#page-mock-data-center .page-body,
+#page-sap-integration-console .page-body,
+#page-strategy-optimization-center .page-body,
+#page-scenario-studio .page-body,
+#page-execution-monitor .page-body,
+#page-learning-center .page-body,
+#page-ai-copilot .page-body {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+#page-mock-data-center .page-wrapper,
+#page-mock-data-center .page-content,
+#page-mock-data-center .layout-main,
+#page-mock-data-center .layout-main-section-wrapper,
+#page-mock-data-center .layout-main-section,
+#page-sap-integration-console .page-wrapper,
+#page-sap-integration-console .page-content,
+#page-sap-integration-console .layout-main,
+#page-sap-integration-console .layout-main-section-wrapper,
+#page-sap-integration-console .layout-main-section,
+#page-strategy-optimization-center .page-wrapper,
+#page-strategy-optimization-center .page-content,
+#page-strategy-optimization-center .layout-main,
+#page-strategy-optimization-center .layout-main-section-wrapper,
+#page-strategy-optimization-center .layout-main-section,
+#page-scenario-studio .page-wrapper,
+#page-scenario-studio .page-content,
+#page-scenario-studio .layout-main,
+#page-scenario-studio .layout-main-section-wrapper,
+#page-scenario-studio .layout-main-section,
+#page-execution-monitor .page-wrapper,
+#page-execution-monitor .page-content,
+#page-execution-monitor .layout-main,
+#page-execution-monitor .layout-main-section-wrapper,
+#page-execution-monitor .layout-main-section,
+#page-learning-center .page-wrapper,
+#page-learning-center .page-content,
+#page-learning-center .layout-main,
+#page-learning-center .layout-main-section-wrapper,
+#page-learning-center .layout-main-section,
+#page-ai-copilot .page-wrapper,
+#page-ai-copilot .page-content,
+#page-ai-copilot .layout-main,
+#page-ai-copilot .layout-main-section-wrapper,
+#page-ai-copilot .layout-main-section {
+  width: 100%;
+  max-width: none;
+  margin-right: 0;
+  margin-left: 0;
+  padding-right: 0;
+  padding-left: 0;
+  flex: 0 0 100%;
+}
+
 .cp-workspace-shell * {
   letter-spacing: 0;
 }
@@ -1448,6 +1504,9 @@
   display: grid;
   gap: 4px;
   margin-top: 12px;
+  max-height: calc(100vh - 132px);
+  overflow: auto;
+  padding-right: 2px;
 }
 
 .cp-side-nav button {
@@ -3134,6 +3193,383 @@
   line-height: 1.35;
 }
 
+.cp-fiori-legacy-content {
+  --cp-ink: var(--cp-text);
+  --cp-muted: var(--cp-text-muted);
+  --cp-line: var(--cp-border);
+  --cp-panel: var(--cp-surface);
+  --cp-navy: var(--cp-primary);
+  --cp-blue: var(--cp-info);
+  --cp-cyan: #0e9384;
+  --cp-green: var(--cp-success);
+  --cp-amber: var(--cp-warning);
+  --cp-red: var(--cp-danger);
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  color: var(--cp-text);
+}
+
+.cp-fiori-legacy-content .chainpilot-hero,
+.cp-fiori-legacy-content .chainpilot-workbench-head,
+.cp-fiori-legacy-content .chainpilot-plan-header {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.82fr) minmax(520px, 1.18fr);
+  gap: 18px;
+  align-items: center;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--cp-border);
+  border-radius: 8px;
+  background: var(--cp-surface);
+}
+
+.cp-fiori-legacy-content .chainpilot-eyebrow {
+  color: var(--cp-primary);
+  font-size: 11px;
+  font-weight: 780;
+  text-transform: none;
+}
+
+.cp-fiori-legacy-content .chainpilot-title {
+  margin: 4px 0;
+  color: var(--cp-text);
+  font-size: 24px;
+  font-weight: 790;
+  line-height: 1.15;
+}
+
+.cp-fiori-legacy-content .chainpilot-subtitle,
+.cp-fiori-legacy-content .chainpilot-panel-note {
+  max-width: none;
+  margin: 0;
+  color: var(--cp-text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.cp-fiori-legacy-content .chainpilot-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(132px, 1fr));
+  gap: 10px 18px;
+  min-width: 0;
+  padding: 2px 0 2px 18px;
+  border-left: 1px solid var(--cp-border);
+}
+
+.cp-fiori-legacy-content .chainpilot-meta-item {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.cp-fiori-legacy-content .chainpilot-label,
+.cp-fiori-legacy-content .chainpilot-metric-label,
+.cp-fiori-legacy-content .chainpilot-meta-item .chainpilot-label {
+  color: var(--cp-text-muted);
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.02em;
+}
+
+.cp-fiori-legacy-content .chainpilot-value,
+.cp-fiori-legacy-content .chainpilot-metric,
+.cp-fiori-legacy-content .chainpilot-meta-item .chainpilot-value {
+  margin-top: 3px;
+  color: var(--cp-text);
+  font-size: 13px;
+  font-weight: 780;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.cp-fiori-legacy-content .chainpilot-grid-2,
+.cp-fiori-legacy-content .chainpilot-kpi-grid,
+.cp-fiori-legacy-content .chainpilot-exec-grid,
+.cp-fiori-legacy-content .chainpilot-plan-kpis,
+.cp-fiori-legacy-content .chainpilot-domain-grid,
+.cp-fiori-legacy-content .chainpilot-distribution-grid,
+.cp-fiori-legacy-content .chainpilot-technical-grid,
+.cp-fiori-legacy-content .chainpilot-profile-grid,
+.cp-fiori-legacy-content .chainpilot-audit-grid {
+  gap: 12px;
+  margin-top: 0;
+}
+
+.cp-fiori-legacy-content .chainpilot-grid-2 {
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.72fr);
+}
+
+.cp-fiori-legacy-content .chainpilot-kpi-grid,
+.cp-fiori-legacy-content .chainpilot-exec-grid,
+.cp-fiori-legacy-content .chainpilot-plan-kpis {
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+}
+
+.cp-fiori-legacy-content .chainpilot-panel,
+.cp-fiori-legacy-content .chainpilot-kpi,
+.cp-fiori-legacy-content .chainpilot-exec-kpi,
+.cp-fiori-legacy-content .chainpilot-planning-kpi,
+.cp-fiori-legacy-content .chainpilot-action-card,
+.cp-fiori-legacy-content .chainpilot-scenario,
+.cp-fiori-legacy-content .chainpilot-data-card,
+.cp-fiori-legacy-content .chainpilot-data-section,
+.cp-fiori-legacy-content .chainpilot-plan-card,
+.cp-fiori-legacy-content .chainpilot-side-section,
+.cp-fiori-legacy-content .chainpilot-scenario-card,
+.cp-fiori-legacy-content .chainpilot-workbench,
+.cp-fiori-legacy-content .chainpilot-planner-workspace,
+.cp-fiori-legacy-content .chainpilot-audit-item,
+.cp-fiori-legacy-content .chainpilot-domain-card,
+.cp-fiori-legacy-content .chainpilot-reason-tile,
+.cp-fiori-legacy-content .chainpilot-evidence-item {
+  border: 1px solid var(--cp-border);
+  border-radius: 8px;
+  background: var(--cp-surface);
+  box-shadow: none;
+}
+
+.cp-fiori-legacy-content .chainpilot-panel,
+.cp-fiori-legacy-content .chainpilot-kpi,
+.cp-fiori-legacy-content .chainpilot-exec-kpi,
+.cp-fiori-legacy-content .chainpilot-planning-kpi,
+.cp-fiori-legacy-content .chainpilot-plan-card,
+.cp-fiori-legacy-content .chainpilot-data-card,
+.cp-fiori-legacy-content .chainpilot-side-section,
+.cp-fiori-legacy-content .chainpilot-scenario-card,
+.cp-fiori-legacy-content .chainpilot-evidence-item {
+  min-width: 0;
+  min-height: auto;
+  padding: 12px;
+}
+
+.cp-fiori-legacy-content .chainpilot-kpi,
+.cp-fiori-legacy-content .chainpilot-exec-kpi,
+.cp-fiori-legacy-content .chainpilot-planning-kpi {
+  border-left-width: 4px;
+}
+
+.cp-fiori-legacy-content .chainpilot-kpi strong,
+.cp-fiori-legacy-content .chainpilot-exec-kpi strong,
+.cp-fiori-legacy-content .chainpilot-planning-kpi strong,
+.cp-fiori-legacy-content .chainpilot-reason-tile strong,
+.cp-fiori-legacy-content .chainpilot-domain-card b {
+  margin: 6px 0 3px;
+  color: var(--cp-text);
+  font-size: 20px;
+  font-weight: 790;
+  line-height: 1.08;
+}
+
+.cp-fiori-legacy-content .chainpilot-kpi span,
+.cp-fiori-legacy-content .chainpilot-exec-kpi span,
+.cp-fiori-legacy-content .chainpilot-planning-kpi span,
+.cp-fiori-legacy-content .chainpilot-kpi small,
+.cp-fiori-legacy-content .chainpilot-exec-kpi small,
+.cp-fiori-legacy-content .chainpilot-planning-kpi small {
+  color: var(--cp-text-muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.cp-fiori-legacy-content .chainpilot-panel-header,
+.cp-fiori-legacy-content .chainpilot-card-head,
+.cp-fiori-legacy-content .chainpilot-data-section-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.cp-fiori-legacy-content .chainpilot-panel-title,
+.cp-fiori-legacy-content .chainpilot-card-head h2,
+.cp-fiori-legacy-content .chainpilot-data-section-head h3,
+.cp-fiori-legacy-content .chainpilot-side-section h3 {
+  margin: 0;
+  color: var(--cp-text);
+  font-size: 15px;
+  font-weight: 790;
+}
+
+.cp-fiori-legacy-content .chainpilot-tabs,
+.cp-fiori-legacy-content .chainpilot-plan-tabs {
+  border-bottom: 1px solid var(--cp-border);
+  background: var(--cp-surface-subtle);
+}
+
+.cp-fiori-legacy-content .chainpilot-tab,
+.cp-fiori-legacy-content .chainpilot-plan-tab,
+.cp-fiori-legacy-content .chainpilot-ledger-tab {
+  min-height: 42px;
+  border-color: var(--cp-border);
+  border-radius: 0;
+  background: transparent;
+  color: var(--cp-text-muted);
+}
+
+.cp-fiori-legacy-content .chainpilot-tab.active,
+.cp-fiori-legacy-content .chainpilot-plan-tab.active,
+.cp-fiori-legacy-content .chainpilot-ledger-tab.active {
+  border-bottom-color: var(--cp-primary);
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  box-shadow: inset 0 -3px 0 var(--cp-primary);
+}
+
+.cp-fiori-legacy-content .chainpilot-action-card,
+.cp-fiori-legacy-content .chainpilot-scenario,
+.cp-fiori-legacy-content .chainpilot-risk-row,
+.cp-fiori-legacy-content .chainpilot-profile-row,
+.cp-fiori-legacy-content .chainpilot-policy-row {
+  min-height: 50px;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--cp-border);
+  border-radius: 0;
+  background: var(--cp-surface);
+}
+
+.cp-fiori-legacy-content .chainpilot-action-card,
+.cp-fiori-legacy-content .chainpilot-scenario {
+  border-radius: 6px;
+}
+
+.cp-fiori-legacy-content .chainpilot-action-title,
+.cp-fiori-legacy-content .chainpilot-scenario-name,
+.cp-fiori-legacy-content .chainpilot-domain-card strong,
+.cp-fiori-legacy-content .chainpilot-profile-main strong {
+  color: var(--cp-text);
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.cp-fiori-legacy-content .chainpilot-action-subtitle,
+.cp-fiori-legacy-content .chainpilot-scenario-text,
+.cp-fiori-legacy-content .chainpilot-domain-card span,
+.cp-fiori-legacy-content .chainpilot-profile-facts span {
+  color: var(--cp-text-muted);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.cp-fiori-legacy-content .chainpilot-badge {
+  min-height: 22px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.cp-fiori-legacy-content .chainpilot-badge.green {
+  border-color: #a6f4c5;
+  background: #ecfdf3;
+  color: var(--cp-success);
+}
+
+.cp-fiori-legacy-content .chainpilot-badge.blue {
+  border-color: #b2ddff;
+  background: #eff8ff;
+  color: var(--cp-info);
+}
+
+.cp-fiori-legacy-content .chainpilot-badge.amber {
+  border-color: #fedf89;
+  background: #fffaeb;
+  color: var(--cp-warning);
+}
+
+.cp-fiori-legacy-content .chainpilot-badge.red {
+  border-color: #fecdca;
+  background: #fef3f2;
+  color: var(--cp-danger);
+}
+
+.cp-fiori-legacy-content .chainpilot-badge.neutral {
+  border-color: var(--cp-border);
+  background: var(--cp-surface-subtle);
+  color: var(--cp-text-muted);
+}
+
+.cp-fiori-legacy-content .chainpilot-link-button,
+.cp-fiori-legacy-content .chainpilot-primary-command,
+.cp-fiori-legacy-content .chainpilot-secondary-command,
+.cp-fiori-legacy-content .chainpilot-filter,
+.cp-fiori-legacy-content button.chainpilot-filter {
+  min-height: 30px;
+  padding: 5px 10px;
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.cp-fiori-legacy-content .chainpilot-link-button,
+.cp-fiori-legacy-content .chainpilot-primary-command,
+.cp-fiori-legacy-content .chainpilot-filter.active {
+  border-color: var(--cp-primary);
+  background: var(--cp-primary);
+  color: #fff;
+}
+
+.cp-fiori-legacy-content .form-control,
+.cp-fiori-legacy-content input,
+.cp-fiori-legacy-content textarea,
+.cp-fiori-legacy-content select {
+  min-height: 32px;
+  border: 1px solid var(--cp-border);
+  border-radius: 5px;
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.cp-fiori-legacy-content textarea.form-control {
+  min-height: 96px;
+}
+
+.cp-fiori-legacy-content .chainpilot-table,
+.cp-fiori-legacy-content .chainpilot-policy-list,
+.cp-fiori-legacy-content .chainpilot-week-chart,
+.cp-fiori-legacy-content .chainpilot-action-list,
+.cp-fiori-legacy-content .chainpilot-compact-list {
+  border-color: var(--cp-border);
+}
+
+.cp-fiori-legacy-content .chainpilot-table-row,
+.cp-fiori-legacy-content .chainpilot-week-row,
+.cp-fiori-legacy-content .chainpilot-policy-row {
+  border-bottom-color: var(--cp-border);
+  color: var(--cp-text);
+  font-size: 11px;
+}
+
+.cp-fiori-legacy-content .chainpilot-table-row.head,
+.cp-fiori-legacy-content .chainpilot-week-head {
+  background: var(--cp-surface-subtle);
+  color: var(--cp-text-muted);
+  font-weight: 790;
+}
+
+.cp-fiori-legacy-content .chainpilot-progress {
+  height: 6px;
+  background: #edf1f7;
+}
+
+.cp-fiori-legacy-content .chainpilot-progress i {
+  background: var(--cp-primary);
+}
+
+.cp-fiori-legacy-content .chainpilot-ai-panel {
+  border-color: #d6bbfb;
+  background: #f9f5ff;
+}
+
 @media (max-width: 1280px) {
   .cp-work-area {
     grid-template-columns: minmax(0, 1fr);
@@ -3177,6 +3613,30 @@
     border-bottom: 1px solid var(--cp-border);
   }
 
+  .cp-fiori-legacy-content .chainpilot-hero,
+  .cp-fiori-legacy-content .chainpilot-workbench-head,
+  .cp-fiori-legacy-content .chainpilot-plan-header,
+  .cp-fiori-legacy-content .chainpilot-grid-2,
+  .cp-fiori-legacy-content .chainpilot-action-card,
+  .cp-fiori-legacy-content .chainpilot-scenario,
+  .cp-fiori-legacy-content .chainpilot-ledger-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cp-fiori-legacy-content .chainpilot-meta-grid {
+    padding: 0;
+    border-left: 0;
+  }
+
+  .cp-fiori-legacy-content .chainpilot-kpi-grid,
+  .cp-fiori-legacy-content .chainpilot-exec-grid,
+  .cp-fiori-legacy-content .chainpilot-plan-kpis,
+  .cp-fiori-legacy-content .chainpilot-domain-grid,
+  .cp-fiori-legacy-content .chainpilot-distribution-grid,
+  .cp-fiori-legacy-content .chainpilot-technical-grid {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+
   .cp-model-context > div {
     border-right: 0;
     border-bottom: 1px solid var(--cp-border);
@@ -3217,7 +3677,14 @@
   .cp-constraint-bar,
   .cp-detail-grid,
   .cp-capability-grid,
-  .cp-timeline {
+  .cp-timeline,
+  .cp-fiori-legacy-content .chainpilot-meta-grid,
+  .cp-fiori-legacy-content .chainpilot-kpi-grid,
+  .cp-fiori-legacy-content .chainpilot-exec-grid,
+  .cp-fiori-legacy-content .chainpilot-plan-kpis,
+  .cp-fiori-legacy-content .chainpilot-domain-grid,
+  .cp-fiori-legacy-content .chainpilot-distribution-grid,
+  .cp-fiori-legacy-content .chainpilot-technical-grid {
     grid-template-columns: 1fr;
   }
 }

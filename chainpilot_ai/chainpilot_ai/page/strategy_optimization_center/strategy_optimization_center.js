@@ -22,7 +22,7 @@
   frappe.pages["strategy-optimization-center"].on_page_load = function (wrapper) {
     const page = frappe.ui.make_app_page({
       parent: wrapper,
-      title: "策略优化中心",
+      title: "策略优化训练",
       single_column: true,
     });
 
@@ -31,7 +31,12 @@
     page.add_inner_button("模拟数据", () => frappe.set_route("mock-data-center"));
     page.add_inner_button("SAP 连接", () => frappe.set_route("sap-integration-console"));
     page.add_inner_button("建议", () => frappe.set_route("action-inbox"));
-    page.main.html(`<div class="chainpilot-shell"><div class="chainpilot-loading">正在加载策略优化...</div></div>`);
+    window.chainpilot.workspace.mountLegacyShell(page, {
+      route: "strategy-optimization-center",
+      title: "策略优化训练",
+      subtitle: "回测样本 / 参数配置 / 策略闸门",
+      loading: "正在加载策略优化训练...",
+    });
     load_dashboard(page);
   };
 

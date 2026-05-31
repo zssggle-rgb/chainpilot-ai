@@ -195,7 +195,14 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
     ["shortage-risk-war-room", "库存投影", "缺料例外"],
     ["cash-release-action-package", "PR / PO", "采购动作"],
     ["master-data-health", "计划参数", "主数据"],
+    ["mock-data-center", "模拟账套", "数据中心"],
+    ["sap-integration-console", "SAP 接入", "数据连接"],
+    ["strategy-optimization-center", "策略回测", "优化训练"],
+    ["scenario-studio", "方案测算", "计划场景"],
     ["action-inbox", "审批执行", "动作队列"],
+    ["execution-monitor", "兑现跟踪", "执行监控"],
+    ["learning-center", "反馈学习", "学习中心"],
+    ["ai-copilot", "目标助手", "智能协同"],
     ["recommendation-detail", "证据约束", "对象详情"],
     ["algorithm-run-detail", "求解日志", "优化运行"],
   ];
@@ -226,6 +233,30 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
       console.error(error);
       page.main.find(".cp-workspace-shell").html(`<div class="cp-empty">无法加载工作台数据。</div>`);
     }
+  };
+
+  workspace.mountLegacyShell = function (page, options) {
+    const config = options || {};
+    const route = config.route || "";
+    const title = config.title || "ChainPilot AI";
+    const subtitle = config.subtitle || "供应链计划工作台";
+    const loading = config.loading || "正在加载数据...";
+    page.main.html(`
+      <div class="cp-workspace-shell">
+        <div class="cp-app-frame">
+          ${renderNav(route)}
+          <section class="cp-app-main">
+            ${renderLegacyTopHeader(route, title, subtitle)}
+            <div class="cp-work-area cp-work-area-canvas">
+              <main class="cp-page-content chainpilot-shell cp-fiori-legacy-content" data-chainpilot-legacy-content>
+                <div class="chainpilot-loading">${cp.escape(loading)}</div>
+              </main>
+            </div>
+          </section>
+        </div>
+      </div>
+    `);
+    bindWorkspace(page);
   };
 
   function normalizeData(runtime, mock) {
@@ -326,7 +357,26 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
       recommendation: "recommendation-detail",
       algorithm: "algorithm-run-detail",
     };
-    return map[view] === route;
+    return (map[view] || view) === route;
+  }
+
+  function renderLegacyTopHeader(route, title, subtitle) {
+    return `
+      <header class="cp-top-header cp-top-header-planning">
+        <div class="cp-header-breadcrumb">
+          <button type="button" class="cp-back-button" aria-label="返回">‹</button>
+          <div>
+            <h1>${cp.escape(title)}</h1>
+            <span>${cp.escape(subtitle)}</span>
+          </div>
+        </div>
+        <div class="cp-header-controls">
+          <button type="button" class="cp-control-pill">SAP 模拟快照</button>
+          <button type="button" class="cp-control-pill">只读工作区</button>
+          <button type="button" class="cp-button primary" data-route="chainpilot-ai-command-center">返回计划工作台</button>
+        </div>
+      </header>
+    `;
   }
 
   function renderTopHeader(view, data) {
