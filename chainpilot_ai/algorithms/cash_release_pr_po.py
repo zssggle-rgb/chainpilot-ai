@@ -312,15 +312,19 @@ def _select_actions(candidates: list[dict[str, Any]], scenario: dict[str, Any]) 
         return [], {"solver_name": "无候选", "solver_status": "INFEASIBLE", "objective_value": 0, "constraint_count": 0}
 
     constraints = _solver_constraints(allowed, max_selected, max_review_actions, max_supplier_confirmations, approval_cash_capacity)
-    selected_indexes, solver_name, solver_status, objective_value = _solve_binary_program(allowed, constraints)
+    selected_indexes, solver_meta = _solve_binary_program(allowed, constraints)
     for index, row in enumerate(allowed):
         row["solver_selected"] = index in selected_indexes
     return [allowed[index] for index in selected_indexes], {
-        "solver_name": solver_name,
-        "solver_status": solver_status,
-        "objective_value": round(objective_value, 2),
+        **solver_meta,
+        "objective_value": round(_selected_objective_value(allowed, selected_indexes), 2),
+        "objective_components": _objective_components(allowed, selected_indexes, risk_penalty, supplier_penalty_value),
+        "constraint_utilization": _constraint_utilization(selected_indexes, constraints),
         "constraint_count": len(constraints),
         "candidate_action_count_after_constraints": len(allowed),
+        "decision_variable_count": len(allowed),
+        "binary_variable_count": len(allowed),
+        "positive_score_count": sum(1 for row in allowed if float(row.get("objective_score") or 0) > 0),
         "max_selected_actions": max_selected,
         "max_review_actions": max_review_actions,
         "max_supplier_confirmations": max_supplier_confirmations,
@@ -364,7 +368,7 @@ def _solver_constraints(
     return constraints
 
 
-def _solve_binary_program(allowed: list[dict[str, Any]], constraints: list[dict[str, Any]]) -> tuple[set[int], str, str, float]:
+def _solve_binary_program(allowed: list[dict[str, Any]], constraints: list[dict[str, Any]]) -> tuple[set[int], dict[str, Any]]:
     scores = [max(0.0, float(row.get("objective_score") or 0)) for row in allowed]
     if milp and Bounds and LinearConstraint:
         try:
@@ -375,14 +379,22 @@ def _solve_binary_program(allowed: list[dict[str, Any]], constraints: list[dict[
             result = milp(c=c, integrality=[1 for _ in allowed], bounds=Bounds(0, 1), constraints=linear, options={"time_limit": 5})
             if result.success and result.x is not None:
                 indexes = {index for index, value in enumerate(result.x) if value >= 0.5 and scores[index] > 0}
-                status = "OPTIMAL" if getattr(result, "mip_gap", 0) in (None, 0) else "FEASIBLE"
-                return indexes, "HiGHS MILP", status, sum(scores[index] for index in indexes)
-        except Exception:
-            pass
+                mip_gap = getattr(result, "mip_gap", 0)
+                normalized_gap = 0.0 if mip_gap in (None, 0) else float(mip_gap)
+                status = "OPTIMAL" if normalized_gap <= 1e-6 else "FEASIBLE"
+                return indexes, {
+                    "solver_name": "HiGHS MILP",
+                    "solver_status": status,
+                    "mip_gap": round(normalized_gap, 8),
+                    "time_limit_seconds": 5,
+                    "solver_message": str(getattr(result, "message", "求解完成")),
+                }
+        except Exception as exc:
+            return _exact_binary_fallback(scores, constraints, fallback_reason=str(exc))
     return _exact_binary_fallback(scores, constraints)
 
 
-def _exact_binary_fallback(scores: list[float], constraints: list[dict[str, Any]]) -> tuple[set[int], str, str, float]:
+def _exact_binary_fallback(scores: list[float], constraints: list[dict[str, Any]], fallback_reason: str = "") -> tuple[set[int], dict[str, Any]]:
     best_indexes: set[int] = set()
     best_value = 0.0
     candidate_count = len(scores)
@@ -394,7 +406,14 @@ def _exact_binary_fallback(scores: list[float], constraints: list[dict[str, Any]
         if _constraints_pass(order, bits, constraints):
             best_value = value
             best_indexes = {index for index, enabled in zip(order, bits) if enabled}
-    return best_indexes, "精确整数枚举", "OPTIMAL" if candidate_count <= 28 else "TRUNCATED_OPTIMAL", best_value
+    status = "OPTIMAL" if candidate_count <= 28 else "TRUNCATED_OPTIMAL"
+    return best_indexes, {
+        "solver_name": "精确整数枚举",
+        "solver_status": status,
+        "mip_gap": 0.0 if status == "OPTIMAL" else None,
+        "time_limit_seconds": 0,
+        "solver_message": fallback_reason or ("已枚举全部候选" if status == "OPTIMAL" else "候选过多，仅枚举目标分最高的前 28 个动作"),
+    }
 
 
 def _constraints_pass(order: list[int], bits: tuple[int, ...], constraints: list[dict[str, Any]]) -> bool:
@@ -404,3 +423,43 @@ def _constraints_pass(order: list[int], bits: tuple[int, ...], constraints: list
         if used > float(constraint["upper_bound"]) + 1e-9:
             return False
     return True
+
+
+def _selected_objective_value(allowed: list[dict[str, Any]], selected_indexes: set[int]) -> float:
+    return sum(max(0.0, float(allowed[index].get("objective_score") or 0)) for index in selected_indexes)
+
+
+def _objective_components(
+    allowed: list[dict[str, Any]],
+    selected_indexes: set[int],
+    risk_penalty: float,
+    supplier_penalty_value: float,
+) -> dict[str, float]:
+    selected = [allowed[index] for index in selected_indexes]
+    cash_benefit = sum(float(row.get("cash_impact") or 0) for row in selected)
+    risk_penalty_total = sum(float(row.get("risk_after") or 0) * risk_penalty for row in selected)
+    supplier_penalty_total = sum(supplier_penalty_value for row in selected if row.get("recommendation_level") == "L3_SUPPLIER_CONFIRM")
+    return {
+        "cash_benefit": round(cash_benefit, 2),
+        "risk_penalty": round(risk_penalty_total, 2),
+        "supplier_confirmation_penalty": round(supplier_penalty_total, 2),
+        "net_objective": round(cash_benefit - risk_penalty_total - supplier_penalty_total, 2),
+    }
+
+
+def _constraint_utilization(selected_indexes: set[int], constraints: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    utilization = []
+    for constraint in constraints:
+        coefficients = constraint["coefficients"]
+        used = sum(float(coefficients[index]) for index in selected_indexes)
+        upper_bound = float(constraint["upper_bound"])
+        utilization.append(
+            {
+                "name": constraint["name"],
+                "used": round(used, 4),
+                "upper_bound": round(upper_bound, 4),
+                "utilization_rate": round(used / upper_bound, 4) if upper_bound else 0.0,
+                "status": "紧约束" if upper_bound and used / upper_bound >= 0.95 else "通过",
+            }
+        )
+    return utilization

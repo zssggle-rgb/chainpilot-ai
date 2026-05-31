@@ -3,7 +3,7 @@ from __future__ import annotations
 import random
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta
-from statistics import mean, pstdev
+from statistics import mean, median, pstdev
 from typing import Any
 
 from chainpilot_ai.strategy.policy import policy_for_material
@@ -15,6 +15,7 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
     horizon_days = int(scenario.get("horizon_days") or 14)
     simulations = int(scenario.get("simulations") or 600)
     max_results = int(scenario.get("max_shortage_results") or 120)
+    forecast_reserve_ratio = float(scenario.get("forecast_reserve_ratio") or 0.0)
     inventory = {(row["material_code"], row["plant"]): row for row in snapshot.get("inventory", [])}
     demands = _group(snapshot.get("planned_demands", []), "material_code", "plant")
     history = _group(snapshot.get("consumption_history", []), "material_code", "plant")
@@ -24,6 +25,7 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
     materials = {(row["material_code"], row["plant"]): row for row in snapshot.get("materials", [])}
 
     results = []
+    forecast_profiles: list[dict[str, Any]] = []
     for key, inv_row in inventory.items():
         material_code, plant = key
         material = materials.get(key, {})
@@ -35,7 +37,10 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
         rng = random.Random(_stable_seed(material_code, plant))
         shortage_days: list[int] = []
         shortage_qtys: list[float] = []
-        demand_std = _demand_std(history.get(key, []), material_demands)
+        forecast_profile = _forecast_profile(history.get(key, []), material_demands, horizon_days)
+        forecast_profiles.append(forecast_profile)
+        demand_std = max(_demand_std(history.get(key, []), material_demands), float(forecast_profile.get("daily_uncertainty_qty") or 0))
+        residual_daily_demand = max(0.0, float(forecast_profile.get("forecast_daily_qty") or 0) - _planned_daily_demand(material_demands, base_date, horizon_days))
         delay_samples = _delay_samples(performance.get(key, []))
 
         for _ in range(simulations):
@@ -45,7 +50,11 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
             for day_offset in range(1, horizon_days + 1):
                 current_day = base_date + timedelta(days=day_offset)
                 inbound = _inbound_qty(po_lines.get(key, []), current_day, base_date, rng, delay_samples)
-                demand = _demand_qty(material_demands, current_day) + max(0, rng.gauss(0, demand_std * 0.35))
+                demand = (
+                    _demand_qty(material_demands, current_day)
+                    + residual_daily_demand * forecast_reserve_ratio
+                    + max(0, rng.gauss(0, demand_std * 0.35))
+                )
                 stock += inbound - demand
                 safety_stock = float(inv_row.get("safety_stock") or 0)
                 if stock < safety_stock:
@@ -83,6 +92,17 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
                 "inventory": float(inv_row.get("unrestricted_qty") or 0),
                 "safety_stock": float(inv_row.get("safety_stock") or 0),
                 "demand_std": round(demand_std, 2),
+                "forecast_model": forecast_profile["selected_model"],
+                "forecast_model_label": forecast_profile["selected_model_label"],
+                "forecast_wape": forecast_profile["wape"],
+                "forecast_mae": forecast_profile["mae"],
+                "forecast_holdout_points": forecast_profile["holdout_points"],
+                "forecast_daily_qty": forecast_profile["forecast_daily_qty"],
+                "forecast_confidence": forecast_profile["confidence"],
+                "forecast_residual_daily_qty": round(residual_daily_demand, 2),
+                "forecast_reserve_ratio": forecast_reserve_ratio,
+                "forecast_driver_summary": forecast_profile["driver_summary"],
+                "forecast_model_candidates": forecast_profile["candidate_metrics"],
                 "simulation_count": simulations,
                 "delay_samples": delay_samples,
                 "abc_class": material.get("abc_class"),
@@ -100,6 +120,10 @@ def run(snapshot: dict[str, Any], scenario: dict[str, Any] | None = None) -> dic
         "summary": {
             "result_count": len(limited_results),
             "high_risk_count": sum(1 for item in results if item["shortage_probability_14d"] >= 0.5),
+            "forecast_model_counts": dict(Counter(profile["selected_model_label"] for profile in forecast_profiles)),
+            "avg_forecast_wape": round(mean(float(profile["wape"]) for profile in forecast_profiles), 4) if forecast_profiles else 0.0,
+            "avg_forecast_confidence": round(mean(float(profile["confidence"]) for profile in forecast_profiles), 4) if forecast_profiles else 0.0,
+            "forecast_backtest_materials": len(forecast_profiles),
             "simulation_count": simulations,
             "horizon_days": horizon_days,
             "max_results": max_results,
@@ -136,6 +160,91 @@ def _demand_std(history_rows: list[dict[str, Any]], demand_rows: list[dict[str, 
         return max(1.0, pstdev(values))
     demand_values = [float(row.get("demand_qty") or 0) for row in demand_rows]
     return max(1.0, mean(demand_values) * 0.2 if demand_values else 1.0)
+
+
+def _forecast_profile(history_rows: list[dict[str, Any]], demand_rows: list[dict[str, Any]], horizon_days: int) -> dict[str, Any]:
+    weekly_history = [
+        float(row.get("actual_consumption_qty") or 0)
+        for row in sorted(history_rows, key=lambda item: str(item.get("posting_date") or ""))
+        if float(row.get("actual_consumption_qty") or 0) > 0
+    ]
+    if len(weekly_history) < 4:
+        fallback_qty = mean([float(row.get("demand_qty") or 0) for row in demand_rows] or [0.0])
+        weekly_history = [max(1.0, fallback_qty)] * 4
+
+    holdout_points = min(3, max(2, len(weekly_history) // 3))
+    train = weekly_history[:-holdout_points] or weekly_history
+    holdout = weekly_history[-holdout_points:] or weekly_history[-1:]
+    candidate_metrics = []
+    for candidate in _forecast_candidates(train, len(holdout)):
+        forecasts = candidate["forecast"]
+        wape = _wape(holdout, forecasts)
+        mae = _mae(holdout, forecasts)
+        candidate_metrics.append(
+            {
+                "model": candidate["model"],
+                "label": candidate["label"],
+                "wape": round(wape, 4),
+                "mae": round(mae, 2),
+            }
+        )
+    best = sorted(candidate_metrics, key=lambda item: (float(item["wape"]), float(item["mae"])))[0]
+    future_weeks = max(1, int(round(horizon_days / 7)))
+    future_candidate = next(candidate for candidate in _forecast_candidates(weekly_history, future_weeks) if candidate["model"] == best["model"])
+    forecast_weekly_qty = mean(future_candidate["forecast"])
+    forecast_daily_qty = max(0.0, forecast_weekly_qty / 7.0)
+    weekly_std = pstdev(weekly_history) if len(weekly_history) >= 2 else forecast_weekly_qty * 0.15
+    planned_daily = sum(float(row.get("demand_qty") or 0) for row in demand_rows) / max(1, horizon_days)
+    confidence = max(0.0, min(0.99, 1.0 - float(best["wape"])))
+    return {
+        "selected_model": best["model"],
+        "selected_model_label": best["label"],
+        "wape": round(float(best["wape"]), 4),
+        "mae": round(float(best["mae"]), 2),
+        "holdout_points": len(holdout),
+        "forecast_daily_qty": round(forecast_daily_qty, 2),
+        "daily_uncertainty_qty": round(max(1.0, weekly_std / 7.0), 2),
+        "confidence": round(confidence, 4),
+        "candidate_metrics": candidate_metrics,
+        "driver_summary": {
+            "historical_weekly_avg": round(mean(weekly_history), 2),
+            "historical_weekly_std": round(weekly_std, 2),
+            "future_planned_daily": round(planned_daily, 2),
+            "history_points": len(weekly_history),
+        },
+    }
+
+
+def _forecast_candidates(train: list[float], steps: int) -> list[dict[str, Any]]:
+    recent = train[-min(4, len(train)) :]
+    moving_avg = mean(recent)
+    robust_level = median(recent)
+    trend_slope = (train[-1] - train[0]) / max(1, len(train) - 1)
+    trend = [max(0.0, train[-1] + trend_slope * step) for step in range(1, steps + 1)]
+    trend_blend = [max(0.0, moving_avg * 0.65 + value * 0.35) for value in trend]
+    return [
+        {"model": "MOVING_AVERAGE", "label": "近四周移动平均", "forecast": [max(0.0, moving_avg) for _ in range(steps)]},
+        {"model": "TREND_BLEND", "label": "趋势修正组合", "forecast": trend_blend},
+        {"model": "ROBUST_MEDIAN", "label": "稳健中位数", "forecast": [max(0.0, robust_level) for _ in range(steps)]},
+    ]
+
+
+def _wape(actual: list[float], forecast: list[float]) -> float:
+    return sum(abs(a - f) for a, f in zip(actual, forecast)) / max(1.0, sum(abs(value) for value in actual))
+
+
+def _mae(actual: list[float], forecast: list[float]) -> float:
+    return mean(abs(a - f) for a, f in zip(actual, forecast)) if actual else 0.0
+
+
+def _planned_daily_demand(rows: list[dict[str, Any]], base_date: date, horizon_days: int) -> float:
+    end_date = base_date + timedelta(days=horizon_days)
+    total = 0.0
+    for row in rows:
+        demand_date = datetime.fromisoformat(row["demand_date"]).date()
+        if base_date < demand_date <= end_date:
+            total += float(row.get("demand_qty") or 0)
+    return total / max(1, horizon_days)
 
 
 def _delay_samples(rows: list[dict[str, Any]]) -> list[int]:

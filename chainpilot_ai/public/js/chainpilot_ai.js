@@ -95,6 +95,10 @@ window.chainpilot.statusLabel = function (value) {
     PASS_WITH_APPROVAL: "需审批",
     BLOCKED: "已阻断",
     BLOCK: "已阻断",
+    OPTIMAL: "最优",
+    FEASIBLE: "可行",
+    TRUNCATED_OPTIMAL: "截断最优",
+    INFEASIBLE: "不可行",
     L1_AUTO_RECOMMEND: "低风险可审批",
     L2_REVIEW: "计划员复核",
     L3_SUPPLIER_CONFIRM: "供应商确认",
@@ -1135,7 +1139,14 @@ window.chainpilot.recommendationLabel = function (recommendationId) {
     } catch (error) {
       summary = {};
     }
-    return `<section class="cp-panel"><div class="cp-run-row"><div><strong>${algorithmName(run.algorithm_code)}</strong><span>${cp.escape(run.algorithm_run_id || "-")}</span></div><div>${CPSeverityBadge(cp.statusLabel(run.status), cp.verdictTone(run.status))}</div><div><span>结果</span><strong>${cp.number(summary.result_count || summary.candidate_action_count || 0)}</strong></div><div><span>耗时</span><strong>${cp.number(run.duration_ms || 0)} ms</strong></div><button class="cp-button" data-evidence-key="${cp.escape(registerEvidence({ ...run, algorithm_run: run.algorithm_run_id, algorithm_code: run.algorithm_code, evidence: summary }))}">证据</button></div></section>`;
+    return `<section class="cp-panel"><div class="cp-run-row"><div><strong>${algorithmName(run.algorithm_code)}</strong><span>${cp.escape(run.algorithm_run_id || "-")}</span></div><div>${CPSeverityBadge(cp.statusLabel(run.status), cp.verdictTone(run.status))}</div><div><span>结果</span><strong>${cp.number(summary.result_count || summary.candidate_action_count || 0)}</strong></div><div><span>质量</span><strong>${cp.escape(runQualityText(summary))}</strong></div><div><span>耗时</span><strong>${cp.number(run.duration_ms || 0)} ms</strong></div><button class="cp-button" data-evidence-key="${cp.escape(registerEvidence({ ...run, algorithm_run: run.algorithm_run_id, algorithm_code: run.algorithm_code, evidence: summary }))}">证据</button></div></section>`;
+  }
+
+  function runQualityText(summary) {
+    if (summary.avg_forecast_wape != null) return `预测误差 ${cp.percent(Number(summary.avg_forecast_wape || 0) * 100)}`;
+    if (summary.mip_gap != null) return `最优差距 ${cp.number(summary.mip_gap, 4)}`;
+    if (summary.lead_time_issue_count != null) return `${cp.number(summary.result_count || 0)} 条异常`;
+    return "-";
   }
 
   function registerEvidence(item) {

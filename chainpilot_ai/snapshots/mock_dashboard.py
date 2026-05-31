@@ -37,6 +37,7 @@ def _build_mock_data_dashboard(history_days: int) -> dict[str, Any]:
     shortage_rows = [row["raw"] for row in runtime["results"] if row["result_type"] == "SHORTAGE_RISK"]
     selected_cash = [row for row in cash_rows if row.get("selected")]
     cash_summary = next((run["summary"] for run in runtime["runs"] if run["run"]["algorithm_code"] == "CASH_RELEASE_PR_PO_OPT"), {})
+    shortage_summary = next((run["summary"] for run in runtime["runs"] if run["run"]["algorithm_code"] == "SHORTAGE_RISK_14D_PROB"), {})
     counts = snapshot_counts(snapshot)
     return {
         "ok": True,
@@ -52,6 +53,7 @@ def _build_mock_data_dashboard(history_days: int) -> dict[str, Any]:
         "material_profiles": _material_profiles(snapshot, cash_rows, shortage_rows),
         "algorithm_counts": runtime["counts"],
         "cash_summary": cash_summary,
+        "shortage_summary": shortage_summary,
         "shortage_rows": shortage_rows[:16],
         "selected_cash_rows": selected_cash[:16],
         "blocked_reasons": _blocked_reason_rows(cash_rows),

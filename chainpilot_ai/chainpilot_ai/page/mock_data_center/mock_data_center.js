@@ -52,6 +52,7 @@
     const planning = data.planning_workbench || {};
     const scenario = planning.scenario || {};
     const cash = data.cash_summary || {};
+    const shortage = data.shortage_summary || {};
     const best = (data.backtests || []).find((row) => row.strategy_id === data.recommended_strategy_id) || (data.backtests || [])[0] || {};
     const totalRows = Object.values(counts).reduce((sum, value) => sum + Number(value || 0), 0);
     const relation = relationship_score(data.relationship_checks || []);
@@ -258,6 +259,8 @@
                   ${audit_item("工厂范围", (data.snapshot || {}).plant_scope || "-")}
                   ${audit_item("求解器", cash.solver_name || "-")}
                   ${audit_item("求解状态", status_label(cash.solver_status))}
+                  ${audit_item("MIP Gap", cash.mip_gap == null ? "-" : chainpilot.number(cash.mip_gap, 4))}
+                  ${audit_item("预测 WAPE", shortage.avg_forecast_wape == null ? "-" : chainpilot.percent(shortage.avg_forecast_wape * 100))}
                   ${audit_item("推荐策略", data.recommended_strategy_name || "-")}
                 </div>
               </section>

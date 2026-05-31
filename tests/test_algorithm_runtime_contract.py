@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 
 from chainpilot_ai.algorithms.registry import run_mvp_algorithms
+from chainpilot_ai.algorithms.quality import evaluate_algorithm_quality
 from chainpilot_ai.recommendation.result_to_recommendation import convert_algorithm_results
 from chainpilot_ai.scripts.verify_algorithm_runtime import run as verify_algorithm_runtime
 from chainpilot_ai.snapshots.mock_loader import DEFAULT_MOCK_SAP_SNAPSHOT_PATH, load_mock_sap_snapshot
@@ -49,10 +50,18 @@ class AlgorithmRuntimeContractTest(unittest.TestCase):
         self.assertGreaterEqual(runtime["counts"]["cash_release_results"], 20)
         self.assertGreaterEqual(runtime["counts"]["master_data_results"], 15)
         cash_summary = next(run["summary"] for run in runtime["runs"] if run["run"]["algorithm_code"] == "CASH_RELEASE_PR_PO_OPT")
+        shortage_summary = next(run["summary"] for run in runtime["runs"] if run["run"]["algorithm_code"] == "SHORTAGE_RISK_14D_PROB")
+        self.assertLessEqual(shortage_summary["avg_forecast_wape"], 0.12)
+        self.assertGreaterEqual(shortage_summary["avg_forecast_confidence"], 0.85)
+        self.assertGreaterEqual(shortage_summary["forecast_backtest_materials"], 100)
         self.assertGreaterEqual(cash_summary["selected_actions"], 10)
         self.assertGreaterEqual(cash_summary["blocked_actions"], 1)
         self.assertIn(cash_summary["solver_name"], {"HiGHS MILP", "精确整数枚举"})
         self.assertIn(cash_summary["solver_status"], {"OPTIMAL", "FEASIBLE", "TRUNCATED_OPTIMAL"})
+        self.assertIn("objective_components", cash_summary)
+        self.assertIn("constraint_utilization", cash_summary)
+        self.assertEqual(cash_summary["mip_gap"], 0.0)
+        self.assertGreaterEqual(cash_summary["decision_variable_count"], cash_summary["selected_actions"])
 
     def test_algorithm_results_convert_to_traceable_recommendations(self) -> None:
         runtime = run_mvp_algorithms(load_mock_sap_snapshot())
@@ -94,6 +103,13 @@ class AlgorithmRuntimeContractTest(unittest.TestCase):
         report = verify_algorithm_runtime()
         self.assertTrue(report["ok"], report)
         self.assertEqual(report["counts"]["Pass"], 4)
+
+    def test_algorithm_quality_gates_pass_on_mock_history(self) -> None:
+        report = evaluate_algorithm_quality(history_days=45, sample_interval_days=14)
+        self.assertTrue(report["ok"], report["quality_gates"])
+        self.assertLessEqual(report["forecast_quality"]["avg_wape"], 0.12)
+        self.assertGreaterEqual(report["optimizer_quality"]["selected_actions"], 15)
+        self.assertTrue(all(row["pass"] for row in report["quality_gates"]))
 
 
 if __name__ == "__main__":
